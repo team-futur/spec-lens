@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useState } from 'react';
 
 import {
@@ -410,86 +411,104 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
             </button>
           </div>
 
-          {executeError && (
-            <div
-              style={{
-                padding: '1.2rem',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid rgba(239, 68, 68, 0.2)',
-                borderRadius: '0.6rem',
-                color: '#ef4444',
-                fontSize: '1.3rem',
-              }}
-            >
-              Error: {executeError}
-            </div>
-          )}
-
-          {response && (
-            <div
-              style={{
-                marginTop: '0.8rem',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '0.6rem',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  padding: '1rem 1.2rem',
-                  backgroundColor: 'rgba(255,255,255,0.02)',
-                  borderBottom: '1px solid rgba(255,255,255,0.1)',
-                }}
+          <AnimatePresence mode="wait">
+            {executeError && (
+              <motion.div
+                key="error"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                style={{ overflow: 'hidden' }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <span
-                    style={{
-                      fontWeight: 700,
-                      fontSize: '1.3rem',
-                      color: getExecuteStatusColor(response.status),
-                    }}
-                  >
-                    {response.status}
-                  </span>
-                  <span style={{ fontSize: '1.2rem', color: '#9ca3af' }}>
-                    {response.duration}ms
-                  </span>
-                </div>
-                <div style={{ display: 'flex', gap: '0.8rem' }}>
-                  <button onClick={handleCopyResponse} style={iconButtonStyle}>
-                    {copiedResponse ? <Check size={14} /> : <Copy size={14} />}
-                  </button>
-                  <button onClick={apiTesterStoreActions.clearResponse} style={iconButtonStyle}>
-                    {' '}
-                    <Trash2 size={14} />{' '}
-                  </button>
-                </div>
-              </div>
-              <div
-                style={{
-                  padding: '1.2rem',
-                  backgroundColor: '#0a0a0a',
-                  overflow: 'auto',
-                  maxHeight: '400px',
-                }}
-              >
-                <pre
+                <div
                   style={{
-                    margin: 0,
-                    fontSize: '1.2rem',
-                    fontFamily: 'monospace',
-                    color: '#e5e5e5',
+                    padding: '1.2rem',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                    borderRadius: '0.6rem',
+                    color: '#ef4444',
+                    fontSize: '1.3rem',
                   }}
                 >
-                  {typeof response.data === 'string'
-                    ? response.data
-                    : JSON.stringify(response.data, null, 2)}
-                </pre>
-              </div>
-            </div>
-          )}
+                  Error: {executeError}
+                </div>
+              </motion.div>
+            )}
+
+            {response && (
+              <motion.div
+                key="response"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                style={{ overflow: 'hidden', marginTop: '0.8rem' }}
+              >
+                <div
+                  style={{
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '0.6rem',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      padding: '1rem 1.2rem',
+                      backgroundColor: 'rgba(255,255,255,0.02)',
+                      borderBottom: '1px solid rgba(255,255,255,0.1)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <span
+                        style={{
+                          fontWeight: 700,
+                          fontSize: '1.3rem',
+                          color: getExecuteStatusColor(response.status),
+                        }}
+                      >
+                        {response.status}
+                      </span>
+                      <span style={{ fontSize: '1.2rem', color: '#9ca3af' }}>
+                        {response.duration}ms
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.8rem' }}>
+                      <button onClick={handleCopyResponse} style={iconButtonStyle}>
+                        {copiedResponse ? <Check size={14} /> : <Copy size={14} />}
+                      </button>
+                      <button onClick={apiTesterStoreActions.clearResponse} style={iconButtonStyle}>
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      padding: '1.2rem',
+                      backgroundColor: '#0a0a0a',
+                      overflow: 'auto',
+                      maxHeight: '400px',
+                    }}
+                  >
+                    <pre
+                      style={{
+                        margin: 0,
+                        fontSize: '1.2rem',
+                        fontFamily: 'monospace',
+                        color: '#e5e5e5',
+                      }}
+                    >
+                      {typeof response.data === 'string'
+                        ? response.data
+                        : JSON.stringify(response.data, null, 2)}
+                    </pre>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
     </div>
