@@ -19,56 +19,61 @@ const initialState: ApiTesterState = {
 export const useApiTesterStore = create<ApiTesterStore>((set) => ({
   ...initialState,
 
-  setSelectedServer: (selectedServer) => set({ selectedServer }),
+  actions: {
+    setSelectedServer: (selectedServer) => set({ selectedServer }),
 
-  setPathParam: (key, value) =>
-    set((state) => ({
-      pathParams: { ...state.pathParams, [key]: value },
-    })),
+    setPathParam: (key, value) =>
+      set((state) => ({
+        pathParams: { ...state.pathParams, [key]: value },
+      })),
 
-  setQueryParam: (key, value) =>
-    set((state) => ({
-      queryParams: { ...state.queryParams, [key]: value },
-    })),
+    setQueryParam: (key, value) =>
+      set((state) => ({
+        queryParams: { ...state.queryParams, [key]: value },
+      })),
 
-  setHeader: (key, value) =>
-    set((state) => ({
-      headers: { ...state.headers, [key]: value },
-    })),
+    setHeader: (key, value) =>
+      set((state) => ({
+        headers: { ...state.headers, [key]: value },
+      })),
 
-  removeHeader: (key) =>
-    set((state) => {
-      const { [key]: _, ...rest } = state.headers;
-      return { headers: rest };
-    }),
+    removeHeader: (key) =>
+      set((state) => {
+        const { [key]: _, ...rest } = state.headers;
+        return { headers: rest };
+      }),
 
-  setRequestBody: (requestBody) => set({ requestBody }),
+    setRequestBody: (requestBody) => set({ requestBody }),
 
-  setResponse: (response) => set({ response, isExecuting: false, executeError: null }),
+    setResponse: (response) => set({ response, isExecuting: false, executeError: null }),
 
-  setExecuting: (isExecuting) => set({ isExecuting }),
+    setExecuting: (isExecuting) => set({ isExecuting }),
 
-  setExecuteError: (executeError) => set({ executeError, isExecuting: false }),
+    setExecuteError: (executeError) => set({ executeError, isExecuting: false }),
 
-  clearResponse: () => set({ response: null, executeError: null }),
+    clearResponse: () => set({ response: null, executeError: null }),
 
-  resetParams: () =>
-    set({
-      pathParams: {},
-      queryParams: {},
-      headers: { 'Content-Type': 'application/json' },
-      requestBody: '',
-      response: null,
-      executeError: null,
-    }),
+    resetParams: () =>
+      set({
+        pathParams: {},
+        queryParams: {},
+        headers: { 'Content-Type': 'application/json' },
+        requestBody: '',
+        response: null,
+        executeError: null,
+      }),
 
-  addToHistory: (entry: HistoryEntry) =>
-    set((state) => ({
-      history: [entry, ...state.history].slice(0, 50),
-    })),
+    addToHistory: (entry: HistoryEntry) =>
+      set((state) => ({
+        history: [entry, ...state.history].slice(0, 50),
+      })),
 
-  clearHistory: () => set({ history: [] }),
+    clearHistory: () => set({ history: [] }),
+  },
 }));
+
+// Actions - can be used outside of React components
+export const apiTesterStoreActions = useApiTesterStore.getState().actions;
 
 // Selector hooks
 export const useSelectedServer = () => useApiTesterStore((s) => s.selectedServer);

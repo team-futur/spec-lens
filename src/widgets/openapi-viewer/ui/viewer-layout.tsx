@@ -3,18 +3,18 @@ import { Menu, X, Upload, RefreshCw } from 'lucide-react';
 import { EndpointDetail } from './endpoint-detail.tsx';
 import { Sidebar } from './sidebar.tsx';
 import {
+  openAPIStoreActions,
   useOpenAPIStore,
   useSpec,
   useIsSidebarOpen,
   useSelectedEndpoint,
 } from '@/entities/openapi';
 
-export function ViewerLayout({ onReset }: { onReset: () => void }) {
+export function ViewerLayout() {
   const spec = useSpec();
   const isSidebarOpen = useIsSidebarOpen();
   const selectedEndpointKey = useSelectedEndpoint();
   const endpoints = useOpenAPIStore((s) => s.endpoints);
-  const { toggleSidebar } = useOpenAPIStore();
 
   // Find the selected endpoint data
   const selectedEndpoint = selectedEndpointKey
@@ -53,7 +53,7 @@ export function ViewerLayout({ onReset }: { onReset: () => void }) {
         className='mobile-only'
       >
         <button
-          onClick={toggleSidebar}
+          onClick={openAPIStoreActions.toggleSidebar}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -70,7 +70,7 @@ export function ViewerLayout({ onReset }: { onReset: () => void }) {
           {spec.info.title}
         </span>
         <button
-          onClick={onReset}
+          onClick={openAPIStoreActions.clearSpec}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -112,7 +112,7 @@ export function ViewerLayout({ onReset }: { onReset: () => void }) {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
             <button
-              onClick={toggleSidebar}
+              onClick={openAPIStoreActions.toggleSidebar}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -143,7 +143,7 @@ export function ViewerLayout({ onReset }: { onReset: () => void }) {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
             <button
-              onClick={onReset}
+              onClick={openAPIStoreActions.clearSpec}
               style={{
                 display: 'flex',
                 alignItems: 'center',

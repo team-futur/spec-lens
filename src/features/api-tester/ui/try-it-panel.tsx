@@ -13,7 +13,7 @@ import {
 
 import { executeRequest, getStatusColor } from '../api/execute-request.ts';
 import {
-  useApiTesterStore,
+  apiTesterStoreActions,
   useSelectedServer,
   usePathParams,
   useQueryParams,
@@ -47,28 +47,14 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
   const isExecuting = useIsExecuting();
   const executeError = useExecuteError();
 
-  const {
-    setSelectedServer,
-    setPathParam,
-    setQueryParam,
-    setHeader,
-    setRequestBody,
-    setResponse,
-    setExecuting,
-    setExecuteError,
-    clearResponse,
-    resetParams,
-    addToHistory,
-  } = useApiTesterStore();
-
   const servers = spec.servers || [{ url: 'http://localhost:3000', description: 'Local' }];
 
   // Initialize server
   useEffect(() => {
     if (!selectedServer && servers.length > 0) {
-      setSelectedServer(servers[0].url);
+      apiTesterStoreActions.setSelectedServer(servers[0].url);
     }
-  }, [servers, selectedServer, setSelectedServer]);
+  }, [servers, selectedServer]);
 
   // Generate example
   const generateBodyExample = useCallback(() => {
@@ -85,10 +71,10 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
 
   // Reset params & body on endpoint change
   useEffect(() => {
-    resetParams();
+    apiTesterStoreActions.resetParams();
     const example = generateBodyExample();
-    if (example) setRequestBody(example);
-  }, [endpoint.path, endpoint.method, resetParams, generateBodyExample, setRequestBody]);
+    if (example) apiTesterStoreActions.setRequestBody(example);
+  }, [endpoint.path, endpoint.method, generateBodyExample]);
 
   const merged = getMergedParameters(endpoint);
   const parameters = merged.filter((p): p is ParameterObject => !isReferenceObject(p));
@@ -98,8 +84,8 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
 
   async function handleExecute() {
     if (!selectedServer) return;
-    setExecuting(true);
-    clearResponse();
+    apiTesterStoreActions.setExecuting(true);
+    apiTesterStoreActions.clearResponse();
     const result = await executeRequest({
       baseUrl: selectedServer,
       path: endpoint.path,
@@ -109,11 +95,11 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
       headers,
       body: requestBody,
     });
-    setExecuting(false);
+    apiTesterStoreActions.setExecuting(false);
 
     if (result.success) {
-      setResponse(result.response);
-      addToHistory({
+      apiTesterStoreActions.setResponse(result.response);
+      apiTesterStoreActions.addToHistory({
         timestamp: Date.now(),
         method: endpoint.method,
         url: `${selectedServer}${endpoint.path}`,
@@ -121,8 +107,8 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
         error: null,
       });
     } else {
-      setExecuteError(result.error);
-      addToHistory({
+      apiTesterStoreActions.setExecuteError(result.error);
+      apiTesterStoreActions.addToHistory({
         timestamp: Date.now(),
         method: endpoint.method,
         url: `${selectedServer}${endpoint.path}`,
@@ -198,7 +184,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
             </label>
             <FuturSelect
               value={selectedServer}
-              onChange={(val) => setSelectedServer(val)}
+              onChange={(val) => apiTesterStoreActions.setSelectedServer(val)}
               options={servers.map((s) => ({
                 label: `${s.url}${s.description ? ` (${s.description})` : ''}`,
                 value: s.url,
@@ -230,7 +216,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                         key={p.name}
                         param={p}
                         value={pathParams[p.name] || ''}
-                        onChange={(v) => setPathParam(p.name, v)}
+                        onChange={(v) => apiTesterStoreActions.setPathParam(p.name, v)}
                       />
                     ))}
                   </div>
@@ -256,7 +242,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                         key={p.name}
                         param={p}
                         value={queryParams[p.name] || ''}
-                        onChange={(v) => setQueryParam(p.name, v)}
+                        onChange={(v) => apiTesterStoreActions.setQueryParam(p.name, v)}
                       />
                     ))}
                   </div>
@@ -302,7 +288,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                     <input readOnly value={k} style={inputStyle} />
                     <input
                       value={v}
-                      onChange={(e) => setHeader(k, e.target.value)}
+                      onChange={(e) => apiTesterStoreActions.setHeader(k, e.target.value)}
                       style={inputStyle}
                     />
                   </div>
@@ -328,7 +314,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                 <button
                   onClick={() => {
                     const example = generateBodyExample();
-                    setRequestBody(example);
+                    apiTesterStoreActions.setRequestBody(example);
                   }}
                   title='Reset to default example'
                   style={{
@@ -348,7 +334,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
               </div>
               <textarea
                 value={requestBody}
-                onChange={(e) => setRequestBody(e.target.value)}
+                onChange={(e) => apiTesterStoreActions.setRequestBody(e.target.value)}
                 rows={8}
                 style={{
                   width: '100%',
@@ -445,7 +431,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                   <button onClick={handleCopyResponse} style={iconButtonStyle}>
                     {copiedResponse ? <Check size={14} /> : <Copy size={14} />}
                   </button>
-                  <button onClick={clearResponse} style={iconButtonStyle}>
+                  <button onClick={apiTesterStoreActions.clearResponse} style={iconButtonStyle}>
                     {' '}
                     <Trash2 size={14} />{' '}
                   </button>
@@ -526,9 +512,8 @@ function ParameterInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={
-          param.description || (param.schema && !isReferenceObject(param.schema))
-            ? String(param.schema.type || '')
-            : ''
+          param.description ||
+          (param.schema && !isReferenceObject(param.schema) ? String(param.schema.type || '') : '')
         }
         style={inputStyle}
       />

@@ -2,17 +2,22 @@ import { useState, type DragEvent, type ChangeEvent } from 'react';
 
 import { Upload, FileJson, AlertCircle } from 'lucide-react';
 
-import { type OpenAPISpec, validateOpenAPISpec, useOpenAPIStore } from '@/entities/openapi';
+import {
+  type OpenAPISpec,
+  validateOpenAPISpec,
+  openAPIStoreActions,
+  useError,
+} from '@/entities/openapi';
 
-export function FileUploadZone({ onSuccess }: { onSuccess?: () => void }) {
+export function FileUploadZone() {
   const [isDragging, setIsDragging] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
-  const { setSpec, setLoading, setError, error } = useOpenAPIStore();
+  const error = useError();
 
   async function processFile(file: File) {
     setFileName(file.name);
-    setLoading(true);
-    setError(null);
+    openAPIStoreActions.setLoading(true);
+    openAPIStoreActions.setError(null);
 
     try {
       const text = await file.text();
@@ -23,11 +28,10 @@ export function FileUploadZone({ onSuccess }: { onSuccess?: () => void }) {
         throw new Error(validation.error);
       }
 
-      setSpec(json as OpenAPISpec, { type: 'file', name: file.name });
-      onSuccess?.();
+      openAPIStoreActions.setSpec(json as OpenAPISpec, { type: 'file', name: file.name });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to parse file';
-      setError(message);
+      openAPIStoreActions.setError(message);
     }
   }
 
@@ -49,7 +53,7 @@ export function FileUploadZone({ onSuccess }: { onSuccess?: () => void }) {
     if (file && (file.type === 'application/json' || file.name.endsWith('.json'))) {
       processFile(file);
     } else {
-      setError('Please drop a JSON file');
+      openAPIStoreActions.setError('Please drop a JSON file');
     }
   }
 

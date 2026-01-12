@@ -29,110 +29,112 @@ export const useOpenAPIStore = create<OpenAPIStore>()(
     (set, get) => ({
       ...initialState,
 
-      setSpec: (spec, source) => {
-        const endpoints = parseEndpoints(spec);
-        const tags = getAllTags(spec);
+      actions: {
+        setSpec: (spec, source) => {
+          const endpoints = parseEndpoints(spec);
+          const tags = getAllTags(spec);
 
-        set({
-          spec,
-          specSource: source,
-          endpoints,
-          tags,
-          error: null,
-          isLoading: false,
-          selectedEndpoint: null,
-          expandedTags: tags,
-        });
-      },
+          set({
+            spec,
+            specSource: source,
+            endpoints,
+            tags,
+            error: null,
+            isLoading: false,
+            selectedEndpoint: null,
+            expandedTags: tags,
+          });
+        },
 
-      clearSpec: () => {
-        set({
-          ...initialState,
-        });
-      },
+        clearSpec: () => {
+          set({
+            ...initialState,
+          });
+        },
 
-      setLoading: (isLoading) => set({ isLoading }),
+        setLoading: (isLoading) => set({ isLoading }),
 
-      setError: (error) => set({ error, isLoading: false }),
+        setError: (error) => set({ error, isLoading: false }),
 
-      selectEndpoint: (path, method) => {
-        set({ selectedEndpoint: { path, method } });
-      },
+        selectEndpoint: (path, method) => {
+          set({ selectedEndpoint: { path, method } });
+        },
 
-      clearSelection: () => set({ selectedEndpoint: null }),
+        clearSelection: () => set({ selectedEndpoint: null }),
 
-      setSearchQuery: (searchQuery) => set({ searchQuery }),
+        setSearchQuery: (searchQuery) => set({ searchQuery }),
 
-      toggleTag: (tag) => {
-        const { selectedTags } = get();
-        const newTags = selectedTags.includes(tag)
-          ? selectedTags.filter((t) => t !== tag)
-          : [...selectedTags, tag];
-        set({ selectedTags: newTags });
-      },
+        toggleTag: (tag) => {
+          const { selectedTags } = get();
+          const newTags = selectedTags.includes(tag)
+            ? selectedTags.filter((t) => t !== tag)
+            : [...selectedTags, tag];
+          set({ selectedTags: newTags });
+        },
 
-      toggleMethod: (method) => {
-        const { selectedMethods } = get();
-        const newMethods = selectedMethods.includes(method)
-          ? selectedMethods.filter((m) => m !== method)
-          : [...selectedMethods, method];
-        set({ selectedMethods: newMethods });
-      },
+        toggleMethod: (method) => {
+          const { selectedMethods } = get();
+          const newMethods = selectedMethods.includes(method)
+            ? selectedMethods.filter((m) => m !== method)
+            : [...selectedMethods, method];
+          set({ selectedMethods: newMethods });
+        },
 
-      clearFilters: () => {
-        set({
-          searchQuery: '',
-          selectedTags: [],
-          selectedMethods: [],
-        });
-      },
+        clearFilters: () => {
+          set({
+            searchQuery: '',
+            selectedTags: [],
+            selectedMethods: [],
+          });
+        },
 
-      toggleSidebar: () => {
-        set((state) => ({ isSidebarOpen: !state.isSidebarOpen }));
-      },
+        toggleSidebar: () => {
+          set((state) => ({ isSidebarOpen: !state.isSidebarOpen }));
+        },
 
-      setSidebarOpen: (isSidebarOpen) => set({ isSidebarOpen }),
+        setSidebarOpen: (isSidebarOpen) => set({ isSidebarOpen }),
 
-      toggleTagExpanded: (tag) => {
-        const { expandedTags } = get();
-        const newExpanded = expandedTags.includes(tag)
-          ? expandedTags.filter((t) => t !== tag)
-          : [...expandedTags, tag];
-        set({ expandedTags: newExpanded });
-      },
+        toggleTagExpanded: (tag) => {
+          const { expandedTags } = get();
+          const newExpanded = expandedTags.includes(tag)
+            ? expandedTags.filter((t) => t !== tag)
+            : [...expandedTags, tag];
+          set({ expandedTags: newExpanded });
+        },
 
-      expandAllTags: () => {
-        const { tags } = get();
-        set({ expandedTags: [...tags] });
-      },
+        expandAllTags: () => {
+          const { tags } = get();
+          set({ expandedTags: [...tags] });
+        },
 
-      collapseAllTags: () => {
-        set({ expandedTags: [] });
-      },
+        collapseAllTags: () => {
+          set({ expandedTags: [] });
+        },
 
-      getFilteredEndpoints: () => {
-        const { endpoints, searchQuery, selectedTags, selectedMethods } = get();
-        return filterEndpoints(endpoints, {
-          searchQuery,
-          selectedTags,
-          selectedMethods,
-        });
-      },
+        getFilteredEndpoints: () => {
+          const { endpoints, searchQuery, selectedTags, selectedMethods } = get();
+          return filterEndpoints(endpoints, {
+            searchQuery,
+            selectedTags,
+            selectedMethods,
+          });
+        },
 
-      getEndpointsByTag: () => {
-        const filteredEndpoints = get().getFilteredEndpoints();
-        return groupEndpointsByTag(filteredEndpoints);
-      },
+        getEndpointsByTag: () => {
+          const filteredEndpoints = get().actions.getFilteredEndpoints();
+          return groupEndpointsByTag(filteredEndpoints);
+        },
 
-      getSelectedEndpointData: () => {
-        const { endpoints, selectedEndpoint } = get();
-        if (!selectedEndpoint) return null;
+        getSelectedEndpointData: () => {
+          const { endpoints, selectedEndpoint } = get();
+          if (!selectedEndpoint) return null;
 
-        return (
-          endpoints.find(
-            (e) => e.path === selectedEndpoint.path && e.method === selectedEndpoint.method,
-          ) || null
-        );
+          return (
+            endpoints.find(
+              (e) => e.path === selectedEndpoint.path && e.method === selectedEndpoint.method,
+            ) || null
+          );
+        },
       },
     }),
     {
@@ -145,6 +147,9 @@ export const useOpenAPIStore = create<OpenAPIStore>()(
     },
   ),
 );
+
+// Actions - can be used outside of React components
+export const openAPIStoreActions = useOpenAPIStore.getState().actions;
 
 // Selector hooks
 export const useSpec = () => useOpenAPIStore((state) => state.spec);

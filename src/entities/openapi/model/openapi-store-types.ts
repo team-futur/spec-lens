@@ -64,4 +64,4 @@ export interface OpenAPIActions {
   getSelectedEndpointData: () => ParsedEndpoint | null;
 }
 
-export type OpenAPIStore = OpenAPIState & OpenAPIActions;
+export type OpenAPIStore = OpenAPIState & { actions: OpenAPIActions };

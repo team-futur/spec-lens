@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { useSpec, useOpenAPIStore } from '@/entities/openapi';
+import { useSpec } from '@/entities/openapi';
 import { ViewerLayout } from '@/widgets/openapi-viewer';
 import {
   SpecLoaderHeader,
@@ -12,11 +12,10 @@ import {
 
 export function APIDocsPage() {
   const spec = useSpec();
-  const { clearSpec } = useOpenAPIStore();
   const [inputMode, setInputMode] = useState<SpecLoaderType>('file');
 
   if (spec) {
-    return <ViewerLayout onReset={clearSpec} />;
+    return <ViewerLayout />;
   }
 
   return (

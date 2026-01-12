@@ -10,6 +10,7 @@ export type {
 // Store
 export {
   useApiTesterStore,
+  apiTesterStoreActions,
   useSelectedServer,
   usePathParams,
   useQueryParams,

@@ -55,6 +55,7 @@ export {
 // Store
 export {
   useOpenAPIStore,
+  openAPIStoreActions,
   useSpec,
   useSpecSource,
   useEndpoints,

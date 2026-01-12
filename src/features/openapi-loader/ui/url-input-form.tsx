@@ -3,15 +3,13 @@ import { useState, type FormEvent } from 'react';
 
 import { Link, Loader2, AlertCircle } from 'lucide-react';
 
-import { type OpenAPISpec, validateOpenAPISpec, useOpenAPIStore } from '@/entities/openapi';
+import { type OpenAPISpec, validateOpenAPISpec, openAPIStoreActions } from '@/entities/openapi';
 import { fetchExternalSpec } from '@/shared/server/fetch-external-spec';
 
-export function UrlInputForm({ onSuccess }: { onSuccess?: () => void }) {
+export function UrlInputForm() {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoadingLocal] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
-
-  const { setSpec, setLoading, setError: setStoreError } = useOpenAPIStore();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -35,7 +33,7 @@ export function UrlInputForm({ onSuccess }: { onSuccess?: () => void }) {
 
     setIsLoadingLocal(true);
     setLocalError(null);
-    setLoading(true);
+    openAPIStoreActions.setLoading(true);
 
     try {
       let json: unknown;
@@ -55,9 +53,8 @@ export function UrlInputForm({ onSuccess }: { onSuccess?: () => void }) {
         throw new Error(validation.error);
       }
 
-      setSpec(json as OpenAPISpec, { type: 'url', name: url });
+      openAPIStoreActions.setSpec(json as OpenAPISpec, { type: 'url', name: url });
       setUrl('');
-      onSuccess?.();
     } catch (err) {
       let message = 'Failed to fetch spec';
 
@@ -74,10 +71,10 @@ export function UrlInputForm({ onSuccess }: { onSuccess?: () => void }) {
       }
 
       setLocalError(message);
-      setStoreError(message);
+      openAPIStoreActions.setError(message);
     } finally {
       setIsLoadingLocal(false);
-      setLoading(false);
+      openAPIStoreActions.setLoading(false);
     }
   }
 

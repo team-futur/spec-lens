@@ -51,4 +51,4 @@ export interface ApiTesterActions {
   clearHistory: () => void;
 }
 
-export type ApiTesterStore = ApiTesterState & ApiTesterActions;
+export type ApiTesterStore = ApiTesterState & { actions: ApiTesterActions };

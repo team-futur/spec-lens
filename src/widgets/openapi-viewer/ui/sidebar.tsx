@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronRight, Search, X } from 'lucide-react';
 
 import {
+  openAPIStoreActions,
   useOpenAPIStore,
   useSearchQuery,
   useSelectedEndpoint,
@@ -15,10 +16,8 @@ export function Sidebar() {
   const selectedEndpoint = useSelectedEndpoint();
   const expandedTags = useExpandedTags();
   const isSidebarOpen = useIsSidebarOpen();
-  const { setSearchQuery, selectEndpoint, toggleTagExpanded, getEndpointsByTag, clearFilters } =
-    useOpenAPIStore();
 
-  const endpointsByTag = getEndpointsByTag();
+  const endpointsByTag = openAPIStoreActions.getEndpointsByTag();
   const tagEntries = Object.entries(endpointsByTag);
 
   if (!spec) return null;
@@ -78,7 +77,7 @@ export function Sidebar() {
           <input
             type='text'
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => openAPIStoreActions.setSearchQuery(e.target.value)}
             placeholder='Search endpoints...'
             style={{
               flex: 1,
@@ -91,7 +90,7 @@ export function Sidebar() {
           />
           {searchQuery && (
             <button
-              onClick={clearFilters}
+              onClick={openAPIStoreActions.clearFilters}
               style={{
                 padding: '0.2rem',
                 backgroundColor: 'transparent',
@@ -133,7 +132,7 @@ export function Sidebar() {
               <div key={tag} style={{ marginBottom: '0.4rem' }}>
                 {/* Tag Header */}
                 <button
-                  onClick={() => toggleTagExpanded(tag)}
+                  onClick={() => openAPIStoreActions.toggleTagExpanded(tag)}
                   style={{
                     width: '100%',
                     display: 'flex',
@@ -184,7 +183,9 @@ export function Sidebar() {
                       return (
                         <button
                           key={`${endpoint.method}-${endpoint.path}`}
-                          onClick={() => selectEndpoint(endpoint.path, endpoint.method)}
+                          onClick={() =>
+                            openAPIStoreActions.selectEndpoint(endpoint.path, endpoint.method)
+                          }
                           style={{
                             width: '100%',
                             display: 'flex',
