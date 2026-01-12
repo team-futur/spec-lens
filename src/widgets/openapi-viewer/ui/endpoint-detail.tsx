@@ -61,7 +61,7 @@ export function EndpointDetail({
           <MethodBadge method={method} size='lg' />
           <h1
             style={{
-              color: '#e5e5e5',
+              color: '#ffffff', // Changed to pure white
               fontSize: '2rem',
               fontWeight: 600,
               fontFamily: 'monospace',
@@ -75,7 +75,7 @@ export function EndpointDetail({
         {operation.summary && (
           <p
             style={{
-              color: '#e5e5e5',
+              color: '#ffffff', // Changed to pure white
               fontSize: '1.6rem',
               marginBottom: '0.8rem',
             }}
@@ -87,7 +87,7 @@ export function EndpointDetail({
         {operation.description && (
           <p
             style={{
-              color: '#9ca3af',
+              color: '#d1d5db', // gray-300 (lighter than previous 400)
               fontSize: '1.4rem',
               lineHeight: 1.6,
             }}
@@ -110,9 +110,9 @@ export function EndpointDetail({
                 key={tag}
                 style={{
                   padding: '0.4rem 1rem',
-                  backgroundColor: 'rgba(107, 114, 128, 0.2)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)', // Lighter background
                   borderRadius: '0.4rem',
-                  color: '#9ca3af',
+                  color: '#e5e5e5', // Lighter text
                   fontSize: '1.2rem',
                 }}
               >
@@ -203,7 +203,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     <div style={{ marginBottom: '2.4rem' }}>
       <h2
         style={{
-          color: '#e5e5e5',
+          color: '#ffffff', // Changed to pure white as requested
           fontSize: '1.5rem',
           fontWeight: 600,
           marginBottom: '1.2rem',
@@ -224,7 +224,7 @@ function ParameterGroup({ title, params }: { title: string; params: ParameterObj
     <div style={{ marginBottom: '1.6rem' }}>
       <h3
         style={{
-          color: '#9ca3af',
+          color: '#e5e5e5', // Lighter gray
           fontSize: '1.2rem',
           fontWeight: 500,
           textTransform: 'uppercase',
@@ -260,7 +260,7 @@ function ParameterGroup({ title, params }: { title: string; params: ParameterObj
             >
               <span
                 style={{
-                  color: '#e5e5e5',
+                  color: '#ffffff', // Pure white name
                   fontSize: '1.3rem',
                   fontFamily: 'monospace',
                 }}
@@ -273,7 +273,7 @@ function ParameterGroup({ title, params }: { title: string; params: ParameterObj
               {param.schema && !isReferenceObject(param.schema) && param.schema.type && (
                 <span
                   style={{
-                    color: '#6b7280',
+                    color: '#9ca3af',
                     fontSize: '1.2rem',
                     fontFamily: 'monospace',
                   }}
@@ -283,7 +283,7 @@ function ParameterGroup({ title, params }: { title: string; params: ParameterObj
               )}
             </div>
             {param.description && (
-              <p style={{ color: '#9ca3af', fontSize: '1.2rem', margin: 0 }}>
+              <p style={{ color: '#d1d5db', fontSize: '1.2rem', margin: 0 }}> {/* Light gray desc */}
                 {param.description}
               </p>
             )}
@@ -334,7 +334,7 @@ function ResponseItem({
         }}
       >
         {isExpanded ? (
-          <ChevronDown size={14} color='#6b7280' />
+          <ChevronDown size={14} color='#9ca3af' />
         ) : (
           <ChevronRight size={14} color='#6b7280' />
         )}
@@ -348,7 +348,7 @@ function ResponseItem({
         >
           {statusCode}
         </span>
-        <span style={{ color: '#9ca3af', fontSize: '1.3rem' }}>{response.description}</span>
+        <span style={{ color: '#ffffff', fontSize: '1.3rem' }}>{response.description}</span> {/* White response desc */}
       </button>
 
       {isExpanded && schema && (

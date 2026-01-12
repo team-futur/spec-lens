@@ -88,7 +88,8 @@ export function SchemaViewer({
       cursor: hasChildren ? 'pointer' : 'default',
       transition: 'background-color 0.2s',
       borderRadius: '0.4rem',
-      backgroundColor: isHovered && hasChildren ? '#f9fafb' : 'transparent', // hover: gray-50
+      // Changed from #f9fafb (very white) to rgba(255,255,255,0.05) for dark mode compatibility
+      backgroundColor: isHovered && hasChildren ? 'rgba(255,255,255,0.05)' : 'transparent', 
     },
     chevron: {
       marginTop: '0.2rem',
@@ -110,7 +111,7 @@ export function SchemaViewer({
       fontFamily: 'monospace',
       fontSize: '1.4rem',
       fontWeight: 500,
-      color: '#111827', // gray-900
+      color: '#e5e5e5', // gray-200 (light for dark mode)
     },
     required: {
       color: '#ef4444', // red-500
@@ -146,7 +147,7 @@ export function SchemaViewer({
     description: {
       marginTop: '0.4rem',
       fontSize: '1.2rem',
-      color: '#6b7280', // gray-500
+      color: '#d1d5db', // gray-300 (light gray for readability)
       lineHeight: 1.5,
     },
     enumContainer: {
