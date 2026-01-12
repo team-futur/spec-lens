@@ -1,54 +1,83 @@
-# CJ Freshway Center App
+# SpecLens
 
-React + TypeScript + Vite ±â¹İÀÇ CJ Freshway ¼¾ÅÍ App
+OpenAPI/Swagger ìŠ¤í™ì„ ì‹œê°í™”í•˜ê³  APIë¥¼ í…ŒìŠ¤íŠ¸í•  ìˆ˜ ìˆëŠ” ë·°ì–´
 
-## ½ÃÀÛÇÏ±â
+## ì£¼ìš” ê¸°ëŠ¥
 
-### °³¹ß È¯°æ
+- **ìŠ¤í™ ë¡œë”©**: JSON íŒŒì¼ ì—…ë¡œë“œ ë˜ëŠ” URL ì…ë ¥ìœ¼ë¡œ OpenAPI ìŠ¤í™ ë¡œë“œ
+- **API ì‹œê°í™”**: ì—”ë“œí¬ì¸íŠ¸ ëª©ë¡, íŒŒë¼ë¯¸í„°, ìŠ¤í‚¤ë§ˆ ë“± ì‹œê°ì ìœ¼ë¡œ í‘œì‹œ
+- **API í…ŒìŠ¤íŠ¸**: Try it out ê¸°ëŠ¥ìœ¼ë¡œ ì‹¤ì œ API í˜¸ì¶œ í…ŒìŠ¤íŠ¸
+- **ë‹¤í¬ í…Œë§ˆ**: ëˆˆì´ í¸í•œ ë‹¤í¬ ëª¨ë“œ UI
+
+## ì§€ì› í¬ë§·
+
+- OpenAPI 3.0.x JSON
+
+## ê¸°ìˆ  ìŠ¤íƒ
+
+- **Framework**: TanStack Start (React meta-framework with SSR)
+- **Routing**: TanStack Router (file-based routing)
+- **State Management**: Zustand
+- **Server State**: TanStack Query
+- **Database**: Prisma + SQLite (libsql adapter)
+- **Build**: Vite + Nitro
+
+## ì‹œì‘í•˜ê¸°
+
+### ì„¤ì¹˜
 
 ```bash
-# ÀÇÁ¸¼º ¼³Ä¡
-npm install
-# ¶Ç´Â
-yarn install
-# ¶Ç´Â
 pnpm install
+```
 
-# °³¹ß ¼­¹ö ½ÇÇà
-npm run dev
-# ¶Ç´Â
-yarn dev
-# ¶Ç´Â
+### ê°œë°œ ì„œë²„ ì‹¤í–‰
+
+```bash
 pnpm dev
 ```
 
-### ÇÁ·Î´ö¼Ç ºôµå
+### í”„ë¡œë•ì…˜ ë¹Œë“œ
 
 ```bash
-# ÇÁ·Î´ö¼Ç ºôµå
-npm run build
-# ¶Ç´Â
-yarn build
-# ¶Ç´Â
 pnpm build
 ```
 
-**ºôµå°¡ ¿Ï·áµÇ¸é `dist` Æú´õ°¡ »ı¼ºµË´Ï´Ù. ÀÌ Æú´õ¿¡´Â ¿î¿µ È¯°æ¿¡ ¹èÆ÷ÇÒ ¼ö ÀÖ´Â ¸ğµç ÆÄÀÏÀÌ Æ÷ÇÔµÇ¾î ÀÖ½À´Ï´Ù.**
-
-### ÇÁ·Î´ö¼Ç ºôµå ¹Ì¸®º¸±â
+### í”„ë¡œë•ì…˜ ë¹Œë“œ ë¯¸ë¦¬ë³´ê¸°
 
 ```bash
-npm run preview
-# ¶Ç´Â
-yarn preview
-# ¶Ç´Â
 pnpm preview
 ```
 
-## »ç¿ë °¡´ÉÇÑ ½ºÅ©¸³Æ®
+## ì£¼ìš” ìŠ¤í¬ë¦½íŠ¸
 
-- `npm run dev` / `yarn dev` / `pnpm dev` - °³¹ß ¼­¹ö ½ÇÇà
-- `npm run build` / `yarn build` / `pnpm build` - TypeScript ÄÄÆÄÀÏ ¹× ÇÁ·Î´ö¼Ç ºôµå (dist Æú´õ »ı¼º)
-- `npm run preview` / `yarn preview` / `pnpm preview` - ÇÁ·Î´ö¼Ç ºôµå ·ÎÄÃ ¹Ì¸®º¸±â
-- `npm run lint` / `yarn lint` / `pnpm lint` - ESLint ½ÇÇà
-- `npm run lint:fix` / `yarn lint:fix` / `pnpm lint:fix` - ESLint ÀÚµ¿ ¼öÁ¤
+| ëª…ë ¹ì–´ | ì„¤ëª… |
+|--------|------|
+| `pnpm dev` | ê°œë°œ ì„œë²„ ì‹¤í–‰ |
+| `pnpm build` | í”„ë¡œë•ì…˜ ë¹Œë“œ |
+| `pnpm start` | í”„ë¡œë•ì…˜ ì„œë²„ ì‹¤í–‰ |
+| `pnpm preview` | í”„ë¡œë•ì…˜ ë¹Œë“œ ë¯¸ë¦¬ë³´ê¸° |
+| `pnpm lint` | ESLint ê²€ì‚¬ |
+| `pnpm lint:fix` | ESLint ìë™ ìˆ˜ì • |
+| `pnpm db:generate` | Prisma í´ë¼ì´ì–¸íŠ¸ ìƒì„± |
+| `pnpm db:migrate` | ë§ˆì´ê·¸ë ˆì´ì…˜ ì‹¤í–‰ |
+| `pnpm db:studio` | Prisma Studio ì—´ê¸° |
+
+## í”„ë¡œì íŠ¸ êµ¬ì¡°
+
+```
+src/
+â”œâ”€â”€ routes/          # TanStack Router íŒŒì¼ ê¸°ë°˜ ë¼ìš°íŠ¸
+â”œâ”€â”€ pages/           # í˜ì´ì§€ ì»´í¬ë„ŒíŠ¸
+â”œâ”€â”€ widgets/         # ë³µí•© UI ë¸”ë¡
+â”‚   â”œâ”€â”€ openapi-viewer/  # API ë·°ì–´ ìœ„ì ¯
+â”‚   â””â”€â”€ spec-loader/     # ìŠ¤í™ ë¡œë” ìœ„ì ¯
+â”œâ”€â”€ features/        # ë¹„ì¦ˆë‹ˆìŠ¤ ê¸°ëŠ¥
+â”‚   â””â”€â”€ openapi-loader/  # ìŠ¤í™ ë¡œë”© ê¸°ëŠ¥
+â”œâ”€â”€ entities/        # ë¹„ì¦ˆë‹ˆìŠ¤ ì—”í‹°í‹°
+â”‚   â””â”€â”€ openapi/         # OpenAPI ê´€ë ¨ íƒ€ì…, ìŠ¤í† ì–´, íŒŒì„œ
+â””â”€â”€ shared/          # ê³µìœ  ì½”ë“œ (api, hooks, lib, store, ui)
+```
+
+## ë¼ì´ì„ ìŠ¤
+
+MIT
