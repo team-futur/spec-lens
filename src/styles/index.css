@@ -1,0 +1,209 @@
+@charset "utf-8";
+
+@font-face {
+    font-family: 'Pretendard Variable';
+    font-weight: 45 920;
+    font-style: normal;
+    font-display: optional;
+    src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    @supports (-webkit-touch-callout: none) {
+        body, * {
+            font-family: 'Pretendard-iOS-Fix', 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+        }
+    }
+}
+
+
+* {
+  -webkit-touch-callout: none;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+*:focus {
+  -webkit-tap-highlight-color: transparent;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"]  { color-scheme: dark; }
+
+div {
+  -webkit-tap-highlight-color: transparent;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+}
+
+html {
+  font-size: clamp(8px, 1.2vw, 10px);
+  font-synthesis: none;
+  font-synthesis-weight: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+
+
+html, body {
+  font-family:
+      'Pretendard Variable',
+      Pretendard,
+      -apple-system, /* iOS Safari / macOS */
+      BlinkMacSystemFont, /* Chrome on macOS */
+      "Segoe UI", /* Windows */
+      Roboto, /* Android (AOS) */
+      "Helvetica Neue", Helvetica, Arial, /* 추가 서체 */
+      "Noto Sans KR", "Apple SD Gothic Neo", /* 한글 fallback */
+      sans-serif; /* 최종 fallback */
+
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-weight: 500;
+}
+
+body {
+  overflow-x: hidden;
+  line-height: 1.5;
+  background-color: white;
+  color: #111111;
+}
+
+input::placeholder, textarea::placeholder {
+  font-size: 1.8rem; /* Adjusted based on user feedback */
+  color: #888; /* Slightly lighter than #666 for better contrast on dark bg */
+  font-weight: 500;
+  opacity: 1;
+}
+
+/* Remove autofill background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active {
+  -webkit-text-fill-color: #fff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.selection-none {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(128,128,128,0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 12px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.4);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+::-webkit-scrollbar-track-piece {}
+::-webkit-scrollbar-corner {
+  display: none;
+}
+::-webkit-resizer{
+  display: none;
+}
+
+/* 이미지, 비디오 등의 요소의 최대 너비 제한 */
+img,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+/* 목록 기본 스타일 제거 */
+ul, ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 링크의 기본 스타일 제거 */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 테이블 기본 스타일 재정의 */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+pre {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+pre::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile Responsiveness Utilities */
+.mobile-only {
+  display: block;
+}
+
+.desktop-only {
+  display: none !important;
+}
+
+@media (min-width: 769px) { /* Tablet/Desktop */
+  .mobile-only {
+    display: none !important;
+  }
+  .desktop-only {
+    display: flex !important;
+  }
+}
+
+[contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: #999;
+    pointer-events: none;
+}
