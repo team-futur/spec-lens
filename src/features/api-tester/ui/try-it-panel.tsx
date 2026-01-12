@@ -1,7 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-import { Play, Loader2, Copy, Check, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
+import {
+  Play,
+  Loader2,
+  Copy,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Trash2,
+  RotateCcw,
+} from 'lucide-react';
 
+import { executeRequest, getStatusColor } from '../api/execute-request.ts';
 import {
   useApiTesterStore,
   useSelectedServer,
@@ -13,14 +23,15 @@ import {
   useIsExecuting,
   useExecuteError,
 } from '@/entities/api-tester';
-import { executeRequest, getStatusColor } from '../api/execute-request.ts';
 import {
   type ParsedEndpoint,
   type OpenAPISpec,
   type ParameterObject,
   getMergedParameters,
   isReferenceObject,
+  generateExample,
 } from '@/entities/openapi';
+import { FuturSelect } from '@/shared/ui/select';
 
 export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec: OpenAPISpec }) {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -50,38 +61,45 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
     addToHistory,
   } = useApiTesterStore();
 
-  // Get servers from spec
   const servers = spec.servers || [{ url: 'http://localhost:3000', description: 'Local' }];
 
-  // Initialize server selection
+  // Initialize server
   useEffect(() => {
     if (!selectedServer && servers.length > 0) {
       setSelectedServer(servers[0].url);
     }
   }, [servers, selectedServer, setSelectedServer]);
 
-  // Reset params when endpoint changes
+  // Generate example
+  const generateBodyExample = useCallback(() => {
+    if (!endpoint.operation.requestBody || isReferenceObject(endpoint.operation.requestBody))
+      return '';
+
+    const content = endpoint.operation.requestBody.content?.['application/json'];
+    if (content?.schema) {
+      const example = generateExample(content.schema, spec);
+      return example ? JSON.stringify(example, null, 2) : '';
+    }
+    return '';
+  }, [endpoint.operation.requestBody, spec]);
+
+  // Reset params & body on endpoint change
   useEffect(() => {
     resetParams();
-  }, [endpoint.path, endpoint.method, resetParams]);
+    const example = generateBodyExample();
+    if (example) setRequestBody(example);
+  }, [endpoint.path, endpoint.method, resetParams, generateBodyExample, setRequestBody]);
 
-  // Parse parameters
   const merged = getMergedParameters(endpoint);
   const parameters = merged.filter((p): p is ParameterObject => !isReferenceObject(p));
-
   const pathParameters = parameters.filter((p) => p.in === 'path');
   const queryParameters = parameters.filter((p) => p.in === 'query');
-
-  // Check if endpoint has request body
   const hasRequestBody = !!endpoint.operation.requestBody;
 
-  // Handle execute
   async function handleExecute() {
     if (!selectedServer) return;
-
     setExecuting(true);
     clearResponse();
-
     const result = await executeRequest({
       baseUrl: selectedServer,
       path: endpoint.path,
@@ -91,6 +109,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
       headers,
       body: requestBody,
     });
+    setExecuting(false);
 
     if (result.success) {
       setResponse(result.response);
@@ -113,7 +132,6 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
     }
   }
 
-  // Copy response to clipboard
   function handleCopyResponse() {
     if (response?.data) {
       navigator.clipboard.writeText(JSON.stringify(response.data, null, 2));
@@ -132,7 +150,6 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
         overflow: 'hidden',
       }}
     >
-      {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         style={{
@@ -146,19 +163,14 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
           cursor: 'pointer',
         }}
       >
-        <span
-          style={{
-            color: '#e5e5e5',
-            fontSize: '1.4rem',
-            fontWeight: 600,
-          }}
-        >
-          Try it out
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <Play size={16} fill='#ffffff' color='#ffffff' style={{ opacity: 0.8 }} />
+          <span style={{ color: '#ffffff', fontSize: '1.4rem', fontWeight: 600 }}>Try it out</span>
+        </div>
         {isExpanded ? (
-          <ChevronUp size={18} color='#6b7280' />
+          <ChevronUp size={18} color='#9ca3af' />
         ) : (
-          <ChevronDown size={18} color='#6b7280' />
+          <ChevronDown size={18} color='#9ca3af' />
         )}
       </button>
 
@@ -171,7 +183,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
             gap: '1.6rem',
           }}
         >
-          {/* Server Selection */}
+          {/* Server */}
           <div>
             <label
               style={{
@@ -182,147 +194,116 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                 marginBottom: '0.6rem',
               }}
             >
-              Server
+              Target Server
             </label>
-            <select
+            <FuturSelect
               value={selectedServer}
-              onChange={(e) => setSelectedServer(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '1rem 1.2rem',
-                backgroundColor: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '0.6rem',
-                color: '#e5e5e5',
-                fontSize: '1.3rem',
-                outline: 'none',
-              }}
-            >
-              {servers.map((server, i) => (
-                <option key={i} value={server.url} style={{ backgroundColor: '#1a1a1a' }}>
-                  {server.url} {server.description ? `(${server.description})` : ''}
-                </option>
-              ))}
-            </select>
+              onChange={(val) => setSelectedServer(val)}
+              options={servers.map((s) => ({
+                label: `${s.url}${s.description ? ` (${s.description})` : ''}`,
+                value: s.url,
+              }))}
+              placeholder='Select a server'
+            />
           </div>
 
-          {/* Path Parameters */}
-          {pathParameters.length > 0 && (
-            <div>
-              <label
-                style={{
-                  display: 'block',
-                  color: '#9ca3af',
-                  fontSize: '1.2rem',
-                  fontWeight: 500,
-                  marginBottom: '0.8rem',
-                }}
-              >
-                Path Parameters
-              </label>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                {pathParameters.map((param) => (
-                  <ParameterInput
-                    key={param.name}
-                    param={param}
-                    value={pathParams[param.name] || ''}
-                    onChange={(value) => setPathParam(param.name, value)}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Query Parameters */}
-          {queryParameters.length > 0 && (
-            <div>
-              <label
-                style={{
-                  display: 'block',
-                  color: '#9ca3af',
-                  fontSize: '1.2rem',
-                  fontWeight: 500,
-                  marginBottom: '0.8rem',
-                }}
-              >
-                Query Parameters
-              </label>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                {queryParameters.map((param) => (
-                  <ParameterInput
-                    key={param.name}
-                    param={param}
-                    value={queryParams[param.name] || ''}
-                    onChange={(value) => setQueryParam(param.name, value)}
-                  />
-                ))}
-              </div>
+          {/* Parameters Group */}
+          {(pathParameters.length > 0 || queryParameters.length > 0) && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+              {pathParameters.length > 0 && (
+                <div>
+                  <div
+                    style={{
+                      color: '#e5e5e5',
+                      fontSize: '1.2rem',
+                      fontWeight: 600,
+                      marginBottom: '0.8rem',
+                      textTransform: 'uppercase',
+                      opacity: 0.7,
+                    }}
+                  >
+                    Path Params
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    {pathParameters.map((p) => (
+                      <ParameterInput
+                        key={p.name}
+                        param={p}
+                        value={pathParams[p.name] || ''}
+                        onChange={(v) => setPathParam(p.name, v)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+              {queryParameters.length > 0 && (
+                <div>
+                  <div
+                    style={{
+                      color: '#e5e5e5',
+                      fontSize: '1.2rem',
+                      fontWeight: 600,
+                      marginBottom: '0.8rem',
+                      textTransform: 'uppercase',
+                      opacity: 0.7,
+                    }}
+                  >
+                    Query Params
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    {queryParameters.map((p) => (
+                      <ParameterInput
+                        key={p.name}
+                        param={p}
+                        value={queryParams[p.name] || ''}
+                        onChange={(v) => setQueryParam(p.name, v)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
           {/* Headers */}
           <div>
-            <button
+            <div
               onClick={() => setShowHeaders(!showHeaders)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.6rem',
-                backgroundColor: 'transparent',
-                border: 'none',
+                gap: '0.8rem',
                 cursor: 'pointer',
-                padding: 0,
-                marginBottom: '0.8rem',
+                marginBottom: '0.6rem',
               }}
             >
+              <span style={{ color: '#9ca3af', fontSize: '1.2rem', fontWeight: 500 }}>Headers</span>
               <span
                 style={{
-                  color: '#9ca3af',
-                  fontSize: '1.2rem',
-                  fontWeight: 500,
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  padding: '0.2rem 0.6rem',
+                  borderRadius: '1rem',
+                  fontSize: '1rem',
+                  color: '#e5e5e5',
                 }}
               >
-                Headers ({Object.keys(headers).length})
+                {Object.keys(headers).length}
               </span>
               {showHeaders ? (
-                <ChevronUp size={14} color='#6b7280' />
+                <ChevronUp size={12} color='#9ca3af' />
               ) : (
-                <ChevronDown size={14} color='#6b7280' />
+                <ChevronDown size={12} color='#9ca3af' />
               )}
-            </button>
-
+            </div>
             {showHeaders && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                {Object.entries(headers).map(([key, value]) => (
-                  <div key={key} style={{ display: 'flex', gap: '0.8rem' }}>
+                {Object.entries(headers).map(([k, v]) => (
+                  <div key={k} style={{ display: 'flex', gap: '0.8rem' }}>
+                    <input readOnly value={k} style={inputStyle} />
                     <input
-                      type='text'
-                      value={key}
-                      readOnly
-                      style={{
-                        flex: 1,
-                        padding: '0.8rem 1.2rem',
-                        backgroundColor: 'rgba(255,255,255,0.03)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '0.6rem',
-                        color: '#9ca3af',
-                        fontSize: '1.3rem',
-                      }}
-                    />
-                    <input
-                      type='text'
-                      value={value}
-                      onChange={(e) => setHeader(key, e.target.value)}
-                      style={{
-                        flex: 1,
-                        padding: '0.8rem 1.2rem',
-                        backgroundColor: 'rgba(255,255,255,0.05)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '0.6rem',
-                        color: '#e5e5e5',
-                        fontSize: '1.3rem',
-                        outline: 'none',
-                      }}
+                      value={v}
+                      onChange={(e) => setHeader(k, e.target.value)}
+                      style={inputStyle}
                     />
                   </div>
                 ))}
@@ -333,26 +314,46 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
           {/* Request Body */}
           {hasRequestBody && (
             <div>
-              <label
+              <div
                 style={{
-                  display: 'block',
-                  color: '#9ca3af',
-                  fontSize: '1.2rem',
-                  fontWeight: 500,
-                  marginBottom: '0.6rem',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '0.8rem',
                 }}
               >
-                Request Body
-              </label>
+                <label style={{ color: '#9ca3af', fontSize: '1.2rem', fontWeight: 500 }}>
+                  Request Body (JSON)
+                </label>
+                <button
+                  onClick={() => {
+                    const example = generateBodyExample();
+                    setRequestBody(example);
+                  }}
+                  title='Reset to default example'
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#f59e0b',
+                    fontSize: '1.2rem',
+                  }}
+                >
+                  <RotateCcw size={12} />
+                  Reset to Default
+                </button>
+              </div>
               <textarea
                 value={requestBody}
                 onChange={(e) => setRequestBody(e.target.value)}
-                placeholder='{"key": "value"}'
-                rows={6}
+                rows={8}
                 style={{
                   width: '100%',
                   padding: '1.2rem',
-                  backgroundColor: 'rgba(255,255,255,0.05)',
+                  backgroundColor: 'rgba(0,0,0,0.2)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '0.6rem',
                   color: '#e5e5e5',
@@ -365,158 +366,145 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
             </div>
           )}
 
-          {/* Execute Button */}
-          <button
-            onClick={handleExecute}
-            disabled={isExecuting}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.8rem',
-              padding: '1.2rem 2.4rem',
-              backgroundColor: '#075D46',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '0.6rem',
-              fontSize: '1.4rem',
-              fontWeight: 500,
-              cursor: isExecuting ? 'not-allowed' : 'pointer',
-              opacity: isExecuting ? 0.7 : 1,
-              transition: 'all 0.2s ease',
-            }}
-          >
-            {isExecuting ? (
-              <>
-                <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
-                <span>Executing...</span>
-              </>
-            ) : (
-              <>
-                <Play size={16} />
-                <span>Execute</span>
-              </>
-            )}
-          </button>
+          {/* Actions */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '0.8rem' }}>
+            <button
+              onClick={handleExecute}
+              disabled={isExecuting}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.8rem',
+                padding: '1rem 2.4rem',
+                backgroundColor: isExecuting ? '#374151' : '#2563eb', // blue-600
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '0.6rem',
+                fontSize: '1.4rem',
+                fontWeight: 600,
+                cursor: isExecuting ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {isExecuting ? (
+                <Loader2 size={16} className='animate-spin' />
+              ) : (
+                <Play size={16} fill='white' />
+              )}
+              {isExecuting ? 'Sending...' : 'Execute Request'}
+            </button>
+          </div>
 
-          {/* Error */}
           {executeError && (
             <div
               style={{
-                padding: '1.2rem 1.6rem',
+                padding: '1.2rem',
                 backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                borderRadius: '0.6rem',
                 border: '1px solid rgba(239, 68, 68, 0.2)',
+                borderRadius: '0.6rem',
+                color: '#ef4444',
+                fontSize: '1.3rem',
               }}
             >
-              <span style={{ color: '#ef4444', fontSize: '1.3rem' }}>{executeError}</span>
+              Error: {executeError}
             </div>
           )}
 
-          {/* Response */}
           {response && (
             <div
               style={{
-                backgroundColor: 'rgba(0,0,0,0.3)',
+                marginTop: '0.8rem',
+                border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: '0.6rem',
                 overflow: 'hidden',
               }}
             >
-              {/* Response Header */}
               <div
                 style={{
                   display: 'flex',
-                  alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '1.2rem 1.6rem',
+                  padding: '1rem 1.2rem',
+                  backgroundColor: 'rgba(255,255,255,0.02)',
                   borderBottom: '1px solid rgba(255,255,255,0.1)',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.6rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                   <span
                     style={{
+                      fontWeight: 700,
+                      fontSize: '1.3rem',
                       color: getStatusColor(response.status),
-                      fontSize: '1.4rem',
-                      fontWeight: 600,
                     }}
                   >
-                    {response.status} {response.statusText}
+                    {response.status}
                   </span>
-                  <span style={{ color: '#6b7280', fontSize: '1.2rem' }}>
+                  <span style={{ fontSize: '1.2rem', color: '#9ca3af' }}>
                     {response.duration}ms
                   </span>
                 </div>
                 <div style={{ display: 'flex', gap: '0.8rem' }}>
-                  <button
-                    onClick={handleCopyResponse}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.6rem',
-                      padding: '0.6rem 1rem',
-                      backgroundColor: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '0.4rem',
-                      color: '#9ca3af',
-                      fontSize: '1.2rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {copiedResponse ? <Check size={12} /> : <Copy size={12} />}
-                    {copiedResponse ? 'Copied' : 'Copy'}
+                  <button onClick={handleCopyResponse} style={iconButtonStyle}>
+                    {copiedResponse ? <Check size={14} /> : <Copy size={14} />}
                   </button>
-                  <button
-                    onClick={clearResponse}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      padding: '0.6rem',
-                      backgroundColor: 'rgba(255,255,255,0.05)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '0.4rem',
-                      color: '#9ca3af',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <Trash2 size={12} />
+                  <button onClick={clearResponse} style={iconButtonStyle}>
+                    {' '}
+                    <Trash2 size={14} />{' '}
                   </button>
                 </div>
               </div>
-
-              {/* Response Body */}
-              <pre
+              <div
                 style={{
-                  margin: 0,
-                  padding: '1.6rem',
-                  color: '#e5e5e5',
-                  fontSize: '1.2rem',
-                  fontFamily: 'monospace',
+                  padding: '1.2rem',
+                  backgroundColor: '#0a0a0a',
                   overflow: 'auto',
                   maxHeight: '400px',
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-word',
                 }}
               >
-                {typeof response.data === 'string'
-                  ? response.data
-                  : JSON.stringify(response.data, null, 2)}
-              </pre>
+                <pre
+                  style={{
+                    margin: 0,
+                    fontSize: '1.2rem',
+                    fontFamily: 'monospace',
+                    color: '#e5e5e5',
+                  }}
+                >
+                  {typeof response.data === 'string'
+                    ? response.data
+                    : JSON.stringify(response.data, null, 2)}
+                </pre>
+              </div>
             </div>
           )}
         </div>
       )}
-
-      <style>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }
 
-// Parameter Input Component
+const inputStyle = {
+  flex: 1,
+  width: '100%',
+  padding: '0.8rem 1.2rem',
+  backgroundColor: 'rgba(255,255,255,0.05)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '0.6rem',
+  color: '#e5e5e5',
+  fontSize: '1.3rem',
+  outline: 'none',
+};
+
+const iconButtonStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '2.4rem',
+  height: '2.4rem',
+  backgroundColor: 'rgba(255,255,255,0.05)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '0.4rem',
+  color: '#e5e5e5',
+  cursor: 'pointer',
+};
+
 function ParameterInput({
   param,
   value,
@@ -524,36 +512,25 @@ function ParameterInput({
 }: {
   param: ParameterObject;
   value: string;
-  onChange: (value: string) => void;
+  onChange: (v: string) => void;
 }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
-      <span
-        style={{
-          minWidth: '120px',
-          color: '#e5e5e5',
-          fontSize: '1.3rem',
-          fontFamily: 'monospace',
-        }}
-      >
-        {param.name}
-        {param.required && <span style={{ color: '#ef4444' }}>*</span>}
-      </span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div style={{ width: '120px', flexShrink: 0 }}>
+        <span style={{ fontSize: '1.2rem', fontFamily: 'monospace', color: '#e5e5e5' }}>
+          {param.name}
+        </span>
+        {param.required && <span style={{ color: '#ef4444', marginLeft: '0.2rem' }}>*</span>}
+      </div>
       <input
-        type='text'
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={param.description || param.name}
-        style={{
-          flex: 1,
-          padding: '0.8rem 1.2rem',
-          backgroundColor: 'rgba(255,255,255,0.05)',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: '0.6rem',
-          color: '#e5e5e5',
-          fontSize: '1.3rem',
-          outline: 'none',
-        }}
+        placeholder={
+          param.description || (param.schema && !isReferenceObject(param.schema))
+            ? String(param.schema.type || '')
+            : ''
+        }
+        style={inputStyle}
       />
     </div>
   );

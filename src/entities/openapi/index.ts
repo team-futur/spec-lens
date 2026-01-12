@@ -49,6 +49,7 @@ export {
   validateOpenAPISpec,
   getMethodColor,
   getSchemaExample,
+  generateExample,
 } from './lib/openapi-parser.ts';
 
 // Store

@@ -251,38 +251,68 @@ export function getMethodColor(method: HttpMethod): string {
 }
 
 /**
- * Extract example value from schema
+ * recursively generate example value from schema
  */
-export function getSchemaExample(schema: SchemaObject): unknown {
-  if (schema.example !== undefined) {
-    return schema.example;
-  }
+export function generateExample(
+  schemaOrRef: SchemaObject | ReferenceObject | undefined,
+  spec: OpenAPISpec,
+  depth = 0,
+): unknown {
+  if (!schemaOrRef) return null;
 
-  if (schema.default !== undefined) {
-    return schema.default;
-  }
+  // Prevent infinite recursion
+  if (depth > 5) return null;
 
-  // Generate example based on type
+  const schema = resolveSchema(schemaOrRef, spec);
+  if (!schema) return null;
+
+  // 1. Use explicit example/default if present
+  if (schema.example !== undefined) return schema.example;
+  if (schema.default !== undefined) return schema.default;
+
+  // 2. Generate based on type
   switch (schema.type) {
-    case 'string':
-      if (schema.enum && schema.enum.length > 0) {
-        return schema.enum[0];
+    case 'object':
+      const obj: Record<string, unknown> = {};
+      if (schema.properties) {
+        for (const [key, propSchema] of Object.entries(schema.properties)) {
+          obj[key] = generateExample(propSchema, spec, depth + 1);
+        }
       }
+      return obj;
+
+    case 'array':
+      if (schema.items) {
+        // Return array with one example item
+        return [generateExample(schema.items, spec, depth + 1)];
+      }
+      return [];
+
+    case 'string':
+      if (schema.enum && schema.enum.length > 0) return schema.enum[0];
       if (schema.format === 'date') return '2024-01-01';
-      if (schema.format === 'date-time') return '2024-01-01T00:00:00Z';
+      if (schema.format === 'date-time') return '2024-01-01T12:00:00Z';
       if (schema.format === 'email') return 'user@example.com';
       if (schema.format === 'uri') return 'https://example.com';
+      if (schema.format === 'uuid') return '3fa85f64-5717-4562-b3fc-2c963f66afa6';
       return 'string';
+
     case 'integer':
     case 'number':
       return 0;
+
     case 'boolean':
       return true;
-    case 'array':
-      return [];
-    case 'object':
-      return {};
+
     default:
       return null;
   }
+}
+
+/**
+ * Legacy wrapper for backward compatibility if needed, though we should migrate usage.
+ */
+export function getSchemaExample(schema: SchemaObject): unknown {
+  // Simple non-recursive fallback for legacy calls without spec
+  return generateExample(schema, { openapi: '3.0.0', info: {} as any, paths: {} });
 }
