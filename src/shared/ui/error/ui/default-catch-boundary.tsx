@@ -21,19 +21,19 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
       style={{
         minWidth: 0,
         flex: 1,
-        padding: '1rem',
+        padding: '1.6rem',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '1.5rem',
+        gap: '2.4rem',
       }}
     >
       <ErrorComponent error={error} />
       <div
         style={{
           display: 'flex',
-          gap: '0.5rem',
+          gap: '0.8rem',
           alignItems: 'center',
           flexWrap: 'wrap',
         }}
@@ -43,9 +43,9 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
             router.invalidate();
           }}
           style={{
-            padding: '0.25rem 0.5rem',
+            padding: '0.4rem 0.8rem',
             backgroundColor: '#4b5563',
-            borderRadius: '0.125rem',
+            borderRadius: '0.2rem',
             color: 'white',
             textTransform: 'uppercase',
             fontWeight: 800,
@@ -59,9 +59,9 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           <Link
             to='/'
             style={{
-              padding: '0.25rem 0.5rem',
+              padding: '0.4rem 0.8rem',
               backgroundColor: '#4b5563',
-              borderRadius: '0.125rem',
+              borderRadius: '0.2rem',
               color: 'white',
               textTransform: 'uppercase',
               fontWeight: 800,
@@ -74,9 +74,9 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           <Link
             to='/'
             style={{
-              padding: '0.25rem 0.5rem',
+              padding: '0.4rem 0.8rem',
               backgroundColor: '#4b5563',
-              borderRadius: '0.125rem',
+              borderRadius: '0.2rem',
               color: 'white',
               textTransform: 'uppercase',
               fontWeight: 800,

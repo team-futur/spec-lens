@@ -31,9 +31,9 @@ export function CjDatePicker({
             label ? (
               <Typography
                 style={{
-                  fontSize: '0.875rem',
+                  fontSize: '1.4rem',
                   fontWeight: 700,
-                  paddingLeft: '0.2rem',
+                  paddingLeft: '0.32rem',
                   color: inputProps?.style?.color,
                   ...labelStyle,
                 }}

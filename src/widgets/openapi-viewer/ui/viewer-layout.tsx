@@ -33,7 +33,7 @@ export function ViewerLayout({ onReset }: { onReset: () => void }) {
           display: 'none',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 1rem',
+          padding: '0 1.6rem',
           backgroundColor: '#111111',
           borderBottom: '1px solid rgba(255,255,255,0.1)',
           zIndex: 100,
@@ -46,7 +46,7 @@ export function ViewerLayout({ onReset }: { onReset: () => void }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '0.5rem',
+            padding: '0.8rem',
             backgroundColor: 'transparent',
             border: 'none',
             cursor: 'pointer',
@@ -54,7 +54,7 @@ export function ViewerLayout({ onReset }: { onReset: () => void }) {
         >
           {isSidebarOpen ? <X size={24} color='#e5e5e5' /> : <Menu size={24} color='#e5e5e5' />}
         </button>
-        <span style={{ color: '#e5e5e5', fontSize: '0.875rem', fontWeight: 600 }}>
+        <span style={{ color: '#e5e5e5', fontSize: '1.4rem', fontWeight: 600 }}>
           {spec.info.title}
         </span>
         <button
@@ -63,7 +63,7 @@ export function ViewerLayout({ onReset }: { onReset: () => void }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '0.5rem',
+            padding: '0.8rem',
             backgroundColor: 'transparent',
             border: 'none',
             cursor: 'pointer',
@@ -92,23 +92,23 @@ export function ViewerLayout({ onReset }: { onReset: () => void }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0.75rem 1.5rem',
+            padding: '1.2rem 2.4rem',
             backgroundColor: '#111111',
             borderBottom: '1px solid rgba(255,255,255,0.1)',
             flexShrink: 0,
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
             <button
               onClick={toggleSidebar}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '0.5rem',
+                padding: '0.8rem',
                 backgroundColor: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '0.375rem',
+                borderRadius: '0.6rem',
                 cursor: 'pointer',
               }}
             >
@@ -118,30 +118,30 @@ export function ViewerLayout({ onReset }: { onReset: () => void }) {
               <h1
                 style={{
                   color: '#e5e5e5',
-                  fontSize: '1rem',
+                  fontSize: '1.6rem',
                   fontWeight: 600,
                   margin: 0,
                 }}
               >
                 {spec.info.title}
               </h1>
-              <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>v{spec.info.version}</span>
+              <span style={{ color: '#6b7280', fontSize: '1.2rem' }}>v{spec.info.version}</span>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
             <button
               onClick={onReset}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem 0.875rem',
+                gap: '0.8rem',
+                padding: '0.8rem 1.4rem',
                 backgroundColor: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '0.375rem',
+                borderRadius: '0.6rem',
                 color: '#9ca3af',
-                fontSize: '0.8125rem',
+                fontSize: '1.3rem',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
               }}
@@ -179,20 +179,20 @@ function EmptyState() {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
-        padding: '2rem',
+        padding: '3.2rem',
         textAlign: 'center',
       }}
     >
       <div
         style={{
-          width: '4rem',
-          height: '4rem',
+          width: '6.4rem',
+          height: '6.4rem',
           borderRadius: '50%',
           backgroundColor: 'rgba(255,255,255,0.05)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: '1rem',
+          marginBottom: '1.6rem',
         }}
       >
         <Menu size={24} color='#6b7280' />
@@ -200,14 +200,14 @@ function EmptyState() {
       <h2
         style={{
           color: '#e5e5e5',
-          fontSize: '1.125rem',
+          fontSize: '1.8rem',
           fontWeight: 600,
-          marginBottom: '0.5rem',
+          marginBottom: '0.8rem',
         }}
       >
         Select an endpoint
       </h2>
-      <p style={{ color: '#6b7280', fontSize: '0.875rem', maxWidth: '300px' }}>
+      <p style={{ color: '#6b7280', fontSize: '1.4rem', maxWidth: '300px' }}>
         Choose an endpoint from the sidebar to view its documentation and test the API.
       </p>
     </div>

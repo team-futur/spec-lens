@@ -18,10 +18,10 @@ export function CjInput({
       style={{
         width: '100%',
         height: FORM_HEIGHT_SM,
-        borderRadius: '0.25rem',
+        borderRadius: '0.4rem',
         boxShadow: `inset 0 0 0 1px ${theme.colors.border}`,
-        paddingInline: '0.9rem',
-        fontSize: '1rem',
+        paddingInline: '1.44rem',
+        fontSize: '1.6rem',
         fontWeight: 500,
         color: theme.colors.textMediumDark,
         ...style,

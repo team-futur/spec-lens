@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 
 export function NotFound({ children }: { children?: any }) {
   return (
-    <div style={{ padding: '0.5rem' }}>
+    <div style={{ padding: '0.8rem' }}>
       <div style={{ color: '#4b5563' }}>
         {children || <p>The page you are looking for does not exist.</p>}
       </div>
@@ -10,20 +10,20 @@ export function NotFound({ children }: { children?: any }) {
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.5rem',
+          gap: '0.8rem',
           flexWrap: 'wrap',
-          marginTop: '0.5rem',
+          marginTop: '0.8rem',
         }}
       >
         <button
           onClick={() => window.history.back()}
           style={{
-            padding: '0.25rem 0.5rem',
-            borderRadius: '0.125rem',
+            padding: '0.4rem 0.8rem',
+            borderRadius: '0.2rem',
             color: 'white',
             textTransform: 'uppercase',
             fontWeight: 900,
-            fontSize: '0.875rem',
+            fontSize: '1.4rem',
             border: 'none',
             cursor: 'pointer',
             backgroundColor: '#10b981',
@@ -34,12 +34,12 @@ export function NotFound({ children }: { children?: any }) {
         <Link
           to='/'
           style={{
-            padding: '0.25rem 0.5rem',
-            borderRadius: '0.125rem',
+            padding: '0.4rem 0.8rem',
+            borderRadius: '0.2rem',
             color: 'white',
             textTransform: 'uppercase',
             fontWeight: 900,
-            fontSize: '0.875rem',
+            fontSize: '1.4rem',
             cursor: 'pointer',
             backgroundColor: '#0891b2',
           }}

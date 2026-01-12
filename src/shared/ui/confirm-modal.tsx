@@ -63,25 +63,25 @@ export function ConfirmModal({
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               style={{
                 width: '90%',
-                maxWidth: '32rem',
+                maxWidth: '51.2rem',
                 backgroundColor: '#1a1a1a',
-                borderRadius: '2rem',
-                padding: '2.4rem',
+                borderRadius: '3.2rem',
+                padding: '3.84rem',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '2rem',
+                gap: '3.2rem',
                 boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
                 pointerEvents: 'auto',
               }}
             >
-              <FlexColumn style={{ gap: '0.8rem', alignItems: 'center' }}>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 700, color: '#fff', margin: 0 }}>
+              <FlexColumn style={{ gap: '1.28rem', alignItems: 'center' }}>
+                <h2 style={{ fontSize: '2.88rem', fontWeight: 700, color: '#fff', margin: 0 }}>
                   {title}
                 </h2>
                 <p
                   style={{
-                    fontSize: '1.5rem',
+                    fontSize: '2.4rem',
                     color: '#888',
                     margin: 0,
                     textAlign: 'center',
@@ -92,16 +92,16 @@ export function ConfirmModal({
                 </p>
               </FlexColumn>
 
-              <FlexRow style={{ gap: '1rem' }}>
+              <FlexRow style={{ gap: '1.6rem' }}>
                 <button
                   onClick={onClose}
                   style={{
                     flex: 1,
-                    padding: '1.2rem',
-                    borderRadius: '1.2rem',
+                    padding: '1.92rem',
+                    borderRadius: '1.92rem',
                     backgroundColor: '#333',
                     color: '#fff',
-                    fontSize: '1.5rem',
+                    fontSize: '2.4rem',
                     fontWeight: 600,
                     border: 'none',
                     cursor: 'pointer',
@@ -113,11 +113,11 @@ export function ConfirmModal({
                   onClick={onConfirm}
                   style={{
                     flex: 1,
-                    padding: '1.2rem',
-                    borderRadius: '1.2rem',
+                    padding: '1.92rem',
+                    borderRadius: '1.92rem',
                     backgroundColor: variant === 'danger' ? '#ff6b6b' : '#fff',
                     color: variant === 'danger' ? '#fff' : '#000',
-                    fontSize: '1.5rem',
+                    fontSize: '2.4rem',
                     fontWeight: 600,
                     border: 'none',
                     cursor: 'pointer',

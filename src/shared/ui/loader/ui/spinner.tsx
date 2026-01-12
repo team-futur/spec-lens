@@ -5,10 +5,10 @@ export function Spinner({ style }: { style?: CSSProperties }) {
   return (
     <motion.div
       style={{
-        width: '1.4rem',
-        height: '1.4rem',
-        border: '0.2rem solid #e0e0e0',
-        borderTop: '0.2rem solid #666',
+        width: '2.24rem',
+        height: '2.24rem',
+        border: '0.32rem solid #e0e0e0',
+        borderTop: '0.32rem solid #666',
         borderRadius: '50%',
         ...style,
       }}

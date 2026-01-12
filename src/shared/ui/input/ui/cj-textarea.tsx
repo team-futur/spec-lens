@@ -9,11 +9,11 @@ export function CjTextarea({ style, ...props }: TextareaProps) {
     <Textarea
       style={{
         width: '100%',
-        borderRadius: '0.25rem',
+        borderRadius: '0.4rem',
         boxShadow: `inset 0 0 0 1px ${theme.colors.border}`,
-        paddingInline: '0.8rem',
-        paddingBlock: '0.8rem',
-        fontSize: '1rem',
+        paddingInline: '1.28rem',
+        paddingBlock: '1.28rem',
+        fontSize: '1.6rem',
         fontWeight: 500,
         color: theme.colors.textMediumDark,
         backgroundColor: '#ffffff',

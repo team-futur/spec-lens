@@ -42,22 +42,22 @@ export function Sidebar() {
       {/* Header */}
       <div
         style={{
-          padding: '1rem',
+          padding: '1.6rem',
           borderBottom: '1px solid rgba(255,255,255,0.1)',
         }}
       >
-        <div style={{ marginBottom: '0.75rem' }}>
+        <div style={{ marginBottom: '1.2rem' }}>
           <h2
             style={{
               color: '#e5e5e5',
-              fontSize: '0.875rem',
+              fontSize: '1.4rem',
               fontWeight: 600,
-              marginBottom: '0.25rem',
+              marginBottom: '0.4rem',
             }}
           >
             {spec.info.title}
           </h2>
-          <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>
+          <span style={{ color: '#6b7280', fontSize: '1.2rem' }}>
             v{spec.info.version} • OpenAPI {spec.openapi}
           </span>
         </div>
@@ -67,10 +67,10 @@ export function Sidebar() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.5rem 0.75rem',
+            gap: '0.8rem',
+            padding: '0.8rem 1.2rem',
             backgroundColor: 'rgba(255,255,255,0.05)',
-            borderRadius: '0.375rem',
+            borderRadius: '0.6rem',
             border: '1px solid rgba(255,255,255,0.1)',
           }}
         >
@@ -86,14 +86,14 @@ export function Sidebar() {
               border: 'none',
               outline: 'none',
               color: '#e5e5e5',
-              fontSize: '0.8125rem',
+              fontSize: '1.3rem',
             }}
           />
           {searchQuery && (
             <button
               onClick={clearFilters}
               style={{
-                padding: '0.125rem',
+                padding: '0.2rem',
                 backgroundColor: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
@@ -112,16 +112,16 @@ export function Sidebar() {
         style={{
           flex: 1,
           overflowY: 'auto',
-          padding: '0.5rem 0',
+          padding: '0.8rem 0',
         }}
       >
         {tagEntries.length === 0 ? (
           <div
             style={{
-              padding: '2rem 1rem',
+              padding: '3.2rem 1.6rem',
               textAlign: 'center',
               color: '#6b7280',
-              fontSize: '0.8125rem',
+              fontSize: '1.3rem',
             }}
           >
             No endpoints found
@@ -130,7 +130,7 @@ export function Sidebar() {
           tagEntries.map(([tag, endpoints]) => {
             const isExpanded = expandedTags.includes(tag);
             return (
-              <div key={tag} style={{ marginBottom: '0.25rem' }}>
+              <div key={tag} style={{ marginBottom: '0.4rem' }}>
                 {/* Tag Header */}
                 <button
                   onClick={() => toggleTagExpanded(tag)}
@@ -138,8 +138,8 @@ export function Sidebar() {
                     width: '100%',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.625rem 1rem',
+                    gap: '0.8rem',
+                    padding: '1rem 1.6rem',
                     backgroundColor: 'transparent',
                     border: 'none',
                     cursor: 'pointer',
@@ -154,7 +154,7 @@ export function Sidebar() {
                   <span
                     style={{
                       color: '#9ca3af',
-                      fontSize: '0.75rem',
+                      fontSize: '1.2rem',
                       fontWeight: 600,
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
@@ -165,7 +165,7 @@ export function Sidebar() {
                   <span
                     style={{
                       color: '#4b5563',
-                      fontSize: '0.6875rem',
+                      fontSize: '1.1rem',
                       marginLeft: 'auto',
                     }}
                   >
@@ -189,8 +189,8 @@ export function Sidebar() {
                             width: '100%',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '0.625rem',
-                            padding: '0.5rem 1rem 0.5rem 2rem',
+                            gap: '1rem',
+                            padding: '0.8rem 1.6rem 0.8rem 3.2rem',
                             backgroundColor: isSelected ? 'rgba(7, 93, 70, 0.15)' : 'transparent',
                             border: 'none',
                             borderLeft: isSelected ? '2px solid #075D46' : '2px solid transparent',
@@ -213,7 +213,7 @@ export function Sidebar() {
                           <span
                             style={{
                               color: isSelected ? '#e5e5e5' : '#9ca3af',
-                              fontSize: '0.8125rem',
+                              fontSize: '1.3rem',
                               fontFamily: 'monospace',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',

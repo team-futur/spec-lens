@@ -20,7 +20,7 @@ export function FuturSelect({
   options,
   value,
   onChange,
-  width = '1.2rem',
+  width = '1.92rem',
   placeholder,
 }: FuturSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -58,13 +58,13 @@ export function FuturSelect({
         style={{
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0.4rem 0.8rem',
+          padding: '0.64rem 1.28rem',
           backgroundColor: 'transparent',
           border: '1px solid rgba(255, 255, 255, 0.2)',
-          borderRadius: '0.4rem',
+          borderRadius: '0.64rem',
           cursor: 'pointer',
           color: '#fff',
-          fontSize: '1.4rem',
+          fontSize: '2.24rem',
         }}
       >
         <span>{selectedOption ? selectedOption.label : placeholder || 'Select'}</span>
@@ -75,12 +75,12 @@ export function FuturSelect({
         <div
           style={{
             position: 'absolute',
-            top: 'calc(100% + 0.4rem)',
+            top: 'calc(100% + 0.64rem)',
             left: 0,
             width: '100%',
             backgroundColor: '#333',
             border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '0.4rem',
+            borderRadius: '0.64rem',
             zIndex: 100,
             overflow: 'hidden',
           }}
@@ -94,10 +94,10 @@ export function FuturSelect({
               }
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
               style={{
-                padding: '0.8rem',
+                padding: '1.28rem',
                 cursor: 'pointer',
                 color: '#fff',
-                fontSize: '1.4rem',
+                fontSize: '2.24rem',
                 transition: 'background-color 0.2s',
                 backgroundColor:
                   value === option.value ? 'rgba(255, 255, 255, 0.1)' : 'transparent',

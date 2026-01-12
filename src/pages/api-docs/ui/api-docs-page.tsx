@@ -25,7 +25,7 @@ export function APIDocsPage() {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100%',
-        padding: '2rem',
+        padding: '3.2rem',
         backgroundColor: '#0a0a0a',
       }}
     >
@@ -36,21 +36,21 @@ export function APIDocsPage() {
         }}
       >
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3.2rem' }}>
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '0.75rem',
-              marginBottom: '0.75rem',
+              gap: '1.2rem',
+              marginBottom: '1.2rem',
             }}
           >
             <FileJson size={32} color='#075D46' />
             <h1
               style={{
                 color: '#e5e5e5',
-                fontSize: '1.75rem',
+                fontSize: '2.8rem',
                 fontWeight: 700,
                 margin: 0,
               }}
@@ -58,7 +58,7 @@ export function APIDocsPage() {
               SpecLens
             </h1>
           </div>
-          <p style={{ color: '#9ca3af', fontSize: '0.9375rem' }}>
+          <p style={{ color: '#9ca3af', fontSize: '1.5rem' }}>
             OpenAPI/Swagger 스펙을 시각화하고 API를 테스트하세요
           </p>
         </div>
@@ -67,23 +67,23 @@ export function APIDocsPage() {
         <div
           style={{
             display: 'flex',
-            gap: '0.25rem',
-            marginBottom: '1.5rem',
+            gap: '0.4rem',
+            marginBottom: '2.4rem',
             backgroundColor: 'rgba(255,255,255,0.05)',
-            borderRadius: '0.5rem',
-            padding: '0.25rem',
+            borderRadius: '0.8rem',
+            padding: '0.4rem',
           }}
         >
           <button
             onClick={() => setInputMode('file')}
             style={{
               flex: 1,
-              padding: '0.625rem 1rem',
+              padding: '1rem 1.6rem',
               backgroundColor: inputMode === 'file' ? '#075D46' : 'transparent',
               border: 'none',
-              borderRadius: '0.375rem',
+              borderRadius: '0.6rem',
               color: inputMode === 'file' ? '#fff' : '#9ca3af',
-              fontSize: '0.875rem',
+              fontSize: '1.4rem',
               fontWeight: 500,
               cursor: 'pointer',
               transition: 'all 0.2s ease',
@@ -95,12 +95,12 @@ export function APIDocsPage() {
             onClick={() => setInputMode('url')}
             style={{
               flex: 1,
-              padding: '0.625rem 1rem',
+              padding: '1rem 1.6rem',
               backgroundColor: inputMode === 'url' ? '#075D46' : 'transparent',
               border: 'none',
-              borderRadius: '0.375rem',
+              borderRadius: '0.6rem',
               color: inputMode === 'url' ? '#fff' : '#9ca3af',
-              fontSize: '0.875rem',
+              fontSize: '1.4rem',
               fontWeight: 500,
               cursor: 'pointer',
               transition: 'all 0.2s ease',
@@ -113,9 +113,9 @@ export function APIDocsPage() {
         {/* Input Content */}
         <div
           style={{
-            padding: '1.5rem',
+            padding: '2.4rem',
             backgroundColor: 'rgba(255,255,255,0.02)',
-            borderRadius: '0.75rem',
+            borderRadius: '1.2rem',
             border: '1px solid rgba(255,255,255,0.1)',
           }}
         >
@@ -125,19 +125,19 @@ export function APIDocsPage() {
         {/* Info */}
         <div
           style={{
-            marginTop: '1.5rem',
-            padding: '1rem',
+            marginTop: '2.4rem',
+            padding: '1.6rem',
             backgroundColor: 'rgba(7, 93, 70, 0.1)',
-            borderRadius: '0.5rem',
+            borderRadius: '0.8rem',
             border: '1px solid rgba(7, 93, 70, 0.2)',
           }}
         >
           <h3
             style={{
               color: '#10b981',
-              fontSize: '0.8125rem',
+              fontSize: '1.3rem',
               fontWeight: 600,
-              marginBottom: '0.5rem',
+              marginBottom: '0.8rem',
             }}
           >
             지원 포맷
@@ -145,10 +145,10 @@ export function APIDocsPage() {
           <ul
             style={{
               color: '#9ca3af',
-              fontSize: '0.8125rem',
+              fontSize: '1.3rem',
               lineHeight: 1.6,
               margin: 0,
-              paddingLeft: '1.25rem',
+              paddingLeft: '2rem',
             }}
           >
             <li>OpenAPI 3.0.x JSON 파일</li>
@@ -157,7 +157,7 @@ export function APIDocsPage() {
         </div>
 
         {/* Example Link */}
-        <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+        <div style={{ marginTop: '1.6rem', textAlign: 'center' }}>
           <a
             href='https://petstore3.swagger.io/api/v3/openapi.json'
             target='_blank'
@@ -165,9 +165,9 @@ export function APIDocsPage() {
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.375rem',
+              gap: '0.6rem',
               color: '#6b7280',
-              fontSize: '0.8125rem',
+              fontSize: '1.3rem',
               textDecoration: 'none',
             }}
           >

@@ -55,8 +55,8 @@ const shimmerAnimation: Variants = {
 
 export function Skeleton({
   width = '100%',
-  height = '1.4rem',
-  borderRadius = '0.25rem',
+  height = '2.24rem',
+  borderRadius = '0.4rem',
   className,
   style,
   variant = 'shimmer',

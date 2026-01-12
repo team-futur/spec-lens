@@ -44,25 +44,25 @@ export function EndpointDetail({
   return (
     <div
       style={{
-        padding: '1.5rem',
+        padding: '2.4rem',
         maxWidth: '900px',
       }}
     >
       {/* Header */}
-      <div style={{ marginBottom: '1.5rem' }}>
+      <div style={{ marginBottom: '2.4rem' }}>
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.75rem',
-            marginBottom: '0.75rem',
+            gap: '1.2rem',
+            marginBottom: '1.2rem',
           }}
         >
           <MethodBadge method={method} size='lg' />
           <h1
             style={{
               color: '#e5e5e5',
-              fontSize: '1.25rem',
+              fontSize: '2rem',
               fontWeight: 600,
               fontFamily: 'monospace',
               wordBreak: 'break-all',
@@ -76,8 +76,8 @@ export function EndpointDetail({
           <p
             style={{
               color: '#e5e5e5',
-              fontSize: '1rem',
-              marginBottom: '0.5rem',
+              fontSize: '1.6rem',
+              marginBottom: '0.8rem',
             }}
           >
             {operation.summary}
@@ -88,7 +88,7 @@ export function EndpointDetail({
           <p
             style={{
               color: '#9ca3af',
-              fontSize: '0.875rem',
+              fontSize: '1.4rem',
               lineHeight: 1.6,
             }}
           >
@@ -101,19 +101,19 @@ export function EndpointDetail({
             style={{
               display: 'flex',
               flexWrap: 'wrap',
-              gap: '0.5rem',
-              marginTop: '0.75rem',
+              gap: '0.8rem',
+              marginTop: '1.2rem',
             }}
           >
             {operation.tags.map((tag) => (
               <span
                 key={tag}
                 style={{
-                  padding: '0.25rem 0.625rem',
+                  padding: '0.4rem 1rem',
                   backgroundColor: 'rgba(107, 114, 128, 0.2)',
-                  borderRadius: '0.25rem',
+                  borderRadius: '0.4rem',
                   color: '#9ca3af',
-                  fontSize: '0.75rem',
+                  fontSize: '1.2rem',
                 }}
               >
                 {tag}
@@ -125,14 +125,14 @@ export function EndpointDetail({
         {operation.deprecated && (
           <div
             style={{
-              marginTop: '0.75rem',
-              padding: '0.5rem 0.75rem',
+              marginTop: '1.2rem',
+              padding: '0.8rem 1.2rem',
               backgroundColor: 'rgba(239, 68, 68, 0.1)',
-              borderRadius: '0.375rem',
+              borderRadius: '0.6rem',
               border: '1px solid rgba(239, 68, 68, 0.2)',
             }}
           >
-            <span style={{ color: '#ef4444', fontSize: '0.8125rem', fontWeight: 500 }}>
+            <span style={{ color: '#ef4444', fontSize: '1.3rem', fontWeight: 500 }}>
               Deprecated
             </span>
           </div>
@@ -157,9 +157,9 @@ export function EndpointDetail({
         <Section title='Request Body'>
           <div
             style={{
-              padding: '1rem',
+              padding: '1.6rem',
               backgroundColor: 'rgba(255,255,255,0.02)',
-              borderRadius: '0.375rem',
+              borderRadius: '0.6rem',
               border: '1px solid rgba(255,255,255,0.1)',
             }}
           >
@@ -171,7 +171,7 @@ export function EndpointDetail({
       {/* Responses Section */}
       {responses.length > 0 && (
         <Section title='Responses'>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
             {responses.map(([statusCode, responseOrRef]) => {
               if (isReferenceObject(responseOrRef)) return null;
               const response = responseOrRef as ResponseObject;
@@ -200,14 +200,14 @@ export function EndpointDetail({
 // Section Component
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div style={{ marginBottom: '1.5rem' }}>
+    <div style={{ marginBottom: '2.4rem' }}>
       <h2
         style={{
           color: '#e5e5e5',
-          fontSize: '0.9375rem',
+          fontSize: '1.5rem',
           fontWeight: 600,
-          marginBottom: '0.75rem',
-          paddingBottom: '0.5rem',
+          marginBottom: '1.2rem',
+          paddingBottom: '0.8rem',
           borderBottom: '1px solid rgba(255,255,255,0.1)',
         }}
       >
@@ -221,15 +221,15 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 // Parameter Group Component
 function ParameterGroup({ title, params }: { title: string; params: ParameterObject[] }) {
   return (
-    <div style={{ marginBottom: '1rem' }}>
+    <div style={{ marginBottom: '1.6rem' }}>
       <h3
         style={{
           color: '#9ca3af',
-          fontSize: '0.75rem',
+          fontSize: '1.2rem',
           fontWeight: 500,
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
-          marginBottom: '0.5rem',
+          marginBottom: '0.8rem',
         }}
       >
         {title}
@@ -237,7 +237,7 @@ function ParameterGroup({ title, params }: { title: string; params: ParameterObj
       <div
         style={{
           backgroundColor: 'rgba(255,255,255,0.02)',
-          borderRadius: '0.375rem',
+          borderRadius: '0.6rem',
           border: '1px solid rgba(255,255,255,0.1)',
           overflow: 'hidden',
         }}
@@ -246,7 +246,7 @@ function ParameterGroup({ title, params }: { title: string; params: ParameterObj
           <div
             key={param.name}
             style={{
-              padding: '0.75rem 1rem',
+              padding: '1.2rem 1.6rem',
               borderBottom: index < params.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
             }}
           >
@@ -254,27 +254,27 @@ function ParameterGroup({ title, params }: { title: string; params: ParameterObj
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem',
-                marginBottom: '0.25rem',
+                gap: '0.8rem',
+                marginBottom: '0.4rem',
               }}
             >
               <span
                 style={{
                   color: '#e5e5e5',
-                  fontSize: '0.8125rem',
+                  fontSize: '1.3rem',
                   fontFamily: 'monospace',
                 }}
               >
                 {param.name}
               </span>
               {param.required && (
-                <span style={{ color: '#ef4444', fontSize: '0.75rem' }}>required</span>
+                <span style={{ color: '#ef4444', fontSize: '1.2rem' }}>required</span>
               )}
               {param.schema && !isReferenceObject(param.schema) && param.schema.type && (
                 <span
                   style={{
                     color: '#6b7280',
-                    fontSize: '0.75rem',
+                    fontSize: '1.2rem',
                     fontFamily: 'monospace',
                   }}
                 >
@@ -283,7 +283,7 @@ function ParameterGroup({ title, params }: { title: string; params: ParameterObj
               )}
             </div>
             {param.description && (
-              <p style={{ color: '#9ca3af', fontSize: '0.75rem', margin: 0 }}>
+              <p style={{ color: '#9ca3af', fontSize: '1.2rem', margin: 0 }}>
                 {param.description}
               </p>
             )}
@@ -314,7 +314,7 @@ function ResponseItem({
     <div
       style={{
         backgroundColor: 'rgba(255,255,255,0.02)',
-        borderRadius: '0.375rem',
+        borderRadius: '0.6rem',
         border: '1px solid rgba(255,255,255,0.1)',
         overflow: 'hidden',
       }}
@@ -325,8 +325,8 @@ function ResponseItem({
           width: '100%',
           display: 'flex',
           alignItems: 'center',
-          gap: '0.75rem',
-          padding: '0.75rem 1rem',
+          gap: '1.2rem',
+          padding: '1.2rem 1.6rem',
           backgroundColor: 'transparent',
           border: 'none',
           cursor: 'pointer',
@@ -341,24 +341,24 @@ function ResponseItem({
         <span
           style={{
             color: statusColor,
-            fontSize: '0.875rem',
+            fontSize: '1.4rem',
             fontWeight: 600,
             fontFamily: 'monospace',
           }}
         >
           {statusCode}
         </span>
-        <span style={{ color: '#9ca3af', fontSize: '0.8125rem' }}>{response.description}</span>
+        <span style={{ color: '#9ca3af', fontSize: '1.3rem' }}>{response.description}</span>
       </button>
 
       {isExpanded && schema && (
         <div
           style={{
-            padding: '0 1rem 1rem',
+            padding: '0 1.6rem 1.6rem',
             borderTop: '1px solid rgba(255,255,255,0.05)',
           }}
         >
-          <div style={{ paddingTop: '0.75rem' }}>
+          <div style={{ paddingTop: '1.2rem' }}>
             <SchemaViewer schema={schema} spec={spec} />
           </div>
         </div>

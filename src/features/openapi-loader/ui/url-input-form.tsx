@@ -72,7 +72,7 @@ export function UrlInputForm({ onSuccess }: { onSuccess?: () => void }) {
       <div
         style={{
           display: 'flex',
-          gap: '0.75rem',
+          gap: '1.2rem',
           alignItems: 'stretch',
         }}
       >
@@ -81,10 +81,10 @@ export function UrlInputForm({ onSuccess }: { onSuccess?: () => void }) {
             flex: 1,
             display: 'flex',
             alignItems: 'center',
-            gap: '0.75rem',
-            padding: '0 1rem',
+            gap: '1.2rem',
+            padding: '0 1.6rem',
             backgroundColor: 'rgba(255,255,255,0.05)',
-            borderRadius: '0.375rem',
+            borderRadius: '0.6rem',
             border: '1px solid rgba(255,255,255,0.1)',
           }}
         >
@@ -99,12 +99,12 @@ export function UrlInputForm({ onSuccess }: { onSuccess?: () => void }) {
             placeholder="https://api.example.com/openapi.json"
             style={{
               flex: 1,
-              padding: '0.875rem 0',
+              padding: '1.4rem 0',
               backgroundColor: 'transparent',
               border: 'none',
               outline: 'none',
               color: '#e5e5e5',
-              fontSize: '0.875rem',
+              fontSize: '1.4rem',
             }}
           />
         </div>
@@ -116,18 +116,18 @@ export function UrlInputForm({ onSuccess }: { onSuccess?: () => void }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '0.5rem',
-            padding: '0 1.5rem',
+            gap: '0.8rem',
+            padding: '0 2.4rem',
             backgroundColor: '#075D46',
             color: '#fff',
             border: 'none',
-            borderRadius: '0.375rem',
-            fontSize: '0.875rem',
+            borderRadius: '0.6rem',
+            fontSize: '1.4rem',
             fontWeight: 500,
             cursor: isLoading ? 'not-allowed' : 'pointer',
             opacity: isLoading ? 0.7 : 1,
             transition: 'all 0.2s ease',
-            minWidth: '5.5rem',
+            minWidth: '8.8rem',
           }}
         >
           {isLoading ? (
@@ -150,16 +150,16 @@ export function UrlInputForm({ onSuccess }: { onSuccess?: () => void }) {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem',
-            marginTop: '0.75rem',
-            padding: '0.75rem 1rem',
+            gap: '0.8rem',
+            marginTop: '1.2rem',
+            padding: '1.2rem 1.6rem',
             backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            borderRadius: '0.375rem',
+            borderRadius: '0.6rem',
             border: '1px solid rgba(239, 68, 68, 0.2)',
           }}
         >
           <AlertCircle size={16} color="#ef4444" />
-          <span style={{ color: '#ef4444', fontSize: '0.8125rem' }}>{localError}</span>
+          <span style={{ color: '#ef4444', fontSize: '1.3rem' }}>{localError}</span>
         </div>
       )}
 

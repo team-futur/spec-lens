@@ -191,7 +191,7 @@ export function SimpleScrollbar({
   if (!showScrollbar) return null;
 
   // Dynamic Styles
-  const currentThumbWidth = isActive || isHover ? '0.8rem' : '0.4rem';
+  const currentThumbWidth = isActive || isHover ? '1.28rem' : '0.64rem';
   const currentThumbColor = isActive ? '#0066ff' : isHover ? '#999999' : '#cccccc';
   const currentOpacity = isVisible || isActive || isHover ? 1 : 0;
 
@@ -207,7 +207,7 @@ export function SimpleScrollbar({
         zIndex: zIndex.scrollbar,
         display: 'flex',
         justifyContent: 'flex-end',
-        paddingRight: '0.2rem',
+        paddingRight: '0.32rem',
       }}
       onMouseDown={handleTrackMouseDown}
       onMouseEnter={() => setIsHover(true)}
@@ -225,7 +225,7 @@ export function SimpleScrollbar({
           cursor: 'pointer',
           opacity: currentOpacity,
           transition: 'width 0.2s ease, background-color 0.2s ease, opacity 0.3s ease',
-          right: '0.2rem',
+          right: '0.32rem',
         }}
       />
     </div>

@@ -125,9 +125,9 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
   return (
     <div
       style={{
-        marginTop: '1.5rem',
+        marginTop: '2.4rem',
         backgroundColor: '#151515',
-        borderRadius: '0.5rem',
+        borderRadius: '0.8rem',
         border: '1px solid rgba(255,255,255,0.1)',
         overflow: 'hidden',
       }}
@@ -140,7 +140,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0.875rem 1rem',
+          padding: '1.4rem 1.6rem',
           backgroundColor: 'transparent',
           border: 'none',
           cursor: 'pointer',
@@ -149,7 +149,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
         <span
           style={{
             color: '#e5e5e5',
-            fontSize: '0.875rem',
+            fontSize: '1.4rem',
             fontWeight: 600,
           }}
         >
@@ -165,10 +165,10 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
       {isExpanded && (
         <div
           style={{
-            padding: '0 1rem 1rem',
+            padding: '0 1.6rem 1.6rem',
             display: 'flex',
             flexDirection: 'column',
-            gap: '1rem',
+            gap: '1.6rem',
           }}
         >
           {/* Server Selection */}
@@ -177,9 +177,9 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
               style={{
                 display: 'block',
                 color: '#9ca3af',
-                fontSize: '0.75rem',
+                fontSize: '1.2rem',
                 fontWeight: 500,
-                marginBottom: '0.375rem',
+                marginBottom: '0.6rem',
               }}
             >
               Server
@@ -189,12 +189,12 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
               onChange={(e) => setSelectedServer(e.target.value)}
               style={{
                 width: '100%',
-                padding: '0.625rem 0.75rem',
+                padding: '1rem 1.2rem',
                 backgroundColor: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '0.375rem',
+                borderRadius: '0.6rem',
                 color: '#e5e5e5',
-                fontSize: '0.8125rem',
+                fontSize: '1.3rem',
                 outline: 'none',
               }}
             >
@@ -213,14 +213,14 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                 style={{
                   display: 'block',
                   color: '#9ca3af',
-                  fontSize: '0.75rem',
+                  fontSize: '1.2rem',
                   fontWeight: 500,
-                  marginBottom: '0.5rem',
+                  marginBottom: '0.8rem',
                 }}
               >
                 Path Parameters
               </label>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                 {pathParameters.map((param) => (
                   <ParameterInput
                     key={param.name}
@@ -240,14 +240,14 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                 style={{
                   display: 'block',
                   color: '#9ca3af',
-                  fontSize: '0.75rem',
+                  fontSize: '1.2rem',
                   fontWeight: 500,
-                  marginBottom: '0.5rem',
+                  marginBottom: '0.8rem',
                 }}
               >
                 Query Parameters
               </label>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                 {queryParameters.map((param) => (
                   <ParameterInput
                     key={param.name}
@@ -267,18 +267,18 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.375rem',
+                gap: '0.6rem',
                 backgroundColor: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
                 padding: 0,
-                marginBottom: '0.5rem',
+                marginBottom: '0.8rem',
               }}
             >
               <span
                 style={{
                   color: '#9ca3af',
-                  fontSize: '0.75rem',
+                  fontSize: '1.2rem',
                   fontWeight: 500,
                 }}
               >
@@ -292,21 +292,21 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
             </button>
 
             {showHeaders && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                 {Object.entries(headers).map(([key, value]) => (
-                  <div key={key} style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div key={key} style={{ display: 'flex', gap: '0.8rem' }}>
                     <input
                       type='text'
                       value={key}
                       readOnly
                       style={{
                         flex: 1,
-                        padding: '0.5rem 0.75rem',
+                        padding: '0.8rem 1.2rem',
                         backgroundColor: 'rgba(255,255,255,0.03)',
                         border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '0.375rem',
+                        borderRadius: '0.6rem',
                         color: '#9ca3af',
-                        fontSize: '0.8125rem',
+                        fontSize: '1.3rem',
                       }}
                     />
                     <input
@@ -315,12 +315,12 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                       onChange={(e) => setHeader(key, e.target.value)}
                       style={{
                         flex: 1,
-                        padding: '0.5rem 0.75rem',
+                        padding: '0.8rem 1.2rem',
                         backgroundColor: 'rgba(255,255,255,0.05)',
                         border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '0.375rem',
+                        borderRadius: '0.6rem',
                         color: '#e5e5e5',
-                        fontSize: '0.8125rem',
+                        fontSize: '1.3rem',
                         outline: 'none',
                       }}
                     />
@@ -337,9 +337,9 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                 style={{
                   display: 'block',
                   color: '#9ca3af',
-                  fontSize: '0.75rem',
+                  fontSize: '1.2rem',
                   fontWeight: 500,
-                  marginBottom: '0.375rem',
+                  marginBottom: '0.6rem',
                 }}
               >
                 Request Body
@@ -351,12 +351,12 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                 rows={6}
                 style={{
                   width: '100%',
-                  padding: '0.75rem',
+                  padding: '1.2rem',
                   backgroundColor: 'rgba(255,255,255,0.05)',
                   border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '0.375rem',
+                  borderRadius: '0.6rem',
                   color: '#e5e5e5',
-                  fontSize: '0.8125rem',
+                  fontSize: '1.3rem',
                   fontFamily: 'monospace',
                   resize: 'vertical',
                   outline: 'none',
@@ -373,13 +373,13 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '0.5rem',
-              padding: '0.75rem 1.5rem',
+              gap: '0.8rem',
+              padding: '1.2rem 2.4rem',
               backgroundColor: '#075D46',
               color: '#fff',
               border: 'none',
-              borderRadius: '0.375rem',
-              fontSize: '0.875rem',
+              borderRadius: '0.6rem',
+              fontSize: '1.4rem',
               fontWeight: 500,
               cursor: isExecuting ? 'not-allowed' : 'pointer',
               opacity: isExecuting ? 0.7 : 1,
@@ -403,13 +403,13 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
           {executeError && (
             <div
               style={{
-                padding: '0.75rem 1rem',
+                padding: '1.2rem 1.6rem',
                 backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                borderRadius: '0.375rem',
+                borderRadius: '0.6rem',
                 border: '1px solid rgba(239, 68, 68, 0.2)',
               }}
             >
-              <span style={{ color: '#ef4444', fontSize: '0.8125rem' }}>{executeError}</span>
+              <span style={{ color: '#ef4444', fontSize: '1.3rem' }}>{executeError}</span>
             </div>
           )}
 
@@ -418,7 +418,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
             <div
               style={{
                 backgroundColor: 'rgba(0,0,0,0.3)',
-                borderRadius: '0.375rem',
+                borderRadius: '0.6rem',
                 overflow: 'hidden',
               }}
             >
@@ -428,37 +428,37 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '0.75rem 1rem',
+                  padding: '1.2rem 1.6rem',
                   borderBottom: '1px solid rgba(255,255,255,0.1)',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1.6rem' }}>
                   <span
                     style={{
                       color: getStatusColor(response.status),
-                      fontSize: '0.875rem',
+                      fontSize: '1.4rem',
                       fontWeight: 600,
                     }}
                   >
                     {response.status} {response.statusText}
                   </span>
-                  <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>
+                  <span style={{ color: '#6b7280', fontSize: '1.2rem' }}>
                     {response.duration}ms
                   </span>
                 </div>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.8rem' }}>
                   <button
                     onClick={handleCopyResponse}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '0.375rem',
-                      padding: '0.375rem 0.625rem',
+                      gap: '0.6rem',
+                      padding: '0.6rem 1rem',
                       backgroundColor: 'rgba(255,255,255,0.05)',
                       border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '0.25rem',
+                      borderRadius: '0.4rem',
                       color: '#9ca3af',
-                      fontSize: '0.75rem',
+                      fontSize: '1.2rem',
                       cursor: 'pointer',
                     }}
                   >
@@ -470,10 +470,10 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      padding: '0.375rem',
+                      padding: '0.6rem',
                       backgroundColor: 'rgba(255,255,255,0.05)',
                       border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '0.25rem',
+                      borderRadius: '0.4rem',
                       color: '#9ca3af',
                       cursor: 'pointer',
                     }}
@@ -487,9 +487,9 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
               <pre
                 style={{
                   margin: 0,
-                  padding: '1rem',
+                  padding: '1.6rem',
                   color: '#e5e5e5',
-                  fontSize: '0.75rem',
+                  fontSize: '1.2rem',
                   fontFamily: 'monospace',
                   overflow: 'auto',
                   maxHeight: '400px',
@@ -527,12 +527,12 @@ function ParameterInput({
   onChange: (value: string) => void;
 }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
       <span
         style={{
           minWidth: '120px',
           color: '#e5e5e5',
-          fontSize: '0.8125rem',
+          fontSize: '1.3rem',
           fontFamily: 'monospace',
         }}
       >
@@ -546,12 +546,12 @@ function ParameterInput({
         placeholder={param.description || param.name}
         style={{
           flex: 1,
-          padding: '0.5rem 0.75rem',
+          padding: '0.8rem 1.2rem',
           backgroundColor: 'rgba(255,255,255,0.05)',
           border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: '0.375rem',
+          borderRadius: '0.6rem',
           color: '#e5e5e5',
-          fontSize: '0.8125rem',
+          fontSize: '1.3rem',
           outline: 'none',
         }}
       />

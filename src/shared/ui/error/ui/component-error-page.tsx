@@ -11,14 +11,14 @@ export function ComponentErrorPage({ error, resetErrorBoundary }: ComponentError
         width: '100%',
         height: '100vh',
         backgroundColor: '#fcfcfc',
-        gap: '1.5rem',
+        gap: '2.4rem',
       }}
     >
-      <Typography style={{ fontSize: '2rem', fontWeight: 600 }}>Component Error</Typography>
+      <Typography style={{ fontSize: '3.2rem', fontWeight: 600 }}>Component Error</Typography>
       <FlexColumn style={{ alignItems: 'center', justifyContent: 'center', maxWidth: '80vw' }}>
         <Typography
           style={{
-            fontSize: '1.4rem',
+            fontSize: '2.24rem',
             fontWeight: 500,
             color: '#888888',
           }}

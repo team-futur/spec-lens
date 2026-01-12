@@ -20,14 +20,14 @@ export function AlertProvider() {
             color: '#000000',
             border: '1px solid #cccccc',
             boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-            fontSize: '1.4rem',
+            fontSize: '2.24rem',
           },
           duration: 1800,
         }}
         icons={{
-          success: <FaCircleCheck style={{ color: theme.colors.successColor, fontSize: '2rem' }} />,
-          warning: <IoIosWarning style={{ color: theme.colors.warningColor, fontSize: '2rem' }} />,
-          error: <MdError style={{ color: theme.colors.errorColor, fontSize: '2rem' }} />,
+          success: <FaCircleCheck style={{ color: theme.colors.successColor, fontSize: '3.2rem' }} />,
+          warning: <IoIosWarning style={{ color: theme.colors.warningColor, fontSize: '3.2rem' }} />,
+          error: <MdError style={{ color: theme.colors.errorColor, fontSize: '3.2rem' }} />,
         }}
         expand={true}
       />

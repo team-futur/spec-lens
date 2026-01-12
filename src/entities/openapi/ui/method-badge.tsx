@@ -12,19 +12,19 @@ export function MethodBadge({
 
   const sizeStyles = {
     sm: {
-      fontSize: '0.625rem',
-      padding: '0.125rem 0.375rem',
-      minWidth: '2.5rem',
+      fontSize: '1rem',
+      padding: '0.2rem 0.6rem',
+      minWidth: '4rem',
     },
     md: {
-      fontSize: '0.6875rem',
-      padding: '0.25rem 0.5rem',
-      minWidth: '3.5rem',
+      fontSize: '1.1rem',
+      padding: '0.4rem 0.8rem',
+      minWidth: '5.6rem',
     },
     lg: {
-      fontSize: '0.75rem',
-      padding: '0.375rem 0.75rem',
-      minWidth: '4rem',
+      fontSize: '1.2rem',
+      padding: '0.6rem 1.2rem',
+      minWidth: '6.4rem',
     },
   };
 
@@ -39,7 +39,7 @@ export function MethodBadge({
         backgroundColor: `${color}20`,
         color: color,
         border: `1px solid ${color}40`,
-        borderRadius: '0.25rem',
+        borderRadius: '0.4rem',
         fontWeight: 700,
         textTransform: 'uppercase',
         fontFamily: 'monospace',

@@ -7,9 +7,9 @@ export function FuturButton({ style, disabledStyle, children, ...props }: Button
     <SolidButton
       style={{
         height: FORM_HEIGHT_MD,
-        fontSize: '1rem',
+        fontSize: '1.6rem',
         fontWeight: 700,
-        borderRadius: '0.25rem',
+        borderRadius: '0.4rem',
         ...style,
       }}
       disabledStyle={{ opacity: 0.3, ...disabledStyle }}

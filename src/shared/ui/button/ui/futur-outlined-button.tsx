@@ -10,7 +10,7 @@ export function FuturOutlinedButton({ style, children, ...props }: ButtonProps) 
     <OutlinedButton
       style={{
         height: FORM_HEIGHT_MD,
-        fontSize: '1rem',
+        fontSize: '1.6rem',
         fontWeight: 700,
         color: theme.colors.textLightDark,
         border: `1px solid  ${theme.colors.border}`,

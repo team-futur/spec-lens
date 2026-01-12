@@ -13,13 +13,13 @@ export function BottomSheetLayout({ title, children }: { title?: string; childre
         style={{
           alignItems: 'center',
           justifyContent: 'space-between',
-          paddingInline: '1rem',
+          paddingInline: '1.6rem',
           paddingBottom: CONTENT_BLOCK_SIZE,
         }}
       >
-        <Typography style={{ fontSize: '1.125rem', fontWeight: 700 }}>{title}</Typography>
+        <Typography style={{ fontSize: '1.8rem', fontWeight: 700 }}>{title}</Typography>
         <CloseIconButton
-          iconSize={'1.5rem'}
+          iconSize={'2.4rem'}
           color={theme.colors.textLightDark}
           close={() => window.history.back()}
         />
