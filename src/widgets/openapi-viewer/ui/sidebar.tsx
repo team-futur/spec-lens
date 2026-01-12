@@ -1,5 +1,6 @@
+import { useLocation, useNavigate } from '@tanstack/react-router';
 import { AnimatePresence, motion, useMotionValue } from 'framer-motion';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { startTransition, useEffect, useEffectEvent, useRef, useState } from 'react';
 
 import { ChevronRight, Search, X } from 'lucide-react';
 
@@ -14,8 +15,16 @@ import {
 } from '@/entities/openapi';
 import { Tooltip } from '@/shared/ui/tooltip';
 
+function generateEndpointHash(method: string, path: string): string {
+  return `${method.toLowerCase()}${path.replace(/[{}]/g, '')}`;
+}
+
 export function Sidebar() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const spec = useOpenAPIStore((s) => s.spec);
+  const endpoints = useOpenAPIStore((s) => s.endpoints);
   const searchQuery = useSearchQuery();
   const selectedEndpoint = useSelectedEndpoint();
   const expandedTags = useExpandedTags();
@@ -25,45 +34,94 @@ export function Sidebar() {
   const sidebarWidth = useMotionValue(320);
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const endpointRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   const endpointsByTag = openAPIStoreActions.getEndpointsByTag();
   const tagEntries = Object.entries(endpointsByTag);
 
-  const startResizing = useCallback(() => {
+  // Restore endpoint from URL hash on mount
+  useEffect(() => {
+    if (!endpoints.length || !location.hash) return;
+
+    // Find matching endpoint by hash
+    const matchingEndpoint = endpoints.find((ep) => {
+      const epHash = generateEndpointHash(ep.method, ep.path);
+      return epHash === location.hash;
+    });
+
+    if (matchingEndpoint) {
+      openAPIStoreActions.selectEndpoint(matchingEndpoint.path, matchingEndpoint.method);
+
+      // Expand the tag containing this endpoint
+      const endpointTag = matchingEndpoint.operation.tags?.[0] || 'default';
+      if (!expandedTags.includes(endpointTag)) {
+        openAPIStoreActions.toggleTagExpanded(endpointTag);
+      }
+    }
+  }, [endpoints, location.hash]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Update URL hash when endpoint is selected (low priority)
+  useEffect(() => {
+    if (selectedEndpoint) {
+      const hash = generateEndpointHash(selectedEndpoint.method, selectedEndpoint.path);
+      if (location.hash !== hash) {
+        startTransition(() => {
+          navigate({ hash, replace: true });
+        });
+      }
+    }
+  }, [selectedEndpoint, location.hash, navigate]);
+
+  // Scroll to selected endpoint
+  useEffect(() => {
+    if (!selectedEndpoint) return;
+
+    const key = `${selectedEndpoint.method}-${selectedEndpoint.path}`;
+    const element = endpointRefs.current.get(key);
+
+    if (element) {
+      // Small delay to ensure DOM is updated after tag expansion
+      setTimeout(() => {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
+  }, [selectedEndpoint]);
+
+  const startResizing = () => {
     setIsResizing(true);
     document.body.style.userSelect = 'none';
     document.body.style.cursor = 'col-resize';
-  }, []);
+  };
 
-  const stopResizing = useCallback(() => {
+  const stopResizing = () => {
     setIsResizing(false);
     document.body.style.userSelect = '';
     document.body.style.cursor = '';
-  }, []);
+  };
 
-  const resize = useCallback(
-    (mouseMoveEvent: MouseEvent) => {
-      if (isResizing) {
-        const newWidth = mouseMoveEvent.clientX;
-        if (newWidth >= 240 && newWidth <= 800) {
-          sidebarWidth.set(newWidth);
-        }
+  const resize = (mouseMoveEvent: MouseEvent) => {
+    if (isResizing) {
+      const newWidth = mouseMoveEvent.clientX;
+      if (newWidth >= 240 && newWidth <= 800) {
+        sidebarWidth.set(newWidth);
       }
-    },
-    [isResizing, sidebarWidth],
-  );
+    }
+  };
+
+  const stopResizingEvent = useEffectEvent(stopResizing);
+  const resizeEvent = useEffectEvent(resize);
 
   useEffect(() => {
     if (isResizing) {
-      window.addEventListener('mousemove', resize);
-      window.addEventListener('mouseup', stopResizing);
+      window.addEventListener('mousemove', resizeEvent);
+      window.addEventListener('mouseup', stopResizingEvent);
     }
 
     return () => {
-      window.removeEventListener('mousemove', resize);
-      window.removeEventListener('mouseup', stopResizing);
+      window.removeEventListener('mousemove', resizeEvent);
+      window.removeEventListener('mouseup', stopResizingEvent);
     };
-  }, [isResizing, resize, stopResizing]);
+  }, [isResizing]);
 
   if (!spec) return null;
 
@@ -251,6 +309,14 @@ export function Sidebar() {
                                 fullWidth
                               >
                                 <motion.button
+                                  ref={(el) => {
+                                    const key = `${endpoint.method}-${endpoint.path}`;
+                                    if (el) {
+                                      endpointRefs.current.set(key, el);
+                                    } else {
+                                      endpointRefs.current.delete(key);
+                                    }
+                                  }}
                                   onClick={() =>
                                     openAPIStoreActions.selectEndpoint(
                                       endpoint.path,

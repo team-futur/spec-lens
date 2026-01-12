@@ -1,3 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
+
 import { Menu, X, Upload, RefreshCw } from 'lucide-react';
 
 import { EndpointDetail } from './endpoint-detail.tsx';
@@ -11,10 +13,17 @@ import {
 } from '@/entities/openapi';
 
 export function ViewerLayout() {
+  const navigate = useNavigate();
   const spec = useSpec();
   const isSidebarOpen = useIsSidebarOpen();
   const selectedEndpointKey = useSelectedEndpoint();
   const endpoints = useOpenAPIStore((s) => s.endpoints);
+
+  // Clear spec and navigate back to spec loader
+  const handleClearSpec = () => {
+    openAPIStoreActions.clearSpec();
+    navigate({ to: '/', replace: true });
+  };
 
   // Find the selected endpoint data
   const selectedEndpoint = selectedEndpointKey
@@ -70,7 +79,7 @@ export function ViewerLayout() {
           {spec.info.title}
         </span>
         <button
-          onClick={openAPIStoreActions.clearSpec}
+          onClick={handleClearSpec}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -143,7 +152,7 @@ export function ViewerLayout() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
             <button
-              onClick={openAPIStoreActions.clearSpec}
+              onClick={handleClearSpec}
               style={{
                 display: 'flex',
                 alignItems: 'center',

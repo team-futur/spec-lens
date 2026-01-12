@@ -1,10 +1,7 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
+
+import { SpecLoaderPage } from '@/pages/spec-loader';
 
 export const Route = createFileRoute('/')({
-  beforeLoad: ({ cause }) => {
-    // Avoid redirect during preload to prevent HMR issues
-    if (cause === 'preload') return;
-    throw redirect({ to: '/api-docs' });
-  },
-  component: () => null,
+  component: SpecLoaderPage,
 });

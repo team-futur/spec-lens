@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { APIDocsPage } from '@/pages/api-docs';
+import { ViewerPage } from '@/pages/viewer';
 
 export const Route = createFileRoute('/api-docs')({
-  component: APIDocsPage,
+  component: ViewerPage,
 });
