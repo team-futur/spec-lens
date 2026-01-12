@@ -272,7 +272,7 @@ export function generateExample(
 
   // 2. Generate based on type
   switch (schema.type) {
-    case 'object':
+    case 'object': {
       const obj: Record<string, unknown> = {};
       if (schema.properties) {
         for (const [key, propSchema] of Object.entries(schema.properties)) {
@@ -280,6 +280,7 @@ export function generateExample(
         }
       }
       return obj;
+    }
 
     case 'array':
       if (schema.items) {

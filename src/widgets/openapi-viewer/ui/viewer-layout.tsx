@@ -2,7 +2,12 @@ import { Menu, X, Upload, RefreshCw } from 'lucide-react';
 
 import { EndpointDetail } from './endpoint-detail.tsx';
 import { Sidebar } from './sidebar.tsx';
-import { useOpenAPIStore, useSpec, useIsSidebarOpen, useSelectedEndpoint } from '@/entities/openapi';
+import {
+  useOpenAPIStore,
+  useSpec,
+  useIsSidebarOpen,
+  useSelectedEndpoint,
+} from '@/entities/openapi';
 
 export function ViewerLayout({ onReset }: { onReset: () => void }) {
   const spec = useSpec();
@@ -13,9 +18,9 @@ export function ViewerLayout({ onReset }: { onReset: () => void }) {
 
   // Find the selected endpoint data
   const selectedEndpoint = selectedEndpointKey
-    ? endpoints.find(
+    ? (endpoints.find(
         (e) => e.path === selectedEndpointKey.path && e.method === selectedEndpointKey.method,
-      ) ?? null
+      ) ?? null)
     : null;
 
   if (!spec) return null;

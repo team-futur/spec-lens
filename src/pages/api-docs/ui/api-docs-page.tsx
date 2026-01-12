@@ -23,9 +23,10 @@ export function APIDocsPage() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         minHeight: '100%',
         padding: '3.2rem',
+        paddingTop: '12rem',
         backgroundColor: '#0a0a0a',
       }}
     >
