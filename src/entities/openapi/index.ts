@@ -68,4 +68,5 @@ export {
   useSelectedMethods,
   useIsSidebarOpen,
   useExpandedTags,
+  useOpenAPIStoreHydration,
 } from './model/openapi-store.ts';

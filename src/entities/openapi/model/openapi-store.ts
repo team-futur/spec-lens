@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -140,10 +141,25 @@ export const useOpenAPIStore = create<OpenAPIStore>()(
     {
       name: 'openapi-store',
       partialize: (state) => ({
+        spec: state.spec,
         specSource: state.specSource,
-        isSidebarOpen: state.isSidebarOpen,
+        selectedEndpoint: state.selectedEndpoint,
         expandedTags: state.expandedTags,
+        isSidebarOpen: state.isSidebarOpen,
       }),
+      skipHydration: true,
+      onRehydrateStorage: () => (state) => {
+        // Re-parse endpoints and tags from stored spec after hydration
+        if (state?.spec) {
+          const endpoints = parseEndpoints(state.spec);
+          const tags = getAllTags(state.spec);
+          useOpenAPIStore.setState({
+            endpoints,
+            tags,
+            expandedTags: state.expandedTags?.length ? state.expandedTags : tags,
+          });
+        }
+      },
     },
   ),
 );
@@ -164,3 +180,19 @@ export const useSelectedTags = () => useOpenAPIStore((state) => state.selectedTa
 export const useSelectedMethods = () => useOpenAPIStore((state) => state.selectedMethods);
 export const useIsSidebarOpen = () => useOpenAPIStore((state) => state.isSidebarOpen);
 export const useExpandedTags = () => useOpenAPIStore((state) => state.expandedTags);
+
+// Hydration hook for SSR - uses persist's built-in hydration tracking
+export function useOpenAPIStoreHydration() {
+  const hydrated = useSyncExternalStore(
+    useOpenAPIStore.persist.onFinishHydration,
+    () => useOpenAPIStore.persist.hasHydrated(),
+    () => false, // SSR always returns false
+  );
+
+  // Trigger rehydration on client mount
+  if (!hydrated && typeof window !== 'undefined') {
+    useOpenAPIStore.persist.rehydrate();
+  }
+
+  return hydrated;
+}
