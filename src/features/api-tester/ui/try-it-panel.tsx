@@ -38,6 +38,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
   const [isExpanded, setIsExpanded] = useState(true);
   const [showHeaders, setShowHeaders] = useState(false);
   const [copiedResponse, setCopiedResponse] = useState(false);
+  const [jsonError, setJsonError] = useState<string | null>(null);
 
   const selectedServer = useSelectedServer();
   const pathParams = usePathParams();
@@ -335,13 +336,26 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
               </div>
               <textarea
                 value={requestBody}
-                onChange={(e) => apiTesterStoreActions.setRequestBody(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  apiTesterStoreActions.setRequestBody(value);
+                  if (value.trim()) {
+                    try {
+                      JSON.parse(value);
+                      setJsonError(null);
+                    } catch (err) {
+                      setJsonError(err instanceof Error ? err.message : 'Invalid JSON');
+                    }
+                  } else {
+                    setJsonError(null);
+                  }
+                }}
                 rows={8}
                 style={{
                   width: '100%',
                   padding: '1.2rem',
                   backgroundColor: 'rgba(0,0,0,0.2)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  border: `1px solid ${jsonError ? 'rgba(239, 68, 68, 0.5)' : 'rgba(255,255,255,0.1)'}`,
                   borderRadius: '0.6rem',
                   color: '#e5e5e5',
                   fontSize: '1.3rem',
@@ -350,6 +364,21 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                   outline: 'none',
                 }}
               />
+              {jsonError && (
+                <div
+                  style={{
+                    marginTop: '0.6rem',
+                    padding: '0.8rem',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                    borderRadius: '0.4rem',
+                    color: '#ef4444',
+                    fontSize: '1.2rem',
+                  }}
+                >
+                  Invalid JSON: {jsonError}
+                </div>
+              )}
             </div>
           )}
 
@@ -357,19 +386,19 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
           <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '0.8rem' }}>
             <button
               onClick={handleExecute}
-              disabled={isExecuting}
+              disabled={isExecuting || !!jsonError}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.8rem',
                 padding: '1rem 2.4rem',
-                backgroundColor: isExecuting ? '#374151' : '#2563eb', // blue-600
+                backgroundColor: isExecuting || jsonError ? '#374151' : '#2563eb',
                 color: '#ffffff',
                 border: 'none',
                 borderRadius: '0.6rem',
                 fontSize: '1.4rem',
                 fontWeight: 600,
-                cursor: isExecuting ? 'not-allowed' : 'pointer',
+                cursor: isExecuting || jsonError ? 'not-allowed' : 'pointer',
               }}
             >
               {isExecuting ? (

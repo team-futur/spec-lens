@@ -1,4 +1,4 @@
-import axios, { type AxiosError } from 'axios';
+import { proxyApiRequest, type ProxyResponse } from '@/shared/server/proxy-api-request';
 
 import type { ExecuteRequestParams, ExecuteRequestResult } from '../model/api-tester-types';
 
@@ -37,26 +37,7 @@ function parseBody(body: string | undefined): unknown {
 }
 
 /**
- * Convert axios headers to plain object
- */
-function headersToObject(headers: unknown): Record<string, string> {
-  const result: Record<string, string> = {};
-
-  if (headers && typeof headers === 'object') {
-    Object.entries(headers as Record<string, unknown>).forEach(([key, value]) => {
-      if (typeof value === 'string') {
-        result[key] = value;
-      } else if (Array.isArray(value)) {
-        result[key] = value.join(', ');
-      }
-    });
-  }
-
-  return result;
-}
-
-/**
- * Execute an API request
+ * Execute an API request via server proxy to avoid CORS issues
  */
 export async function executeRequest(params: ExecuteRequestParams): Promise<ExecuteRequestResult> {
   const { baseUrl, path, method, pathParams, queryParams, headers, body } = params;
@@ -77,40 +58,33 @@ export async function executeRequest(params: ExecuteRequestParams): Promise<Exec
       Object.entries(headers).filter(([_, value]) => value !== ''),
     );
 
-    const response = await axios({
-      method,
-      url,
-      params: filteredQueryParams,
-      headers: filteredHeaders,
-      data: parsedBody,
-      validateStatus: () => true, // Don't throw on non-2xx responses
-      timeout: 30000, // 30 second timeout
-    });
-
-    const duration = performance.now() - startTime;
+    const response = (await proxyApiRequest({
+      data: {
+        url,
+        method,
+        headers: filteredHeaders,
+        queryParams: filteredQueryParams,
+        body: parsedBody,
+      },
+    })) as ProxyResponse;
 
     return {
       success: true,
       response: {
         status: response.status,
         statusText: response.statusText,
-        headers: headersToObject(response.headers),
+        headers: response.headers,
         data: response.data,
-        duration: Math.round(duration),
+        duration: response.duration,
       },
     };
   } catch (error) {
     const duration = performance.now() - startTime;
-    const axiosError = error as AxiosError;
 
     let errorMessage = 'Request failed';
 
-    if (axiosError.code === 'ECONNABORTED') {
-      errorMessage = 'Request timed out';
-    } else if (axiosError.code === 'ERR_NETWORK') {
-      errorMessage = 'Network error. This might be caused by CORS policy.';
-    } else if (axiosError.message) {
-      errorMessage = axiosError.message;
+    if (error instanceof Error) {
+      errorMessage = error.message;
     }
 
     return {
