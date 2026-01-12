@@ -283,7 +283,8 @@ function ParameterGroup({ title, params }: { title: string; params: ParameterObj
               )}
             </div>
             {param.description && (
-              <p style={{ color: '#d1d5db', fontSize: '1.2rem', margin: 0 }}> {/* Light gray desc */}
+              <p style={{ color: '#d1d5db', fontSize: '1.2rem', margin: 0 }}>
+                {/* Light gray desc */}
                 {param.description}
               </p>
             )}
@@ -348,7 +349,8 @@ function ResponseItem({
         >
           {statusCode}
         </span>
-        <span style={{ color: '#ffffff', fontSize: '1.3rem' }}>{response.description}</span> {/* White response desc */}
+        <span style={{ color: '#ffffff', fontSize: '1.3rem' }}>{response.description}</span>
+        {/* White response desc */}
       </button>
 
       {isExpanded && schema && (

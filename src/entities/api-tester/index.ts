@@ -1,4 +1,7 @@
-// Types
+export { getExecuteStatusColor } from './config/execute-status-color.ts';
+
+export { executeRequest } from './lib/execute-request.ts';
+
 export type {
   ResponseState,
   HistoryEntry,
@@ -7,7 +10,6 @@ export type {
   ApiTesterStore,
 } from './model/api-tester-types.ts';
 
-// Store
 export {
   useApiTesterStore,
   apiTesterStoreActions,

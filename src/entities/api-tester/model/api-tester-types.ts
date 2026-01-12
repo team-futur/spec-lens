@@ -1,5 +1,28 @@
 import { type HttpMethod } from '@/entities/openapi';
 
+export interface ExecuteRequestParams {
+  baseUrl: string;
+  path: string;
+  method: HttpMethod;
+  pathParams: Record<string, string>;
+  queryParams: Record<string, string>;
+  headers: Record<string, string>;
+  body?: string;
+}
+
+interface ExecuteResult {
+  success: true;
+  response: ResponseState;
+}
+
+interface ExecuteError {
+  success: false;
+  error: string;
+  duration: number;
+}
+
+export type ExecuteRequestResult = ExecuteResult | ExecuteError;
+
 export interface ResponseState {
   status: number;
   statusText: string;

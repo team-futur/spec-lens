@@ -1,30 +1,6 @@
 import axios, { type AxiosError } from 'axios';
 
-import { type ResponseState } from '@/entities/api-tester';
-import { type HttpMethod } from '@/entities/openapi';
-
-export interface ExecuteRequestParams {
-  baseUrl: string;
-  path: string;
-  method: HttpMethod;
-  pathParams: Record<string, string>;
-  queryParams: Record<string, string>;
-  headers: Record<string, string>;
-  body?: string;
-}
-
-export interface ExecuteResult {
-  success: true;
-  response: ResponseState;
-}
-
-export interface ExecuteError {
-  success: false;
-  error: string;
-  duration: number;
-}
-
-export type ExecuteRequestResult = ExecuteResult | ExecuteError;
+import type { ExecuteRequestParams, ExecuteRequestResult } from '../model/api-tester-types';
 
 /**
  * Build the full URL with path parameters replaced
@@ -143,20 +119,4 @@ export async function executeRequest(params: ExecuteRequestParams): Promise<Exec
       duration: Math.round(duration),
     };
   }
-}
-
-/**
- * Get status code color for UI
- */
-export function getStatusColor(status: number): string {
-  if (status >= 200 && status < 300) {
-    return '#10b981'; // Green - success
-  } else if (status >= 300 && status < 400) {
-    return '#3b82f6'; // Blue - redirect
-  } else if (status >= 400 && status < 500) {
-    return '#f59e0b'; // Amber - client error
-  } else if (status >= 500) {
-    return '#ef4444'; // Red - server error
-  }
-  return '#6b7280'; // Gray - unknown
 }

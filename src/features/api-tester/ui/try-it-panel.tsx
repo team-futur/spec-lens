@@ -1,35 +1,36 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
-  Play,
-  Loader2,
-  Copy,
   Check,
   ChevronDown,
   ChevronUp,
-  Trash2,
+  Copy,
+  Loader2,
+  Play,
   RotateCcw,
+  Trash2,
 } from 'lucide-react';
 
-import { executeRequest, getStatusColor } from '../api/execute-request.ts';
 import {
   apiTesterStoreActions,
-  useSelectedServer,
+  executeRequest,
+  getExecuteStatusColor,
+  useExecuteError,
+  useHeaders,
+  useIsExecuting,
   usePathParams,
   useQueryParams,
-  useHeaders,
   useRequestBody,
   useResponse,
-  useIsExecuting,
-  useExecuteError,
+  useSelectedServer,
 } from '@/entities/api-tester';
 import {
-  type ParsedEndpoint,
   type OpenAPISpec,
   type ParameterObject,
+  type ParsedEndpoint,
+  generateExample,
   getMergedParameters,
   isReferenceObject,
-  generateExample,
 } from '@/entities/openapi';
 import { FuturSelect } from '@/shared/ui/select';
 
@@ -418,7 +419,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                     style={{
                       fontWeight: 700,
                       fontSize: '1.3rem',
-                      color: getStatusColor(response.status),
+                      color: getExecuteStatusColor(response.status),
                     }}
                   >
                     {response.status}

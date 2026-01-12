@@ -6,7 +6,6 @@ import {
   SpecLoaderHeader,
   SpecInputModeTabs,
   SpecLoaderContent,
-  SupportedFormatsInfo,
   type SpecLoaderType,
 } from '@/widgets/spec-loader';
 
@@ -43,7 +42,7 @@ export function APIDocsPage() {
 
         <SpecLoaderContent inputMode={inputMode} />
 
-        <SupportedFormatsInfo />
+        {/* <SupportedFormatsInfo /> */}
       </div>
     </div>
   );
