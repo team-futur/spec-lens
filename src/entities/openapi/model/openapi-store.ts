@@ -182,15 +182,17 @@ export const useIsSidebarOpen = () => useOpenAPIStore((state) => state.isSidebar
 export const useExpandedTags = () => useOpenAPIStore((state) => state.expandedTags);
 
 // Hydration hook for SSR - uses persist's built-in hydration tracking
+const emptySubscribe = () => () => {};
+
 export function useOpenAPIStoreHydration() {
   const hydrated = useSyncExternalStore(
-    useOpenAPIStore.persist.onFinishHydration,
-    () => useOpenAPIStore.persist.hasHydrated(),
+    useOpenAPIStore.persist?.onFinishHydration ?? emptySubscribe,
+    () => useOpenAPIStore.persist?.hasHydrated() ?? false,
     () => false, // SSR always returns false
   );
 
   // Trigger rehydration on client mount
-  if (!hydrated && typeof window !== 'undefined') {
+  if (!hydrated && typeof window !== 'undefined' && useOpenAPIStore.persist) {
     useOpenAPIStore.persist.rehydrate();
   }
 
