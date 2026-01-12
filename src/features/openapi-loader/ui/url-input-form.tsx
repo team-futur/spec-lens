@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 
+import axios, { AxiosError } from 'axios';
 import { Link, Loader2, AlertCircle } from 'lucide-react';
 
 import { type OpenAPISpec, validateOpenAPISpec, useOpenAPIStore } from '@/entities/openapi';
@@ -19,30 +20,32 @@ export function UrlInputForm({ onSuccess }: { onSuccess?: () => void }) {
       return;
     }
 
-    // Validate URL format
-    try {
-      new URL(url);
-    } catch {
-      setLocalError('Please enter a valid URL');
-      return;
+    // Validate URL format - allow relative paths starting with /
+    const isRelativePath = url.trim().startsWith('/');
+    if (!isRelativePath) {
+      try {
+        new URL(url);
+      } catch {
+        setLocalError('Please enter a valid URL or relative path (e.g., /api.json)');
+        return;
+      }
     }
 
     setIsLoadingLocal(true);
     setLocalError(null);
     setLoading(true);
 
+    // Use relative path as-is, or full URL
+    const fetchUrl = isRelativePath ? url.trim() : url;
+
     try {
-      const response = await fetch(url, {
+      const response = await axios.get<unknown>(fetchUrl, {
         headers: {
           Accept: 'application/json',
         },
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const json = await response.json();
+      const json = response.data;
 
       const validation = validateOpenAPISpec(json);
       if (!validation.valid) {
@@ -53,12 +56,20 @@ export function UrlInputForm({ onSuccess }: { onSuccess?: () => void }) {
       setUrl('');
       onSuccess?.();
     } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message.includes('Failed to fetch')
-            ? 'Failed to fetch. The URL might be blocked by CORS policy.'
-            : err.message
-          : 'Failed to fetch spec';
+      let message = 'Failed to fetch spec';
+
+      if (err instanceof AxiosError) {
+        if (err.code === 'ERR_NETWORK') {
+          message = 'Failed to fetch. The URL might be blocked by CORS policy.';
+        } else if (err.response) {
+          message = `HTTP ${err.response.status}: ${err.response.statusText}`;
+        } else {
+          message = err.message;
+        }
+      } else if (err instanceof Error) {
+        message = err.message;
+      }
+
       setLocalError(message);
       setStoreError(message);
     } finally {

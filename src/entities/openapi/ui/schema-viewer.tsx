@@ -264,7 +264,7 @@ export function SchemaViewer({
       {isExpanded && hasChildren && (
         <div style={{ marginTop: '0.4rem', marginBottom: '0.8rem' }}>
           {resolvedSchema.properties &&
-            Object.entries(resolvedSchema.properties).map(([propName, propSchema], i, arr) => (
+            Object.entries(resolvedSchema.properties).map(([propName, propSchema]) => (
               <SchemaViewer
                 key={propName}
                 name={propName}
@@ -272,7 +272,6 @@ export function SchemaViewer({
                 spec={spec}
                 depth={depth + 1}
                 required={resolvedSchema.required?.includes(propName)}
-                isLast={i === arr.length - 1}
               />
             ))}
 
@@ -282,7 +281,6 @@ export function SchemaViewer({
               schema={resolvedSchema.items}
               spec={spec}
               depth={depth + 1}
-              isLast={true}
             />
           )}
 

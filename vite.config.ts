@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',
       port: parseInt(env.VITE_PORT, 10) || 3000,
       open: true,
+      cors: true,
     },
     define: {
       global: 'window',
