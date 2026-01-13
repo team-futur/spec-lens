@@ -576,12 +576,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                   >
                     Request Count
                   </label>
-                  <NumberInput
-                    value={requestCount}
-                    onChange={setRequestCount}
-                    min={1}
-                    max={100}
-                  />
+                  <NumberInput value={requestCount} onChange={setRequestCount} min={1} max={100} />
                 </div>
                 <div style={{ flex: 1 }}>
                   <label
