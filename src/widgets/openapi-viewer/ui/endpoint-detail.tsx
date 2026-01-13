@@ -1,3 +1,4 @@
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 
 import { ChevronDown, ChevronRight } from 'lucide-react';
@@ -193,28 +194,74 @@ export function EndpointDetail({
       )}
 
       {/* Try It Out Panel */}
-      <TryItPanel endpoint={endpoint} spec={spec} />
+      <Section title='Try It Out'>
+        <TryItPanel endpoint={endpoint} spec={spec} />
+      </Section>
     </div>
   );
 }
 
 // Section Component
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  children,
+  defaultExpanded = true,
+}: {
+  title: string;
+  children: React.ReactNode;
+  defaultExpanded?: boolean;
+}) {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+
   return (
     <div style={{ marginBottom: '2.4rem' }}>
-      <h2
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
         style={{
-          color: '#f3f4f6', // Gray-100
-          fontSize: '1.5rem',
-          fontWeight: 600,
-          marginBottom: '1.2rem',
-          paddingBottom: '0.8rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.8rem',
+          width: '100%',
+          backgroundColor: 'transparent',
+          border: 'none',
+          padding: '0 0 0.8rem 0',
+          cursor: 'pointer',
           borderBottom: '1px solid rgba(255,255,255,0.08)',
+          marginBottom: '1.2rem',
         }}
       >
-        {title}
-      </h2>
-      {children}
+        <motion.div
+          animate={{ rotate: isExpanded ? 0 : -90 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          <ChevronDown size={20} color='#f3f4f6' />
+        </motion.div>
+        <h2
+          style={{
+            color: '#f3f4f6', // Gray-100
+            fontSize: '1.5rem',
+            fontWeight: 600,
+            margin: 0,
+          }}
+        >
+          {title}
+        </h2>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            style={{ overflow: 'hidden' }}
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -364,11 +411,13 @@ function ResponseItem({
           textAlign: 'left',
         }}
       >
-        {isExpanded ? (
-          <ChevronDown size={14} color='#9ca3af' />
-        ) : (
-          <ChevronRight size={14} color='#6b7280' />
-        )}
+        <motion.div
+          animate={{ rotate: isExpanded ? 0 : -90 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          <ChevronDown size={14} color={isExpanded ? '#9ca3af' : '#6b7280'} />
+        </motion.div>
         <span
           style={{
             color: statusColor,
@@ -385,20 +434,30 @@ function ResponseItem({
         {/* White response desc */}
       </button>
 
-      {isExpanded && schema && (
-        <div
-          style={{
-            padding: '0 1.6rem 1.6rem',
-            borderTop: '1px solid rgba(255,255,255,0.05)',
-          }}
-        >
-          <div style={{ paddingTop: '1.2rem' }}>
-            <JsonActionWrapper data={generateExample(schema, spec)} defaultView='schema'>
-              <SchemaViewer schema={schema} spec={spec} />
-            </JsonActionWrapper>
-          </div>
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {isExpanded && schema && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div
+              style={{
+                padding: '0 1.6rem 1.6rem',
+                borderTop: '1px solid rgba(255,255,255,0.05)',
+              }}
+            >
+              <div style={{ paddingTop: '1.2rem' }}>
+                <JsonActionWrapper data={generateExample(schema, spec)} defaultView='schema'>
+                  <SchemaViewer schema={schema} spec={spec} />
+                </JsonActionWrapper>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

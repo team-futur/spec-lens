@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { ChevronDown, ChevronRight, Info } from 'lucide-react';
 
@@ -181,11 +182,13 @@ export function SchemaViewer({
       >
         <div style={styles.chevron}>
           {hasChildren ? (
-            isExpanded ? (
+            <motion.div
+              animate={{ rotate: isExpanded ? 0 : -90 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              style={{ display: 'flex', alignItems: 'center' }}
+            >
               <ChevronDown size={16} />
-            ) : (
-              <ChevronRight size={16} />
-            )
+            </motion.div>
           ) : (
             <div style={{ width: 16 }} />
           )}
@@ -266,63 +269,73 @@ export function SchemaViewer({
         </div>
       </div>
 
-      {isExpanded && hasChildren && (
-        <div style={{ marginTop: '0.4rem', marginBottom: '0.8rem' }}>
-          {resolvedSchema.properties &&
-            Object.entries(resolvedSchema.properties).map(([propName, propSchema]) => (
-              <SchemaViewer
-                key={propName}
-                name={propName}
-                schema={propSchema}
-                spec={spec}
-                depth={depth + 1}
-                required={resolvedSchema.required?.includes(propName)}
-              />
-            ))}
+      <AnimatePresence initial={false}>
+        {isExpanded && hasChildren && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div style={{ marginTop: '0.4rem', marginBottom: '0.8rem' }}>
+              {resolvedSchema.properties &&
+                Object.entries(resolvedSchema.properties).map(([propName, propSchema]) => (
+                  <SchemaViewer
+                    key={propName}
+                    name={propName}
+                    schema={propSchema}
+                    spec={spec}
+                    depth={depth + 1}
+                    required={resolvedSchema.required?.includes(propName)}
+                  />
+                ))}
 
-          {resolvedSchema.type === 'array' && resolvedSchema.items && (
-            <SchemaViewer
-              name='items'
-              schema={resolvedSchema.items}
-              spec={spec}
-              depth={depth + 1}
-            />
-          )}
+              {resolvedSchema.type === 'array' && resolvedSchema.items && (
+                <SchemaViewer
+                  name='items'
+                  schema={resolvedSchema.items}
+                  spec={spec}
+                  depth={depth + 1}
+                />
+              )}
 
-          {resolvedSchema.allOf &&
-            resolvedSchema.allOf.map((subSchema, i) => (
-              <SchemaViewer
-                key={`allOf-${i}`}
-                name={`allOf[${i}]`}
-                schema={subSchema}
-                spec={spec}
-                depth={depth + 1}
-              />
-            ))}
+              {resolvedSchema.allOf &&
+                resolvedSchema.allOf.map((subSchema, i) => (
+                  <SchemaViewer
+                    key={`allOf-${i}`}
+                    name={`allOf[${i}]`}
+                    schema={subSchema}
+                    spec={spec}
+                    depth={depth + 1}
+                  />
+                ))}
 
-          {resolvedSchema.oneOf &&
-            resolvedSchema.oneOf.map((subSchema, i) => (
-              <SchemaViewer
-                key={`oneOf-${i}`}
-                name={`oneOf[${i}]`}
-                schema={subSchema}
-                spec={spec}
-                depth={depth + 1}
-              />
-            ))}
+              {resolvedSchema.oneOf &&
+                resolvedSchema.oneOf.map((subSchema, i) => (
+                  <SchemaViewer
+                    key={`oneOf-${i}`}
+                    name={`oneOf[${i}]`}
+                    schema={subSchema}
+                    spec={spec}
+                    depth={depth + 1}
+                  />
+                ))}
 
-          {resolvedSchema.anyOf &&
-            resolvedSchema.anyOf.map((subSchema, i) => (
-              <SchemaViewer
-                key={`anyOf-${i}`}
-                name={`anyOf[${i}]`}
-                schema={subSchema}
-                spec={spec}
-                depth={depth + 1}
-              />
-            ))}
-        </div>
-      )}
+              {resolvedSchema.anyOf &&
+                resolvedSchema.anyOf.map((subSchema, i) => (
+                  <SchemaViewer
+                    key={`anyOf-${i}`}
+                    name={`anyOf[${i}]`}
+                    schema={subSchema}
+                    spec={spec}
+                    depth={depth + 1}
+                  />
+                ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
