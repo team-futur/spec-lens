@@ -1,9 +1,11 @@
 import { AnimatePresence, motion, useMotionValue } from 'framer-motion';
-import { useEffect, useEffectEvent, useRef, useState } from 'react';
+import { useDeferredValue, useEffect, useEffectEvent, useRef, useState } from 'react';
 
 import { ChevronRight, Search, X } from 'lucide-react';
 
 import {
+  filterEndpoints,
+  groupEndpointsByTag,
   MethodBadge,
   openAPIStoreActions,
   useExpandedTags,
@@ -11,6 +13,8 @@ import {
   useOpenAPIStore,
   useSearchQuery,
   useSelectedEndpoint,
+  useSelectedMethods,
+  useSelectedTags,
 } from '@/entities/openapi';
 import { Tooltip } from '@/shared/ui/tooltip';
 import { smoothScrollTo } from '@/shared/utils/scroll';
@@ -25,9 +29,15 @@ export function Sidebar() {
   const spec = useOpenAPIStore((s) => s.spec);
   const endpoints = useOpenAPIStore((s) => s.endpoints);
   const searchQuery = useSearchQuery();
+  const selectedTags = useSelectedTags();
+  const selectedMethods = useSelectedMethods();
   const selectedEndpoint = useSelectedEndpoint();
   const expandedTags = useExpandedTags();
   const isSidebarOpen = useIsSidebarOpen();
+
+  // Defer search query for smoother typing experience
+  // Input updates immediately, but expensive filtering happens with lower priority
+  const deferredSearchQuery = useDeferredValue(searchQuery);
 
   // Use MotionValue for performance (no re-renders on drag)
   const sidebarWidth = useMotionValue(320);
@@ -35,7 +45,14 @@ export function Sidebar() {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const endpointRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
-  const endpointsByTag = openAPIStoreActions.getEndpointsByTag();
+  // Filter endpoints using deferred search query for smooth typing
+  // React Compiler will auto-memoize this
+  const filteredEndpoints = filterEndpoints(endpoints, {
+    searchQuery: deferredSearchQuery,
+    selectedTags,
+    selectedMethods,
+  });
+  const endpointsByTag = groupEndpointsByTag(filteredEndpoints);
   const tagEntries = Object.entries(endpointsByTag);
 
   // Restore endpoint from URL hash on mount

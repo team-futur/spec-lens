@@ -184,18 +184,24 @@ export function filterEndpoints(
 
     // Filter by search query
     if (searchQuery && searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+      // Split query by spaces for multi-term search (all terms must match)
+      const queryTerms = searchQuery
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((term) => term.length > 0);
+
+      // Build searchable text from all relevant fields
       const path = endpoint.path.toLowerCase();
       const summary = (endpoint.operation.summary || '').toLowerCase();
       const description = (endpoint.operation.description || '').toLowerCase();
       const operationId = (endpoint.operation.operationId || '').toLowerCase();
+      const tags = (endpoint.operation.tags || []).join(' ').toLowerCase();
 
-      if (
-        !path.includes(query) &&
-        !summary.includes(query) &&
-        !description.includes(query) &&
-        !operationId.includes(query)
-      ) {
+      const searchableText = `${path} ${summary} ${description} ${operationId} ${tags}`;
+
+      // All query terms must be found in the searchable text
+      const allTermsMatch = queryTerms.every((term) => searchableText.includes(term));
+      if (!allTermsMatch) {
         return false;
       }
     }

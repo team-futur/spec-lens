@@ -655,17 +655,32 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                               gap: '0.8rem',
                               alignItems: 'center',
                               padding: '0.6rem 1rem',
-                              backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                              border: '1px solid rgba(34, 197, 94, 0.2)',
+                              backgroundColor: headers['Authorization']
+                                ? 'rgba(245, 158, 11, 0.1)'
+                                : 'rgba(34, 197, 94, 0.1)',
+                              border: headers['Authorization']
+                                ? '1px solid rgba(245, 158, 11, 0.2)'
+                                : '1px solid rgba(34, 197, 94, 0.2)',
                               borderRadius: '0.6rem',
                             }}
                           >
-                            <Key size={12} color='#22c55e' />
-                            <span style={{ color: '#22c55e', fontSize: '1.1rem', fontWeight: 500 }}>
+                            <Key
+                              size={12}
+                              color={headers['Authorization'] ? '#f59e0b' : '#22c55e'}
+                            />
+                            <span
+                              style={{
+                                color: headers['Authorization'] ? '#f59e0b' : '#22c55e',
+                                fontSize: '1.1rem',
+                                fontWeight: 500,
+                              }}
+                            >
                               Authorization
                             </span>
                             <span style={{ color: '#6b7280', fontSize: '1.1rem', flex: 1 }}>
-                              (from Global Auth: {authConfig.type.toUpperCase()})
+                              {headers['Authorization']
+                                ? '(Custom header overrides Global Auth)'
+                                : `(from Global Auth: ${authConfig.type.toUpperCase()})`}
                             </span>
                           </div>
                         )}

@@ -53,7 +53,8 @@ function applyAuth(
 
   switch (authConfig.type) {
     case 'bearer':
-      if (authConfig.bearerToken) {
+      // Only apply if user hasn't set a custom Authorization header
+      if (authConfig.bearerToken && !headers['Authorization']) {
         newHeaders['Authorization'] = `Bearer ${authConfig.bearerToken}`;
       }
       break;
@@ -61,16 +62,22 @@ function applyAuth(
     case 'apiKey':
       if (authConfig.apiKeyName && authConfig.apiKeyValue) {
         if (authConfig.apiKeyLocation === 'query') {
-          newQueryParams[authConfig.apiKeyName] = authConfig.apiKeyValue;
+          // Only apply if user hasn't set a custom query param with same name
+          if (!queryParams[authConfig.apiKeyName]) {
+            newQueryParams[authConfig.apiKeyName] = authConfig.apiKeyValue;
+          }
         } else {
-          // Default to header
-          newHeaders[authConfig.apiKeyName] = authConfig.apiKeyValue;
+          // Only apply if user hasn't set a custom header with same name
+          if (!headers[authConfig.apiKeyName]) {
+            newHeaders[authConfig.apiKeyName] = authConfig.apiKeyValue;
+          }
         }
       }
       break;
 
     case 'basic':
-      if (authConfig.basicUsername) {
+      // Only apply if user hasn't set a custom Authorization header
+      if (authConfig.basicUsername && !headers['Authorization']) {
         const credentials = btoa(`${authConfig.basicUsername}:${authConfig.basicPassword || ''}`);
         newHeaders['Authorization'] = `Basic ${credentials}`;
       }
