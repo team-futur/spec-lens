@@ -7,6 +7,7 @@ export type {
   AuthConfig,
   CustomCookie,
   SessionCookie,
+  Variable,
   ResponseState,
   HistoryEntry,
   ApiTesterState,
@@ -25,6 +26,7 @@ export {
   useAuthConfig,
   useCustomCookies,
   useSessionCookies,
+  useVariables,
   useHistory,
   // Cookie expiration utilities
   isCookieExpired,

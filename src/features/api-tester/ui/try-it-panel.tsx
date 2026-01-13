@@ -15,6 +15,7 @@ import {
   Trash2,
 } from 'lucide-react';
 
+import { VariableAutocompleteInput } from './variable-autocomplete-input';
 import {
   apiTesterStoreActions,
   executeRequest,
@@ -502,20 +503,30 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                     <ChevronDown size={12} color='#9ca3af' />
                   )}
                 </div>
-                {showHeaders && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                    {Object.entries(headers).map(([k, v]) => (
-                      <div key={k} style={{ display: 'flex', gap: '0.8rem' }}>
-                        <input readOnly value={k} style={inputStyle} />
-                        <input
-                          value={v}
-                          onChange={(e) => apiTesterStoreActions.setHeader(k, e.target.value)}
-                          style={inputStyle}
-                        />
+                <AnimatePresence initial={false}>
+                  {showHeaders && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: 'easeInOut' }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                        {Object.entries(headers).map(([k, v]) => (
+                          <div key={k} style={{ display: 'flex', gap: '0.8rem' }}>
+                            <input readOnly value={k} style={inputStyle} />
+                            <input
+                              value={v}
+                              onChange={(e) => apiTesterStoreActions.setHeader(k, e.target.value)}
+                              style={inputStyle}
+                            />
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Request Body */}
@@ -552,10 +563,9 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                       Reset to Default
                     </button>
                   </div>
-                  <textarea
+                  <VariableAutocompleteInput
                     value={requestBody}
-                    onChange={(e) => {
-                      const value = e.target.value;
+                    onChange={(value) => {
                       apiTesterStoreActions.setRequestBody(value);
                       if (value.trim()) {
                         try {
@@ -568,7 +578,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                         setJsonError(null);
                       }
                     }}
-                    rows={8}
+                    multiline
                     style={{
                       width: '100%',
                       padding: '1.2rem',
@@ -580,6 +590,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                       fontFamily: 'monospace',
                       resize: 'vertical',
                       outline: 'none',
+                      minHeight: '160px',
                     }}
                   />
                   {jsonError && (
@@ -953,9 +964,9 @@ function ParameterInput({
         </span>
         {param.required && <span style={{ color: '#ef4444', marginLeft: '0.2rem' }}>*</span>}
       </div>
-      <input
+      <VariableAutocompleteInput
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={onChange}
         placeholder={
           param.description ||
           (param.schema && !isReferenceObject(param.schema) ? String(param.schema.type || '') : '')

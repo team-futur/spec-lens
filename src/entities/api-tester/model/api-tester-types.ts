@@ -40,6 +40,13 @@ export interface SessionCookie {
   sameSite?: string;
 }
 
+// Variables for parameter/body substitution
+export interface Variable {
+  name: string;
+  value: string;
+  description?: string;
+}
+
 export interface ExecuteRequestParams {
   baseUrl: string;
   path: string;
@@ -93,6 +100,9 @@ export interface ApiTesterState {
   // Session Cookies (from backend Set-Cookie headers)
   sessionCookies: SessionCookie[];
 
+  // Variables (global, shared across all endpoints)
+  variables: Variable[];
+
   // Request params
   pathParams: Record<string, string>;
   queryParams: Record<string, string>;
@@ -123,6 +133,11 @@ export interface ApiTesterActions {
   addSessionCookies: (cookies: SessionCookie[]) => void;
   clearSessionCookies: () => void;
   removeExpiredCookies: () => number; // Returns count of removed cookies
+  // Variables
+  addVariable: (variable: Variable) => void;
+  updateVariable: (index: number, variable: Partial<Variable>) => void;
+  removeVariable: (index: number) => void;
+  clearVariables: () => void;
   // Request params
   setPathParam: (key: string, value: string) => void;
   setQueryParam: (key: string, value: string) => void;

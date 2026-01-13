@@ -5,6 +5,7 @@ import {
   type CustomCookie,
   type SessionCookie,
   type HistoryEntry,
+  type Variable,
   DEFAULT_AUTH_CONFIG,
 } from './api-tester-types.ts';
 import { testParamsStoreActions } from './test-params-store.ts';
@@ -154,12 +155,34 @@ function saveSessionCookies(cookies: SessionCookie[]): void {
   localStorage.setItem('api-tester-session-cookies', JSON.stringify(cookies));
 }
 
+// ========== Variables localStorage Functions ==========
+
+function loadPersistedVariables(): Variable[] {
+  if (typeof window === 'undefined') return [];
+
+  try {
+    const stored = localStorage.getItem('api-tester-variables');
+    if (stored) {
+      return JSON.parse(stored) as Variable[];
+    }
+  } catch {
+    // Ignore parse errors
+  }
+  return [];
+}
+
+function saveVariables(variables: Variable[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem('api-tester-variables', JSON.stringify(variables));
+}
+
 // ========== Auth & Cookie Store ==========
 
 export interface AuthCookieState {
   authConfig: AuthConfig;
   customCookies: CustomCookie[];
   sessionCookies: SessionCookie[];
+  variables: Variable[];
   history: HistoryEntry[];
 }
 
@@ -177,6 +200,11 @@ export interface AuthCookieActions {
   addSessionCookies: (cookies: SessionCookie[]) => void;
   clearSessionCookies: () => void;
   removeExpiredCookies: () => number;
+  // Variables
+  addVariable: (variable: Variable) => void;
+  updateVariable: (index: number, variable: Partial<Variable>) => void;
+  removeVariable: (index: number) => void;
+  clearVariables: () => void;
   // History
   addToHistory: (entry: HistoryEntry) => void;
   clearHistory: () => void;
@@ -188,6 +216,7 @@ const initialState: AuthCookieState = {
   authConfig: loadPersistedAuthConfig(),
   customCookies: loadPersistedCookies(),
   sessionCookies: loadPersistedSessionCookies(),
+  variables: loadPersistedVariables(),
   history: [],
 };
 
@@ -271,6 +300,34 @@ export const useAuthCookieStore = create<AuthCookieStore>((set) => ({
       return removedCount;
     },
 
+    // Variables
+    addVariable: (variable: Variable) =>
+      set((state) => {
+        const newVariables = [...state.variables, variable];
+        saveVariables(newVariables);
+        return { variables: newVariables };
+      }),
+
+    updateVariable: (index: number, variable: Partial<Variable>) =>
+      set((state) => {
+        const newVariables = [...state.variables];
+        newVariables[index] = { ...newVariables[index], ...variable };
+        saveVariables(newVariables);
+        return { variables: newVariables };
+      }),
+
+    removeVariable: (index: number) =>
+      set((state) => {
+        const newVariables = state.variables.filter((_, i) => i !== index);
+        saveVariables(newVariables);
+        return { variables: newVariables };
+      }),
+
+    clearVariables: () => {
+      saveVariables([]);
+      return set({ variables: [] });
+    },
+
     addToHistory: (entry: HistoryEntry) =>
       set((state) => ({
         history: [entry, ...state.history].slice(0, 50),
@@ -287,6 +344,7 @@ export const authCookieStoreActions = useAuthCookieStore.getState().actions;
 export const useAuthConfig = () => useAuthCookieStore((s) => s.authConfig);
 export const useCustomCookies = () => useAuthCookieStore((s) => s.customCookies);
 export const useSessionCookies = () => useAuthCookieStore((s) => s.sessionCookies);
+export const useVariables = () => useAuthCookieStore((s) => s.variables);
 export const useHistory = () => useAuthCookieStore((s) => s.history);
 
 // ========== Backward Compatibility ==========
