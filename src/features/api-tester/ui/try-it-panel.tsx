@@ -9,6 +9,7 @@ import {
   Key,
   Loader2,
   Play,
+  Repeat,
   RotateCcw,
   Trash2,
 } from 'lucide-react';
@@ -45,6 +46,13 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
   const [showHeaders, setShowHeaders] = useState(true);
   const [copiedResponse, setCopiedResponse] = useState(false);
   const [jsonError, setJsonError] = useState<string | null>(null);
+
+  // Repeat request settings
+  const [showRepeatSettings, setShowRepeatSettings] = useState(false);
+  const [requestCount, setRequestCount] = useState(1);
+  const [requestInterval, setRequestInterval] = useState(0); // ms
+  const [currentRequestIndex, setCurrentRequestIndex] = useState(0);
+  const [isRepeating, setIsRepeating] = useState(false);
 
   const selectedServer = useSelectedServer();
   const authConfig = useAuthConfig();
@@ -96,10 +104,8 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
   const queryParameters = parameters.filter((p) => p.in === 'query');
   const hasRequestBody = !!endpoint.operation.requestBody;
 
-  async function handleExecute() {
-    if (!selectedServer) return;
-    apiTesterStoreActions.setExecuting(true);
-    apiTesterStoreActions.clearResponse();
+  // Single request execution
+  async function executeSingleRequest() {
     const result = await executeRequest({
       baseUrl: selectedServer,
       path: endpoint.path,
@@ -111,11 +117,9 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
       authConfig,
       customCookies,
     });
-    apiTesterStoreActions.setExecuting(false);
 
     if (result.success) {
       apiTesterStoreActions.setResponse(result.response);
-      // Store session cookies from the response
       if (result.setCookies && result.setCookies.length > 0) {
         apiTesterStoreActions.addSessionCookies(result.setCookies);
       }
@@ -136,6 +140,48 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
         error: result.error,
       });
     }
+
+    return result;
+  }
+
+  // Handle execute with repeat support
+  async function handleExecute() {
+    if (!selectedServer) return;
+
+    apiTesterStoreActions.setExecuting(true);
+    apiTesterStoreActions.clearResponse();
+
+    if (requestCount <= 1) {
+      // Single request
+      await executeSingleRequest();
+      apiTesterStoreActions.setExecuting(false);
+    } else {
+      // Multiple requests with interval
+      setIsRepeating(true);
+      setCurrentRequestIndex(0);
+
+      for (let i = 0; i < requestCount; i++) {
+        setCurrentRequestIndex(i + 1);
+
+        await executeSingleRequest();
+
+        // Wait for interval before next request (except for last one)
+        if (i < requestCount - 1 && requestInterval > 0) {
+          await new Promise((resolve) => setTimeout(resolve, requestInterval));
+        }
+      }
+
+      setIsRepeating(false);
+      setCurrentRequestIndex(0);
+      apiTesterStoreActions.setExecuting(false);
+    }
+  }
+
+  // Cancel repeating requests
+  function handleCancelRepeat() {
+    setIsRepeating(false);
+    setCurrentRequestIndex(0);
+    apiTesterStoreActions.setExecuting(false);
   }
 
   function handleCopyResponse() {
@@ -477,8 +523,135 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
             </div>
           )}
 
+          {/* Repeat Settings */}
+          <div>
+            <button
+              onClick={() => setShowRepeatSettings(!showRepeatSettings)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                padding: '0.6rem 1rem',
+                backgroundColor: 'transparent',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '0.4rem',
+                color: requestCount > 1 ? '#f59e0b' : '#9ca3af',
+                fontSize: '1.2rem',
+                cursor: 'pointer',
+              }}
+            >
+              <Repeat size={12} />
+              <span>Repeat: {requestCount}x</span>
+              {requestCount > 1 && requestInterval > 0 && (
+                <span style={{ color: '#6b7280' }}>({requestInterval}ms interval)</span>
+              )}
+              {showRepeatSettings ? (
+                <ChevronUp size={12} color='#9ca3af' />
+              ) : (
+                <ChevronDown size={12} color='#9ca3af' />
+              )}
+            </button>
+
+            {showRepeatSettings && (
+              <div
+                style={{
+                  marginTop: '0.8rem',
+                  padding: '1.2rem',
+                  backgroundColor: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: '0.6rem',
+                  display: 'flex',
+                  gap: '1.6rem',
+                  alignItems: 'flex-end',
+                }}
+              >
+                <div style={{ flex: 1 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      color: '#9ca3af',
+                      fontSize: '1.1rem',
+                      marginBottom: '0.4rem',
+                    }}
+                  >
+                    Request Count
+                  </label>
+                  <NumberInput
+                    value={requestCount}
+                    onChange={setRequestCount}
+                    min={1}
+                    max={100}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      color: '#9ca3af',
+                      fontSize: '1.1rem',
+                      marginBottom: '0.4rem',
+                    }}
+                  >
+                    Interval (ms)
+                  </label>
+                  <NumberInput
+                    value={requestInterval}
+                    onChange={setRequestInterval}
+                    min={0}
+                    max={60000}
+                    step={100}
+                  />
+                </div>
+                <button
+                  onClick={() => {
+                    setRequestCount(1);
+                    setRequestInterval(0);
+                  }}
+                  style={{
+                    padding: '0.8rem 1.2rem',
+                    backgroundColor: 'transparent',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '0.4rem',
+                    color: '#9ca3af',
+                    fontSize: '1.2rem',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Reset
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* Actions */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '0.8rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: '0.8rem',
+              paddingTop: '0.8rem',
+            }}
+          >
+            {isRepeating && (
+              <button
+                onClick={handleCancelRepeat}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.8rem',
+                  padding: '1rem 2rem',
+                  backgroundColor: '#dc2626',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '0.6rem',
+                  fontSize: '1.4rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                Cancel
+              </button>
+            )}
             <button
               onClick={handleExecute}
               disabled={isExecuting || !!jsonError}
@@ -501,7 +674,13 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
               ) : (
                 <Play size={16} fill='white' />
               )}
-              {isExecuting ? 'Sending...' : 'Execute Request'}
+              {isRepeating
+                ? `Sending ${currentRequestIndex}/${requestCount}...`
+                : isExecuting
+                  ? 'Sending...'
+                  : requestCount > 1
+                    ? `Execute ${requestCount}x`
+                    : 'Execute Request'}
             </button>
           </div>
 
@@ -668,6 +847,144 @@ function ParameterInput({
         }
         style={inputStyle}
       />
+    </div>
+  );
+}
+
+function NumberInput({
+  value,
+  onChange,
+  min = 0,
+  max = Infinity,
+  step = 1,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+}) {
+  const [inputValue, setInputValue] = useState(String(value));
+
+  // Sync with external value changes
+  useEffect(() => {
+    setInputValue(String(value));
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+
+    // Allow empty input for editing
+    if (raw === '') {
+      setInputValue('');
+      return;
+    }
+
+    // Remove leading zeros (except for "0" itself)
+    const cleaned = raw.replace(/^0+(?=\d)/, '');
+
+    // Only allow digits
+    if (!/^\d*$/.test(cleaned)) {
+      return;
+    }
+
+    setInputValue(cleaned);
+
+    const num = parseInt(cleaned, 10);
+    if (!isNaN(num)) {
+      const clamped = Math.max(min, Math.min(max, num));
+      onChange(clamped);
+    }
+  };
+
+  const handleBlur = () => {
+    // On blur, ensure we have a valid number
+    const num = parseInt(inputValue, 10);
+    if (isNaN(num) || inputValue === '') {
+      setInputValue(String(min));
+      onChange(min);
+    } else {
+      const clamped = Math.max(min, Math.min(max, num));
+      setInputValue(String(clamped));
+      onChange(clamped);
+    }
+  };
+
+  const increment = () => {
+    const newValue = Math.min(max, value + step);
+    onChange(newValue);
+    setInputValue(String(newValue));
+  };
+
+  const decrement = () => {
+    const newValue = Math.max(min, value - step);
+    onChange(newValue);
+    setInputValue(String(newValue));
+  };
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'stretch',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: '0.6rem',
+        overflow: 'hidden',
+      }}
+    >
+      <button
+        type='button'
+        onClick={decrement}
+        disabled={value <= min}
+        style={{
+          padding: '0.6rem 1rem',
+          backgroundColor: 'rgba(255,255,255,0.05)',
+          border: 'none',
+          borderRight: '1px solid rgba(255,255,255,0.1)',
+          color: value <= min ? '#4b5563' : '#9ca3af',
+          fontSize: '1.4rem',
+          cursor: value <= min ? 'not-allowed' : 'pointer',
+          transition: 'background-color 0.15s',
+        }}
+      >
+        −
+      </button>
+      <input
+        type='text'
+        inputMode='numeric'
+        value={inputValue}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        style={{
+          flex: 1,
+          width: '100%',
+          minWidth: '60px',
+          padding: '0.8rem 1rem',
+          backgroundColor: 'rgba(255,255,255,0.05)',
+          border: 'none',
+          color: '#e5e5e5',
+          fontSize: '1.3rem',
+          textAlign: 'center',
+          outline: 'none',
+        }}
+      />
+      <button
+        type='button'
+        onClick={increment}
+        disabled={value >= max}
+        style={{
+          padding: '0.6rem 1rem',
+          backgroundColor: 'rgba(255,255,255,0.05)',
+          border: 'none',
+          borderLeft: '1px solid rgba(255,255,255,0.1)',
+          color: value >= max ? '#4b5563' : '#9ca3af',
+          fontSize: '1.4rem',
+          cursor: value >= max ? 'not-allowed' : 'pointer',
+          transition: 'background-color 0.15s',
+        }}
+      >
+        +
+      </button>
     </div>
   );
 }
