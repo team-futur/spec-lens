@@ -2,12 +2,12 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 
 import { ChevronDown, ChevronUp, Check } from 'lucide-react';
 
-interface Option {
+interface Option<Value extends string | number> {
   label: string;
-  value: string;
+  value: Value;
 }
 
-export function FuturSelect({
+export function FuturSelect<Value extends string | number>({
   options,
   value,
   onChange,
@@ -16,9 +16,9 @@ export function FuturSelect({
   style,
   className,
 }: {
-  options: Option[];
-  value: string;
-  onChange: (value: string) => void;
+  options: Option<Value>[];
+  value: Value;
+  onChange: (value: Value) => void;
   width?: string;
   placeholder?: string;
   style?: CSSProperties;
@@ -42,7 +42,7 @@ export function FuturSelect({
     };
   }, []);
 
-  const handleSelect = (optionValue: string) => {
+  const handleSelect = (optionValue: Value) => {
     onChange(optionValue);
     setIsOpen(false);
   };

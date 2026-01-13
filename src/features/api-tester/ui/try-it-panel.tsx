@@ -4,6 +4,7 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
+  Cookie,
   Copy,
   Key,
   Loader2,
@@ -14,7 +15,6 @@ import {
 
 import {
   apiTesterStoreActions,
-  type AuthType,
   executeRequest,
   getExecuteStatusColor,
   useAuthConfig,
@@ -27,6 +27,7 @@ import {
   useRequestBody,
   useResponse,
   useSelectedServer,
+  useSessionCookies,
 } from '@/entities/api-tester';
 import {
   type OpenAPISpec,
@@ -42,13 +43,13 @@ import { FuturSelect } from '@/shared/ui/select';
 export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec: OpenAPISpec }) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [showHeaders, setShowHeaders] = useState(true);
-  const [showAuth, setShowAuth] = useState(true);
   const [copiedResponse, setCopiedResponse] = useState(false);
   const [jsonError, setJsonError] = useState<string | null>(null);
 
   const selectedServer = useSelectedServer();
   const authConfig = useAuthConfig();
   const customCookies = useCustomCookies();
+  const sessionCookies = useSessionCookies();
   const pathParams = usePathParams();
   const queryParams = useQueryParams();
   const headers = useHeaders();
@@ -212,272 +213,81 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
             />
           </div>
 
-          {/* Authentication */}
-          <div>
-            <div
-              onClick={() => setShowAuth(!showAuth)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.8rem',
-                cursor: 'pointer',
-                marginBottom: '0.6rem',
-              }}
-            >
-              <Key size={14} color='#9ca3af' />
-              <span style={{ color: '#9ca3af', fontSize: '1.2rem', fontWeight: 500 }}>
-                Authentication
-              </span>
+          {/* Auth & Cookies Status (Read-only) */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1.6rem',
+              padding: '1rem 1.2rem',
+              backgroundColor: 'rgba(255,255,255,0.02)',
+              borderRadius: '0.6rem',
+              border: '1px solid rgba(255,255,255,0.08)',
+            }}
+          >
+            {/* Auth Status */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <Key size={14} color={authConfig.type !== 'none' ? '#22c55e' : '#9ca3af'} />
+              <span style={{ color: '#9ca3af', fontSize: '1.2rem' }}>Auth:</span>
               <span
                 style={{
                   backgroundColor:
                     authConfig.type !== 'none' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255,255,255,0.1)',
-                  padding: '0.2rem 0.6rem',
+                  padding: '0.2rem 0.8rem',
                   borderRadius: '1rem',
-                  fontSize: '1rem',
+                  fontSize: '1.1rem',
                   color: authConfig.type !== 'none' ? '#22c55e' : '#9ca3af',
+                  fontWeight: 500,
                 }}
               >
                 {authConfig.type === 'none' ? 'None' : authConfig.type.toUpperCase()}
               </span>
-              {showAuth ? (
-                <ChevronUp size={12} color='#9ca3af' />
-              ) : (
-                <ChevronDown size={12} color='#9ca3af' />
-              )}
             </div>
-            {showAuth && (
-              <div
+
+            {/* Separator */}
+            <div
+              style={{
+                width: '1px',
+                height: '1.6rem',
+                backgroundColor: 'rgba(255,255,255,0.1)',
+              }}
+            />
+
+            {/* Cookies Status */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <Cookie
+                size={14}
+                color={customCookies.length + sessionCookies.length > 0 ? '#f59e0b' : '#9ca3af'}
+              />
+              <span style={{ color: '#9ca3af', fontSize: '1.2rem' }}>Cookies:</span>
+              <span
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '1rem',
-                  padding: '1rem',
-                  backgroundColor: 'rgba(255,255,255,0.02)',
-                  borderRadius: '0.6rem',
-                  border: '1px solid rgba(255,255,255,0.08)',
+                  backgroundColor:
+                    customCookies.length + sessionCookies.length > 0
+                      ? 'rgba(245, 158, 11, 0.2)'
+                      : 'rgba(255,255,255,0.1)',
+                  padding: '0.2rem 0.8rem',
+                  borderRadius: '1rem',
+                  fontSize: '1.1rem',
+                  color: customCookies.length + sessionCookies.length > 0 ? '#f59e0b' : '#9ca3af',
+                  fontWeight: 500,
                 }}
               >
-                {/* Auth Type Selection */}
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      color: '#9ca3af',
-                      fontSize: '1.1rem',
-                      marginBottom: '0.4rem',
-                    }}
-                  >
-                    Type
-                  </label>
-                  <FuturSelect
-                    value={authConfig.type}
-                    onChange={(val) =>
-                      apiTesterStoreActions.setAuthConfig({ type: val as AuthType })
-                    }
-                    options={[
-                      { label: 'None', value: 'none' },
-                      { label: 'Bearer Token', value: 'bearer' },
-                      { label: 'API Key', value: 'apiKey' },
-                      { label: 'Basic Auth', value: 'basic' },
-                    ]}
-                  />
-                </div>
+                {customCookies.length + sessionCookies.length}
+              </span>
+            </div>
 
-                {/* Bearer Token */}
-                {authConfig.type === 'bearer' && (
-                  <div>
-                    <label
-                      style={{
-                        display: 'block',
-                        color: '#9ca3af',
-                        fontSize: '1.1rem',
-                        marginBottom: '0.4rem',
-                      }}
-                    >
-                      Token
-                    </label>
-                    <input
-                      type='password'
-                      value={authConfig.bearerToken || ''}
-                      onChange={(e) =>
-                        apiTesterStoreActions.setAuthConfig({ bearerToken: e.target.value })
-                      }
-                      placeholder='Enter your bearer token'
-                      style={inputStyle}
-                    />
-                  </div>
-                )}
-
-                {/* API Key */}
-                {authConfig.type === 'apiKey' && (
-                  <>
-                    <div style={{ display: 'flex', gap: '0.8rem' }}>
-                      <div style={{ flex: 1 }}>
-                        <label
-                          style={{
-                            display: 'block',
-                            color: '#9ca3af',
-                            fontSize: '1.1rem',
-                            marginBottom: '0.4rem',
-                          }}
-                        >
-                          Key Name
-                        </label>
-                        <input
-                          value={authConfig.apiKeyName || ''}
-                          onChange={(e) =>
-                            apiTesterStoreActions.setAuthConfig({ apiKeyName: e.target.value })
-                          }
-                          placeholder='X-API-Key'
-                          style={inputStyle}
-                        />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <label
-                          style={{
-                            display: 'block',
-                            color: '#9ca3af',
-                            fontSize: '1.1rem',
-                            marginBottom: '0.4rem',
-                          }}
-                        >
-                          Location
-                        </label>
-                        <FuturSelect
-                          value={authConfig.apiKeyLocation || 'header'}
-                          onChange={(val) =>
-                            apiTesterStoreActions.setAuthConfig({
-                              apiKeyLocation: val as 'header' | 'query',
-                            })
-                          }
-                          options={[
-                            { label: 'Header', value: 'header' },
-                            { label: 'Query Parameter', value: 'query' },
-                          ]}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label
-                        style={{
-                          display: 'block',
-                          color: '#9ca3af',
-                          fontSize: '1.1rem',
-                          marginBottom: '0.4rem',
-                        }}
-                      >
-                        Key Value
-                      </label>
-                      <input
-                        type='password'
-                        value={authConfig.apiKeyValue || ''}
-                        onChange={(e) =>
-                          apiTesterStoreActions.setAuthConfig({ apiKeyValue: e.target.value })
-                        }
-                        placeholder='Enter your API key'
-                        style={inputStyle}
-                      />
-                    </div>
-                  </>
-                )}
-
-                {/* Basic Auth */}
-                {authConfig.type === 'basic' && (
-                  <div style={{ display: 'flex', gap: '0.8rem' }}>
-                    <div style={{ flex: 1 }}>
-                      <label
-                        style={{
-                          display: 'block',
-                          color: '#9ca3af',
-                          fontSize: '1.1rem',
-                          marginBottom: '0.4rem',
-                        }}
-                      >
-                        Username
-                      </label>
-                      <input
-                        value={authConfig.basicUsername || ''}
-                        onChange={(e) =>
-                          apiTesterStoreActions.setAuthConfig({ basicUsername: e.target.value })
-                        }
-                        placeholder='Username'
-                        style={inputStyle}
-                      />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <label
-                        style={{
-                          display: 'block',
-                          color: '#9ca3af',
-                          fontSize: '1.1rem',
-                          marginBottom: '0.4rem',
-                        }}
-                      >
-                        Password
-                      </label>
-                      <input
-                        type='password'
-                        value={authConfig.basicPassword || ''}
-                        onChange={(e) =>
-                          apiTesterStoreActions.setAuthConfig({ basicPassword: e.target.value })
-                        }
-                        placeholder='Password'
-                        style={inputStyle}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Persist Session */}
-                {authConfig.type !== 'none' && (
-                  <label
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.6rem',
-                      cursor: 'pointer',
-                      color: '#9ca3af',
-                      fontSize: '1.2rem',
-                    }}
-                  >
-                    <input
-                      type='checkbox'
-                      checked={authConfig.persistSession || false}
-                      onChange={(e) =>
-                        apiTesterStoreActions.setAuthConfig({ persistSession: e.target.checked })
-                      }
-                      style={{ width: '1.4rem', height: '1.4rem', cursor: 'pointer' }}
-                    />
-                    Remember credentials
-                  </label>
-                )}
-
-                {/* Clear Auth Button */}
-                {authConfig.type !== 'none' && (
-                  <button
-                    onClick={() => apiTesterStoreActions.clearAuth()}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.4rem',
-                      padding: '0.6rem 1rem',
-                      backgroundColor: 'transparent',
-                      border: '1px solid rgba(239, 68, 68, 0.3)',
-                      borderRadius: '0.4rem',
-                      color: '#ef4444',
-                      fontSize: '1.2rem',
-                      cursor: 'pointer',
-                      alignSelf: 'flex-start',
-                    }}
-                  >
-                    <Trash2 size={12} />
-                    Clear Authentication
-                  </button>
-                )}
-              </div>
-            )}
+            {/* Info text */}
+            <span
+              style={{
+                marginLeft: 'auto',
+                color: '#6b7280',
+                fontSize: '1.1rem',
+                fontStyle: 'italic',
+              }}
+            >
+              Configure in Global Auth Panel
+            </span>
           </div>
 
           {/* Parameters Group */}
