@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
 
-import { ChevronDown, ChevronRight, Info } from 'lucide-react';
+import { ChevronDown, Info } from 'lucide-react';
 
 import { resolveSchema } from '../lib/openapi-parser.ts';
 import {

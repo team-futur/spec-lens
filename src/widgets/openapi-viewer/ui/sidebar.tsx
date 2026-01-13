@@ -153,7 +153,7 @@ export function Sidebar() {
           animate={{ width: sidebarWidth.get() || 320, opacity: 1 }}
           exit={{ width: 0, opacity: 0 }}
           transition={{
-            width: { duration: isResizing ? 0 : 0.3, ease: 'easeInOut' },
+            width: { duration: isResizing ? 0 : 0.2, ease: 'easeInOut' },
             opacity: { duration: 0.2 },
           }}
           style={{
