@@ -4,10 +4,10 @@ import {
   type AuthConfig,
   type CustomCookie,
   type SessionCookie,
-  type HistoryEntry,
   type Variable,
   DEFAULT_AUTH_CONFIG,
 } from './api-tester-types.ts';
+import { historyStoreActions } from './history-store.ts';
 import { testParamsStoreActions } from './test-params-store.ts';
 
 // Re-export test params store for backward compatibility
@@ -22,6 +22,9 @@ export {
   useIsExecuting,
   useExecuteError,
 } from './test-params-store.ts';
+
+// Re-export history store
+export { historyStoreActions, useHistory } from './history-store.ts';
 
 // ========== Cookie Utility Functions ==========
 
@@ -183,7 +186,6 @@ export interface AuthCookieState {
   customCookies: CustomCookie[];
   sessionCookies: SessionCookie[];
   variables: Variable[];
-  history: HistoryEntry[];
 }
 
 export interface AuthCookieActions {
@@ -205,9 +207,6 @@ export interface AuthCookieActions {
   updateVariable: (index: number, variable: Partial<Variable>) => void;
   removeVariable: (index: number) => void;
   clearVariables: () => void;
-  // History
-  addToHistory: (entry: HistoryEntry) => void;
-  clearHistory: () => void;
 }
 
 export type AuthCookieStore = AuthCookieState & { actions: AuthCookieActions };
@@ -217,7 +216,6 @@ const initialState: AuthCookieState = {
   customCookies: loadPersistedCookies(),
   sessionCookies: loadPersistedSessionCookies(),
   variables: loadPersistedVariables(),
-  history: [],
 };
 
 export const useAuthCookieStore = create<AuthCookieStore>((set) => ({
@@ -327,13 +325,6 @@ export const useAuthCookieStore = create<AuthCookieStore>((set) => ({
       saveVariables([]);
       return set({ variables: [] });
     },
-
-    addToHistory: (entry: HistoryEntry) =>
-      set((state) => ({
-        history: [entry, ...state.history].slice(0, 50),
-      })),
-
-    clearHistory: () => set({ history: [] }),
   },
 }));
 
@@ -345,11 +336,11 @@ export const useAuthConfig = () => useAuthCookieStore((s) => s.authConfig);
 export const useCustomCookies = () => useAuthCookieStore((s) => s.customCookies);
 export const useSessionCookies = () => useAuthCookieStore((s) => s.sessionCookies);
 export const useVariables = () => useAuthCookieStore((s) => s.variables);
-export const useHistory = () => useAuthCookieStore((s) => s.history);
 
 // ========== Backward Compatibility ==========
 // Combined actions object for existing code that uses apiTesterStoreActions
 export const apiTesterStoreActions = {
   ...testParamsStoreActions,
   ...authCookieStoreActions,
+  ...historyStoreActions,
 };

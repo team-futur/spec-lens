@@ -194,6 +194,8 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
 
   // Single request execution
   async function executeSingleRequest() {
+    const startTime = Date.now();
+
     const result = await executeRequest({
       baseUrl: selectedServer,
       path: endpoint.path,
@@ -206,6 +208,26 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
       customCookies,
     });
 
+    const duration = Date.now() - startTime;
+
+    // Create history entry with extended format
+    const historyEntry = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
+      timestamp: Date.now(),
+      method: endpoint.method,
+      url: `${selectedServer}${endpoint.path}`,
+      path: endpoint.path,
+      request: {
+        pathParams,
+        queryParams,
+        headers,
+        body: requestBody,
+      },
+      response: result.success ? result.response : null,
+      error: result.success ? null : result.error,
+      duration,
+    };
+
     if (result.success) {
       apiTesterStoreActions.setResponse(result.response);
 
@@ -215,23 +237,12 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
       } else if (result.setCookies && result.setCookies.length > 0) {
         apiTesterStoreActions.addSessionCookies(result.setCookies);
       }
-      apiTesterStoreActions.addToHistory({
-        timestamp: Date.now(),
-        method: endpoint.method,
-        url: `${selectedServer}${endpoint.path}`,
-        response: result.response,
-        error: null,
-      });
     } else {
       apiTesterStoreActions.setExecuteError(result.error);
-      apiTesterStoreActions.addToHistory({
-        timestamp: Date.now(),
-        method: endpoint.method,
-        url: `${selectedServer}${endpoint.path}`,
-        response: null,
-        error: result.error,
-      });
     }
+
+    // Save to history
+    apiTesterStoreActions.addToHistory(historyEntry);
 
     return result;
   }
