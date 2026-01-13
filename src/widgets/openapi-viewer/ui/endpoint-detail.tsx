@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
+import { JsonActionWrapper } from './json-action-wrapper';
 import {
   type ParsedEndpoint,
   type OpenAPISpec,
@@ -11,6 +12,7 @@ import {
   isReferenceObject,
   MethodBadge,
   SchemaViewer,
+  generateExample,
 } from '@/entities/openapi';
 import { TryItPanel } from '@/features/api-tester';
 import { FormattedText } from '@/shared/ui/formatted-text';
@@ -143,12 +145,14 @@ export function EndpointDetail({
       {/* Parameters Section */}
       {parameters.length > 0 && (
         <Section title='Parameters'>
-          {pathParams.length > 0 && <ParameterGroup title='Path Parameters' params={pathParams} />}
+          {pathParams.length > 0 && (
+            <ParameterGroup title='Path Parameters' params={pathParams} spec={spec} />
+          )}
           {queryParams.length > 0 && (
-            <ParameterGroup title='Query Parameters' params={queryParams} />
+            <ParameterGroup title='Query Parameters' params={queryParams} spec={spec} />
           )}
           {headerParams.length > 0 && (
-            <ParameterGroup title='Header Parameters' params={headerParams} />
+            <ParameterGroup title='Header Parameters' params={headerParams} spec={spec} />
           )}
         </Section>
       )}
@@ -156,16 +160,12 @@ export function EndpointDetail({
       {/* Request Body Section */}
       {requestBodyContent?.schema && (
         <Section title='Request Body'>
-          <div
-            style={{
-              padding: '1.6rem',
-              backgroundColor: 'rgba(255,255,255,0.04)', // Slightly lighter background
-              borderRadius: '0.8rem', // Slightly more rounded
-              border: '1px solid rgba(255,255,255,0.08)',
-            }}
+          <JsonActionWrapper
+            data={generateExample(requestBodyContent.schema, spec)}
+            defaultView='schema'
           >
             <SchemaViewer schema={requestBodyContent.schema} spec={spec} />
-          </div>
+          </JsonActionWrapper>
         </Section>
       )}
 
@@ -220,7 +220,28 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 // Parameter Group Component
-function ParameterGroup({ title, params }: { title: string; params: ParameterObject[] }) {
+function ParameterGroup({
+  title,
+  params,
+  spec,
+}: {
+  title: string;
+  params: ParameterObject[];
+  spec: OpenAPISpec;
+}) {
+  // Generate JSON example for parameters
+  const paramExample = params.reduce(
+    (acc, param) => {
+      if (param.schema && !isReferenceObject(param.schema)) {
+        acc[param.name] = generateExample(param.schema, spec) ?? 'string';
+      } else {
+        acc[param.name] = 'string';
+      }
+      return acc;
+    },
+    {} as Record<string, any>,
+  );
+
   return (
     <div style={{ marginBottom: '1.6rem' }}>
       <h3
@@ -235,63 +256,71 @@ function ParameterGroup({ title, params }: { title: string; params: ParameterObj
       >
         {title}
       </h3>
-      <div
-        style={{
-          backgroundColor: 'rgba(255,255,255,0.04)', // Slightly lighter
-          borderRadius: '0.8rem',
-          border: '1px solid rgba(255,255,255,0.08)',
-          overflow: 'hidden',
-        }}
-      >
-        {params.map((param, index) => (
-          <div
-            key={param.name}
-            style={{
-              padding: '1.2rem 1.6rem',
-              borderBottom: index < params.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-            }}
-          >
+      <JsonActionWrapper data={paramExample}>
+        <div
+          style={{
+            // Removed outer style as JsonActionWrapper handles the container style for the schema view?
+            // Wait, JsonActionWrapper puts children in a padded container.
+            // But ParameterGroup used to have a list style.
+            // I should make children just the list of parameters.
+            // However, the original design had the container around the list.
+            // JsonActionWrapper provides a container for children.
+            // So I just need to return the list items here.
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {params.map((param, index) => (
             <div
+              key={param.name}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.8rem',
-                marginBottom: '0.4rem',
+                padding: '1.2rem 0', // Vertical padding only, horizontal handled by wrapper
+                borderBottom:
+                  index < params.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
               }}
             >
-              <span
+              <div
                 style={{
-                  color: '#f3f4f6', // Gray-100
-                  fontSize: '1.3rem',
-                  fontFamily: 'monospace',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.8rem',
+                  marginBottom: '0.4rem',
                 }}
               >
-                {param.name}
-              </span>
-              {param.required && (
-                <span style={{ color: '#ef4444', fontSize: '1.2rem' }}>required</span>
-              )}
-              {param.schema && !isReferenceObject(param.schema) && param.schema.type && (
                 <span
                   style={{
-                    color: '#9ca3af',
-                    fontSize: '1.2rem',
+                    color: '#f3f4f6', // Gray-100
+                    fontSize: '1.3rem',
                     fontFamily: 'monospace',
                   }}
                 >
-                  {param.schema.type}
+                  {param.name}
                 </span>
+                {param.required && (
+                  <span style={{ color: '#ef4444', fontSize: '1.2rem' }}>required</span>
+                )}
+                {param.schema && !isReferenceObject(param.schema) && param.schema.type && (
+                  <span
+                    style={{
+                      color: '#9ca3af',
+                      fontSize: '1.2rem',
+                      fontFamily: 'monospace',
+                    }}
+                  >
+                    {param.schema.type}
+                  </span>
+                )}
+              </div>
+              {param.description && (
+                <p style={{ color: '#d1d5db', fontSize: '1.2rem', margin: 0 }}>
+                  {/* Light gray desc */}
+                  <FormattedText text={param.description} />
+                </p>
               )}
             </div>
-            {param.description && (
-              <p style={{ color: '#d1d5db', fontSize: '1.2rem', margin: 0 }}>
-                {/* Light gray desc */}
-                <FormattedText text={param.description} />
-              </p>
-            )}
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </JsonActionWrapper>
     </div>
   );
 }
@@ -364,7 +393,9 @@ function ResponseItem({
           }}
         >
           <div style={{ paddingTop: '1.2rem' }}>
-            <SchemaViewer schema={schema} spec={spec} />
+            <JsonActionWrapper data={generateExample(schema, spec)} defaultView='schema'>
+              <SchemaViewer schema={schema} spec={spec} />
+            </JsonActionWrapper>
           </div>
         </div>
       )}

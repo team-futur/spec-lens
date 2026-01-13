@@ -288,9 +288,10 @@ export function Sidebar() {
                       </span>
                       <span
                         style={{
-                          color: '#4b5563',
-                          fontSize: '1.1rem',
+                          color: '#9ca3af', // Lightened for better visibility
+                          fontSize: '1.2rem', // Slightly larger
                           marginLeft: 'auto',
+                          fontWeight: 500,
                         }}
                       >
                         {endpoints.length}
