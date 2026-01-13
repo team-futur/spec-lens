@@ -1,7 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
 
-import { Menu, X, Upload, RefreshCw, Loader2, Link, FileJson } from 'lucide-react';
+import { Menu, X, Upload, RefreshCw, Link, FileJson } from 'lucide-react';
 
 import { EndpointDetail } from './endpoint-detail.tsx';
 import { Sidebar } from './sidebar.tsx';
@@ -11,7 +12,6 @@ import {
   useSpec,
   useIsSidebarOpen,
   useSelectedEndpoint,
-  useIsRefreshing,
   type OpenAPISpec,
   validateOpenAPISpec,
 } from '@/entities/openapi';
@@ -25,7 +25,6 @@ export function ViewerLayout() {
   const selectedEndpointKey = useSelectedEndpoint();
   const endpoints = useOpenAPIStore((s) => s.endpoints);
   const specSource = useOpenAPIStore((s) => s.specSource);
-  const isRefreshing = useIsRefreshing();
 
   // Clear spec and navigate back to spec loader
   const handleClearSpec = () => {
@@ -33,12 +32,21 @@ export function ViewerLayout() {
     navigate({ to: '/', replace: true });
   };
 
+  // Local state for spinning animation
+  const [isSpinning, setIsSpinning] = useState(false);
+
   // Refresh spec from URL (only for URL sources)
   const handleRefreshSpec = async () => {
     if (!specSource || specSource.type !== 'url') return;
+    if (isSpinning) return; // Prevent double-click
 
+    // Start loading state
+    setIsSpinning(true);
     openAPIStoreActions.setRefreshing(true);
     openAPIStoreActions.setRefreshError(null);
+
+    const MIN_SPIN_DURATION = 800; // Minimum spin time for UX
+    const startTime = Date.now();
 
     try {
       const result = await checkSpecUpdate({
@@ -70,11 +78,20 @@ export function ViewerLayout() {
           lastModified: result.newLastModified || specSource.lastModified,
         });
       }
-
-      openAPIStoreActions.setRefreshing(false);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to refresh spec';
       openAPIStoreActions.setRefreshError(message);
+    } finally {
+      // Ensure minimum spin duration for smooth UX
+      const elapsed = Date.now() - startTime;
+      const remaining = Math.max(0, MIN_SPIN_DURATION - elapsed);
+
+      if (remaining > 0) {
+        await new Promise((resolve) => setTimeout(resolve, remaining));
+      }
+
+      setIsSpinning(false);
+      openAPIStoreActions.setRefreshing(false);
     }
   };
 
@@ -117,8 +134,14 @@ export function ViewerLayout() {
         }}
         className='mobile-only'
       >
-        <button
+        <motion.button
           onClick={openAPIStoreActions.toggleSidebar}
+          whileHover={{
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            scale: 1.05,
+          }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ duration: 0.15 }}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -126,16 +149,23 @@ export function ViewerLayout() {
             padding: '0.8rem',
             backgroundColor: 'transparent',
             border: 'none',
+            borderRadius: '0.6rem',
             cursor: 'pointer',
           }}
         >
           {isSidebarOpen ? <X size={24} color='#e5e5e5' /> : <Menu size={24} color='#e5e5e5' />}
-        </button>
+        </motion.button>
         <span style={{ color: '#e5e5e5', fontSize: '1.4rem', fontWeight: 600 }}>
           {spec.info.title}
         </span>
-        <button
+        <motion.button
           onClick={handleClearSpec}
+          whileHover={{
+            backgroundColor: 'rgba(255,255,255,0.1)',
+            scale: 1.05,
+          }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ duration: 0.15 }}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -143,11 +173,12 @@ export function ViewerLayout() {
             padding: '0.8rem',
             backgroundColor: 'transparent',
             border: 'none',
+            borderRadius: '0.6rem',
             cursor: 'pointer',
           }}
         >
           <RefreshCw size={20} color='#6b7280' />
-        </button>
+        </motion.button>
       </div>
 
       {/* Sidebar */}
@@ -176,8 +207,15 @@ export function ViewerLayout() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
-            <button
+            <motion.button
               onClick={openAPIStoreActions.toggleSidebar}
+              whileHover={{
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                borderColor: 'rgba(255,255,255,0.2)',
+                scale: 1.02,
+              }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.15 }}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -190,7 +228,7 @@ export function ViewerLayout() {
               }}
             >
               {isSidebarOpen ? <X size={18} color='#9ca3af' /> : <Menu size={18} color='#9ca3af' />}
-            </button>
+            </motion.button>
             <div>
               <h1
                 style={{
@@ -230,53 +268,62 @@ export function ViewerLayout() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
             {canRefresh && (
-              <button
+              <motion.button
                 onClick={handleRefreshSpec}
-                disabled={isRefreshing}
-                title={isRefreshing ? 'Refreshing...' : 'Refresh spec from URL'}
+                disabled={isSpinning}
+                whileHover={
+                  isSpinning
+                    ? {}
+                    : {
+                        backgroundColor: 'rgba(255,255,255,0.1)',
+                        borderColor: 'rgba(255,255,255,0.2)',
+                        scale: 1.02,
+                      }
+                }
+                whileTap={isSpinning ? {} : { scale: 0.98 }}
+                transition={{ duration: 0.15 }}
+                title={isSpinning ? 'Refreshing...' : 'Refresh spec from URL'}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.6rem',
-                  padding: '0.8rem 1.2rem',
-                  backgroundColor: isRefreshing
-                    ? 'rgba(255,255,255,0.02)'
-                    : 'rgba(255,255,255,0.05)',
+                  gap: '0.8rem',
+                  padding: '0.8rem 1.4rem',
+                  backgroundColor: isSpinning ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '0.6rem',
-                  color: isRefreshing ? '#6b7280' : '#9ca3af',
+                  color: isSpinning ? '#6b7280' : '#e5e5e5',
                   fontSize: '1.3rem',
-                  cursor: isRefreshing ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s ease',
-                  opacity: isRefreshing ? 0.7 : 1,
+                  cursor: isSpinning ? 'not-allowed' : 'pointer',
+                  fontWeight: 500,
                 }}
               >
-                <AnimatePresence mode='wait'>
-                  {isRefreshing ? (
-                    <motion.div
-                      key='loader'
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    >
-                      <Loader2 size={14} />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key='refresh'
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    >
-                      <RefreshCw size={14} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                <span>{isRefreshing ? 'Refreshing' : 'Refresh'}</span>
-              </button>
+                <motion.div
+                  animate={isSpinning ? { rotate: 360 } : { rotate: 0 }}
+                  transition={
+                    isSpinning
+                      ? { duration: 1, repeat: Infinity, ease: 'linear' }
+                      : { duration: 0.2 }
+                  }
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <RefreshCw size={14} />
+                </motion.div>
+                <span>{isSpinning ? 'Refreshing' : 'Refresh'}</span>
+              </motion.button>
             )}
-            <button
+            <motion.button
               onClick={handleClearSpec}
+              whileHover={{
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                borderColor: 'rgba(255,255,255,0.2)',
+                scale: 1.02,
+              }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.15 }}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -285,15 +332,15 @@ export function ViewerLayout() {
                 backgroundColor: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: '0.6rem',
-                color: '#9ca3af',
+                color: '#e5e5e5',
                 fontSize: '1.3rem',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
+                fontWeight: 500,
               }}
             >
               <Upload size={14} />
               <span>Change Spec</span>
-            </button>
+            </motion.button>
           </div>
         </header>
 
