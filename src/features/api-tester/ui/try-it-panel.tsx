@@ -322,10 +322,10 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
             cursor: isExecuting ? 'not-allowed' : 'pointer',
             opacity: isExecuting ? 0.5 : 1,
           }}
-          title='Clear all test data for this endpoint'
+          title='Reset all test data for this endpoint'
         >
           <Trash2 size={10} />
-          Clear All
+          Reset All
         </button>
       </div>
 
