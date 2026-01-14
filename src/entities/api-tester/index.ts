@@ -2,6 +2,7 @@ export { getExecuteStatusColor } from './config/execute-status-color.ts';
 
 export { executeApiTestRequest } from './lib/execute-api-test-request.ts';
 
+// Types
 export type {
   AuthType,
   AuthConfig,
@@ -14,26 +15,29 @@ export type {
   ApiTesterStore,
 } from './model/api-tester-types.ts';
 export type { HistoryEntry } from './model/api-request-history-types.ts';
-
 export { DEFAULT_AUTH_CONFIG } from './model/api-tester-types.ts';
 
+// Auth store
+export { authStoreActions, useAuthConfig } from './model/auth-store.ts';
+
+// Cookie store
 export {
-  // Combined actions for backward compatibility
-  apiTesterStoreActions,
-  // Auth & Cookie store
-  authCookieStoreActions,
-  useAuthConfig,
+  cookieStoreActions,
   useCustomCookies,
   useSessionCookies,
-  useVariables,
   isCookieExpired,
   isCookieExpiringSoon,
   getCookieExpirationInfo,
-} from './model/api-tester-store.ts';
-export { useHistory } from './model/history-store.ts';
+} from './model/cookie-store.ts';
 
+// Variable store
+export { variableStoreActions, useVariables } from './model/variable-store.ts';
+
+// History store
+export { historyStoreActions, useHistory } from './model/history-store.ts';
+
+// Test params store
 export {
-  // Test params store
   useTestParamsStore,
   testParamsStoreActions,
   useSelectedServer,

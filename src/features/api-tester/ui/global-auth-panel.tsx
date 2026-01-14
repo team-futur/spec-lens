@@ -17,7 +17,10 @@ import {
 } from 'lucide-react';
 
 import {
-  apiTesterStoreActions,
+  authStoreActions,
+  cookieStoreActions,
+  variableStoreActions,
+  historyStoreActions,
   type AuthType,
   getCookieExpirationInfo,
   type HistoryEntry,
@@ -325,7 +328,7 @@ function AuthTab() {
         </label>
         <FuturSelect
           value={authConfig.type}
-          onChange={(val) => apiTesterStoreActions.setAuthConfig({ type: val as AuthType })}
+          onChange={(val) => authStoreActions.setAuthConfig({ type: val as AuthType })}
           options={[
             { label: 'None', value: 'none' },
             { label: 'Bearer Token', value: 'bearer' },
@@ -351,7 +354,7 @@ function AuthTab() {
           <input
             type='password'
             value={authConfig.bearerToken || ''}
-            onChange={(e) => apiTesterStoreActions.setAuthConfig({ bearerToken: e.target.value })}
+            onChange={(e) => authStoreActions.setAuthConfig({ bearerToken: e.target.value })}
             placeholder='Enter your bearer token'
             style={inputStyle}
           />
@@ -375,9 +378,7 @@ function AuthTab() {
               </label>
               <input
                 value={authConfig.apiKeyName || ''}
-                onChange={(e) =>
-                  apiTesterStoreActions.setAuthConfig({ apiKeyName: e.target.value })
-                }
+                onChange={(e) => authStoreActions.setAuthConfig({ apiKeyName: e.target.value })}
                 placeholder='X-API-Key'
                 style={inputStyle}
               />
@@ -396,7 +397,7 @@ function AuthTab() {
               <FuturSelect
                 value={authConfig.apiKeyLocation || 'header'}
                 onChange={(val) =>
-                  apiTesterStoreActions.setAuthConfig({
+                  authStoreActions.setAuthConfig({
                     apiKeyLocation: val as 'header' | 'query',
                   })
                 }
@@ -421,7 +422,7 @@ function AuthTab() {
             <input
               type='password'
               value={authConfig.apiKeyValue || ''}
-              onChange={(e) => apiTesterStoreActions.setAuthConfig({ apiKeyValue: e.target.value })}
+              onChange={(e) => authStoreActions.setAuthConfig({ apiKeyValue: e.target.value })}
               placeholder='Enter your API key'
               style={inputStyle}
             />
@@ -445,9 +446,7 @@ function AuthTab() {
             </label>
             <input
               value={authConfig.basicUsername || ''}
-              onChange={(e) =>
-                apiTesterStoreActions.setAuthConfig({ basicUsername: e.target.value })
-              }
+              onChange={(e) => authStoreActions.setAuthConfig({ basicUsername: e.target.value })}
               placeholder='Username'
               style={inputStyle}
             />
@@ -466,9 +465,7 @@ function AuthTab() {
             <input
               type='password'
               value={authConfig.basicPassword || ''}
-              onChange={(e) =>
-                apiTesterStoreActions.setAuthConfig({ basicPassword: e.target.value })
-              }
+              onChange={(e) => authStoreActions.setAuthConfig({ basicPassword: e.target.value })}
               placeholder='Password'
               style={inputStyle}
             />
@@ -499,16 +496,14 @@ function AuthTab() {
             <input
               type='checkbox'
               checked={authConfig.persistSession || false}
-              onChange={(e) =>
-                apiTesterStoreActions.setAuthConfig({ persistSession: e.target.checked })
-              }
+              onChange={(e) => authStoreActions.setAuthConfig({ persistSession: e.target.checked })}
               style={{ width: '1.4rem', height: '1.4rem', cursor: 'pointer' }}
             />
             Remember credentials
           </label>
 
           <button
-            onClick={() => apiTesterStoreActions.clearAuth()}
+            onClick={() => authStoreActions.clearAuth()}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -541,7 +536,7 @@ function CookiesTab() {
   // Auto-check for expired cookies every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      const removedCount = apiTesterStoreActions.removeExpiredCookies();
+      const removedCount = cookieStoreActions.removeExpiredCookies();
       if (removedCount > 0) {
         console.log(`[API Tester] Removed ${removedCount} expired session cookie(s)`);
       }
@@ -554,7 +549,7 @@ function CookiesTab() {
 
   const handleAddCookie = () => {
     if (newCookieName.trim() && newCookieValue.trim()) {
-      apiTesterStoreActions.addCustomCookie({
+      cookieStoreActions.addCustomCookie({
         name: newCookieName.trim(),
         value: newCookieValue.trim(),
         enabled: true,
@@ -786,7 +781,7 @@ function CookiesTab() {
               {/* Toggle */}
               <button
                 onClick={() =>
-                  apiTesterStoreActions.updateCustomCookie(index, { enabled: !cookie.enabled })
+                  cookieStoreActions.updateCustomCookie(index, { enabled: !cookie.enabled })
                 }
                 style={{
                   display: 'flex',
@@ -813,7 +808,7 @@ function CookiesTab() {
               <input
                 value={cookie.name}
                 onChange={(e) =>
-                  apiTesterStoreActions.updateCustomCookie(index, { name: e.target.value })
+                  cookieStoreActions.updateCustomCookie(index, { name: e.target.value })
                 }
                 style={{
                   ...inputStyle,
@@ -827,7 +822,7 @@ function CookiesTab() {
               <input
                 value={cookie.value}
                 onChange={(e) =>
-                  apiTesterStoreActions.updateCustomCookie(index, { value: e.target.value })
+                  cookieStoreActions.updateCustomCookie(index, { value: e.target.value })
                 }
                 style={{
                   ...inputStyle,
@@ -839,7 +834,7 @@ function CookiesTab() {
 
               {/* Delete */}
               <button
-                onClick={() => apiTesterStoreActions.removeCustomCookie(index)}
+                onClick={() => cookieStoreActions.removeCustomCookie(index)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -860,7 +855,7 @@ function CookiesTab() {
 
           {/* Clear Custom Cookies */}
           <button
-            onClick={() => apiTesterStoreActions.clearCustomCookies()}
+            onClick={() => cookieStoreActions.clearCustomCookies()}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -906,7 +901,7 @@ function VariablesTab() {
 
   const handleAdd = () => {
     if (newName.trim()) {
-      apiTesterStoreActions.addVariable({
+      variableStoreActions.addVariable({
         name: newName.trim(),
         value: newValue,
       });
@@ -1009,7 +1004,7 @@ function VariablesTab() {
                 <input
                   value={variable.name}
                   onChange={(e) =>
-                    apiTesterStoreActions.updateVariable(index, { name: e.target.value })
+                    variableStoreActions.updateVariable(index, { name: e.target.value })
                   }
                   style={{
                     ...inputStyle,
@@ -1023,7 +1018,7 @@ function VariablesTab() {
               <input
                 value={variable.value}
                 onChange={(e) =>
-                  apiTesterStoreActions.updateVariable(index, { value: e.target.value })
+                  variableStoreActions.updateVariable(index, { value: e.target.value })
                 }
                 placeholder='Value'
                 style={{
@@ -1035,7 +1030,7 @@ function VariablesTab() {
 
               {/* Delete */}
               <button
-                onClick={() => apiTesterStoreActions.removeVariable(index)}
+                onClick={() => variableStoreActions.removeVariable(index)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -1056,7 +1051,7 @@ function VariablesTab() {
 
           {/* Clear All Variables */}
           <button
-            onClick={() => apiTesterStoreActions.clearVariables()}
+            onClick={() => variableStoreActions.clearVariables()}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -1124,7 +1119,7 @@ function HistoryTab() {
           Recent Requests ({history.length})
         </span>
         <button
-          onClick={() => apiTesterStoreActions.clearHistory()}
+          onClick={() => historyStoreActions.clearHistory()}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -1248,7 +1243,7 @@ function HistoryItem({ entry }: { entry: HistoryEntry }) {
 
       {/* Delete Button */}
       <button
-        onClick={() => apiTesterStoreActions.removeHistoryEntry(entry.id)}
+        onClick={() => historyStoreActions.removeHistoryEntry(entry.id)}
         style={{
           display: 'flex',
           alignItems: 'center',

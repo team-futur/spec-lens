@@ -20,7 +20,9 @@ import {
 import { HeaderAutocompleteInput } from './header-autocomplete-input';
 import { VariableAutocompleteInput } from './variable-autocomplete-input';
 import {
-  apiTesterStoreActions,
+  testParamsStoreActions,
+  cookieStoreActions,
+  historyStoreActions,
   executeApiTestRequest,
   getExecuteStatusColor,
   useAuthConfig,
@@ -129,7 +131,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
   useEffect(() => {
     const serverList = spec.servers ?? DEFAULT_SERVERS;
     if (!selectedServer && serverList.length > 0) {
-      apiTesterStoreActions.setSelectedServer(serverList[0].url);
+      testParamsStoreActions.setSelectedServer(serverList[0].url);
     }
   }, [spec.servers, selectedServer]);
 
@@ -143,16 +145,16 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
       prevEndpointRef.current &&
       prevEndpointRef.current !== currentEndpointKey
     ) {
-      apiTesterStoreActions.saveCurrentParams(specSourceId, prevEndpointRef.current);
+      testParamsStoreActions.saveCurrentParams(specSourceId, prevEndpointRef.current);
     }
 
     // Load saved params for current endpoint
-    const hasData = apiTesterStoreActions.loadSavedParams(specSourceId, currentEndpointKey);
+    const hasData = testParamsStoreActions.loadSavedParams(specSourceId, currentEndpointKey);
 
     // If no saved data, reset and initialize with examples from OpenAPI spec
     if (!hasData) {
-      apiTesterStoreActions.resetParams();
-      if (bodyExample) apiTesterStoreActions.setRequestBody(bodyExample);
+      testParamsStoreActions.resetParams();
+      if (bodyExample) testParamsStoreActions.setRequestBody(bodyExample);
 
       // Initialize path and query params with examples from OpenAPI spec
       const merged = getMergedParameters(endpoint);
@@ -162,9 +164,9 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
         if (example !== null) {
           const exampleStr = typeof example === 'string' ? example : String(example);
           if (param.in === 'path') {
-            apiTesterStoreActions.setPathParam(param.name, exampleStr);
+            testParamsStoreActions.setPathParam(param.name, exampleStr);
           } else if (param.in === 'query') {
-            apiTesterStoreActions.setQueryParam(param.name, exampleStr);
+            testParamsStoreActions.setQueryParam(param.name, exampleStr);
           }
         }
       }
@@ -179,7 +181,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
     const endpointKey = `${endpoint.method}:${endpoint.path}`;
 
     const timeoutId = setTimeout(() => {
-      apiTesterStoreActions.saveCurrentParams(specSourceId, endpointKey);
+      testParamsStoreActions.saveCurrentParams(specSourceId, endpointKey);
     }, 500);
 
     return () => clearTimeout(timeoutId);
@@ -238,20 +240,20 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
     };
 
     if (result.success) {
-      apiTesterStoreActions.setResponse(result.response);
+      testParamsStoreActions.setResponse(result.response);
 
       // Clear session cookies on authentication failure (401 Unauthorized)
       if (result.response.status === 401) {
-        apiTesterStoreActions.clearSessionCookies();
+        cookieStoreActions.clearSessionCookies();
       } else if (result.setCookies && result.setCookies.length > 0) {
-        apiTesterStoreActions.addSessionCookies(result.setCookies);
+        cookieStoreActions.addSessionCookies(result.setCookies);
       }
     } else {
-      apiTesterStoreActions.setExecuteError(result.error);
+      testParamsStoreActions.setExecuteError(result.error);
     }
 
     // Save to history
-    apiTesterStoreActions.addToHistory(historyEntry);
+    historyStoreActions.addToHistory(historyEntry);
 
     return result;
   }
@@ -260,13 +262,13 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
   async function handleExecute() {
     if (!selectedServer) return;
 
-    apiTesterStoreActions.setExecuting(true);
-    apiTesterStoreActions.clearResponse();
+    testParamsStoreActions.setExecuting(true);
+    testParamsStoreActions.clearResponse();
 
     if (requestCount <= 1) {
       // Single request
       await executeSingleRequest();
-      apiTesterStoreActions.setExecuting(false);
+      testParamsStoreActions.setExecuting(false);
     } else {
       // Multiple requests with interval
       setIsRepeating(true);
@@ -285,7 +287,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
 
       setIsRepeating(false);
       setCurrentRequestIndex(0);
-      apiTesterStoreActions.setExecuting(false);
+      testParamsStoreActions.setExecuting(false);
     }
   }
 
@@ -293,7 +295,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
   function handleCancelRepeat() {
     setIsRepeating(false);
     setCurrentRequestIndex(0);
-    apiTesterStoreActions.setExecuting(false);
+    testParamsStoreActions.setExecuting(false);
   }
 
   function handleCopyResponse() {
@@ -307,8 +309,8 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
   // Clear current endpoint test data
   function handleClearCurrent() {
     const endpointKey = `${endpoint.method}:${endpoint.path}`;
-    apiTesterStoreActions.clearEndpointParams(specSourceId, endpointKey);
-    if (bodyExample) apiTesterStoreActions.setRequestBody(bodyExample);
+    testParamsStoreActions.clearEndpointParams(specSourceId, endpointKey);
+    if (bodyExample) testParamsStoreActions.setRequestBody(bodyExample);
   }
 
   return (
@@ -409,7 +411,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                 </label>
                 <FuturSelect
                   value={selectedServer}
-                  onChange={(val) => apiTesterStoreActions.setSelectedServer(val)}
+                  onChange={(val) => testParamsStoreActions.setSelectedServer(val)}
                   options={servers.map((s) => ({
                     label: `${s.url}${s.description ? ` (${s.description})` : ''}`,
                     value: s.url,
@@ -522,7 +524,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                           Path Params
                         </span>
                         <button
-                          onClick={() => apiTesterStoreActions.resetPathParams()}
+                          onClick={() => testParamsStoreActions.resetPathParams()}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -546,7 +548,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                             key={p.name}
                             param={p}
                             value={pathParams[p.name] || ''}
-                            onChange={(v) => apiTesterStoreActions.setPathParam(p.name, v)}
+                            onChange={(v) => testParamsStoreActions.setPathParam(p.name, v)}
                           />
                         ))}
                       </div>
@@ -573,7 +575,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                           Query Params
                         </span>
                         <button
-                          onClick={() => apiTesterStoreActions.resetQueryParams()}
+                          onClick={() => testParamsStoreActions.resetQueryParams()}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -597,7 +599,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                             key={p.name}
                             param={p}
                             value={queryParams[p.name] || ''}
-                            onChange={(v) => apiTesterStoreActions.setQueryParam(p.name, v)}
+                            onChange={(v) => testParamsStoreActions.setQueryParam(p.name, v)}
                           />
                         ))}
                       </div>
@@ -640,7 +642,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                     )}
                   </FlexRow>
                   <button
-                    onClick={() => apiTesterStoreActions.resetHeaders()}
+                    onClick={() => testParamsStoreActions.resetHeaders()}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -716,8 +718,8 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                               value={k}
                               onChange={(newKey) => {
                                 if (newKey !== k) {
-                                  apiTesterStoreActions.removeHeader(k);
-                                  apiTesterStoreActions.setHeader(newKey, v);
+                                  testParamsStoreActions.removeHeader(k);
+                                  testParamsStoreActions.setHeader(newKey, v);
                                 }
                               }}
                               style={{ ...inputStyle, flex: 1 }}
@@ -726,11 +728,11 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                               type='value'
                               headerName={k}
                               value={v}
-                              onChange={(newValue) => apiTesterStoreActions.setHeader(k, newValue)}
+                              onChange={(newValue) => testParamsStoreActions.setHeader(k, newValue)}
                               style={{ ...inputStyle, flex: 2 }}
                             />
                             <button
-                              onClick={() => apiTesterStoreActions.removeHeader(k)}
+                              onClick={() => testParamsStoreActions.removeHeader(k)}
                               style={iconButtonStyle}
                               title='Remove header'
                             >
@@ -766,7 +768,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                           <button
                             onClick={() => {
                               if (newHeaderName.trim()) {
-                                apiTesterStoreActions.setHeader(
+                                testParamsStoreActions.setHeader(
                                   newHeaderName.trim(),
                                   newHeaderValue,
                                 );
@@ -809,7 +811,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                     </label>
                     <button
                       onClick={() => {
-                        apiTesterStoreActions.setRequestBody(bodyExample);
+                        testParamsStoreActions.setRequestBody(bodyExample);
                       }}
                       title='Reset to default example'
                       style={{
@@ -830,7 +832,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                   <VariableAutocompleteInput
                     value={requestBody}
                     onChange={(value) => {
-                      apiTesterStoreActions.setRequestBody(value);
+                      testParamsStoreActions.setRequestBody(value);
                       if (value.trim()) {
                         try {
                           JSON.parse(value);
@@ -1102,7 +1104,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                           {copiedResponse ? <Check size={14} /> : <Copy size={14} />}
                         </button>
                         <button
-                          onClick={apiTesterStoreActions.clearResponse}
+                          onClick={testParamsStoreActions.clearResponse}
                           style={iconButtonStyle}
                         >
                           <Trash2 size={14} />
