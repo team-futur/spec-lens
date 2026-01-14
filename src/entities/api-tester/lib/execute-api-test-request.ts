@@ -2,7 +2,7 @@ import { applyAuth } from './apply-auth';
 import { buildExecuteUrl } from './build-execute-url';
 import { parseBody } from './parse-body';
 import type { ExecuteRequestOptions, ExecuteRequestResult } from '../model/api-tester-types';
-import { proxyApiRequest, type ProxyResponse } from '@/shared/server/proxy-api-request';
+import { proxyApiRequest } from '@/shared/server/proxy-api-request';
 
 /**
  * Execute an API Test request via server proxy to avoid CORS issues
@@ -58,7 +58,7 @@ export async function executeApiTestRequest(
       }
     }
 
-    const response = (await proxyApiRequest({
+    const response = await proxyApiRequest({
       data: {
         url,
         method,
@@ -66,7 +66,7 @@ export async function executeApiTestRequest(
         queryParams: filteredQueryParams,
         body: parsedBody,
       },
-    })) as ProxyResponse;
+    });
 
     return {
       success: true,
@@ -76,6 +76,7 @@ export async function executeApiTestRequest(
         headers: response.headers,
         data: response.data,
         duration: response.duration,
+        size: response.size,
       },
       setCookies: response.setCookies,
     };

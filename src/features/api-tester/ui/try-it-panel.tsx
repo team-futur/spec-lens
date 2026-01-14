@@ -51,6 +51,15 @@ import { FuturSelect } from '@/shared/ui/select';
 
 const DEFAULT_SERVERS = [{ url: 'http://localhost:3000', description: 'Local' }];
 
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  const size = bytes / Math.pow(k, i);
+  return `${size < 10 ? size.toFixed(1) : Math.round(size)} ${sizes[i]}`;
+}
+
 export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec: OpenAPISpec }) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [showHeaders, setShowHeaders] = useState(true);
@@ -1082,7 +1091,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                             {response.status}
                           </span>
                           <span style={{ fontSize: '1.2rem', color: '#9ca3af' }}>
-                            {response.duration}ms
+                            {response.duration}ms · {formatBytes(response.size)}
                           </span>
                         </>
                       ) : null}

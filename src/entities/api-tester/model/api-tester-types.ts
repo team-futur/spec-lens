@@ -82,6 +82,7 @@ export interface ResponseState {
   headers: Record<string, string>;
   data: unknown;
   duration: number;
+  size: number;
 }
 
 export interface HistoryEntry {

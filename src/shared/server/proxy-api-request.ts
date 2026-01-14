@@ -32,6 +32,7 @@ export interface ProxyResponse {
   headers: Record<string, string>;
   data: any;
   duration: number;
+  size: number;
   setCookies: ParsedCookie[];
 }
 
@@ -124,12 +125,28 @@ export const proxyApiRequest = createServerFn({ method: 'POST' })
         });
       }
 
+      // Calculate response size (Content-Length header first, fallback to body size)
+      let size = 0;
+      const contentLength = responseHeaders['content-length'];
+      if (contentLength) {
+        size = parseInt(contentLength, 10) || 0;
+      } else {
+        const data = response.data;
+        if (data !== null && data !== undefined) {
+          size =
+            typeof data === 'string'
+              ? new TextEncoder().encode(data).length
+              : new TextEncoder().encode(JSON.stringify(data)).length;
+        }
+      }
+
       return {
         status: response.status,
         statusText: response.statusText,
         headers: responseHeaders,
         data: response.data,
         duration: Math.round(duration),
+        size,
         setCookies,
       };
     } catch (err) {
@@ -143,12 +160,20 @@ export const proxyApiRequest = createServerFn({ method: 'POST' })
           throw new Error('Failed to connect to the server');
         }
         if (err.response) {
+          const errData = err.response.data;
+          const errSize =
+            errData !== null && errData !== undefined
+              ? typeof errData === 'string'
+                ? new TextEncoder().encode(errData).length
+                : new TextEncoder().encode(JSON.stringify(errData)).length
+              : 0;
           return {
             status: err.response.status,
             statusText: err.response.statusText,
             headers: {},
-            data: err.response.data,
+            data: errData,
             duration: Math.round(duration),
+            size: errSize,
             setCookies: [],
           };
         }
