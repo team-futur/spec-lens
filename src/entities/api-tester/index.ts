@@ -1,6 +1,6 @@
 export { getExecuteStatusColor } from './config/execute-status-color.ts';
 
-export { executeRequest } from './lib/execute-request.ts';
+export { executeApiTestRequest } from './lib/execute-api-test-request.ts';
 
 export type {
   AuthType,

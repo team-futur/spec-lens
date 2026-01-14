@@ -21,7 +21,7 @@ import { HeaderAutocompleteInput } from './header-autocomplete-input';
 import { VariableAutocompleteInput } from './variable-autocomplete-input';
 import {
   apiTesterStoreActions,
-  executeRequest,
+  executeApiTestRequest,
   getExecuteStatusColor,
   useAuthConfig,
   useCustomCookies,
@@ -196,7 +196,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
   async function executeSingleRequest() {
     const startTime = Date.now();
 
-    const result = await executeRequest({
+    const result = await executeApiTestRequest({
       baseUrl: selectedServer,
       path: endpoint.path,
       method: endpoint.method,

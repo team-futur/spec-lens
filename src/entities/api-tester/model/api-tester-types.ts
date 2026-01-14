@@ -57,6 +57,11 @@ export interface ExecuteRequestParams {
   body?: string;
 }
 
+export interface ExecuteRequestOptions extends ExecuteRequestParams {
+  authConfig?: AuthConfig;
+  customCookies?: CustomCookie[];
+}
+
 interface ExecuteResult {
   success: true;
   response: ResponseState;
