@@ -16,8 +16,8 @@ import {
   useSelectedMethods,
   useSelectedTags,
 } from '@/entities/openapi';
+import { smoothScrollTo } from '@/shared/lib';
 import { Tooltip } from '@/shared/ui/tooltip';
-import { smoothScrollTo } from '@/shared/utils/scroll';
 
 function generateEndpointHash(method: string, path: string): string {
   return `${method.toLowerCase()}${path.replace(/[{}]/g, '')}`;

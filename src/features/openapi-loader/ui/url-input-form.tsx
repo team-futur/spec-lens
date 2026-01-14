@@ -4,7 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { Link, Loader2, AlertCircle } from 'lucide-react';
 
 import { type OpenAPISpec, validateOpenAPISpec, openAPIStoreActions } from '@/entities/openapi';
-import { fetchExternalSpec } from '@/shared/server/fetch-external-spec';
+import { fetchExternalSpec } from '@/shared/server';
 
 export function UrlInputForm() {
   const [url, setUrl] = useState('');

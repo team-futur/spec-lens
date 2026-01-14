@@ -20,16 +20,66 @@ export function formatPhoneNumber(phoneNumber: string | number) {
   return String(phoneNumber); // string으로 변환
 }
 
-export function thousandSeparator(number?: string | number) {
-  if (!number) return '0';
+export function thousandSeparator(
+  number?: string | number,
+  options: {
+    allowNegative?: boolean;
+    allowDecimal?: boolean;
+    minimumFractionDigits?: number;
+    maximumFractionDigits?: number;
+  } = {},
+) {
+  const {
+    allowNegative = false,
+    allowDecimal = true,
+    minimumFractionDigits,
+    maximumFractionDigits,
+  } = options;
 
-  const removeComma = number.toString().replaceAll(',', '');
+  if (!number && number !== 0) return '0';
 
-  if (isNaN(Number(removeComma))) {
+  const stringValue = number.toString().replaceAll(',', '');
+
+  // 소숫점 허용하지 않으면 소숫점 제거
+  const cleanedValue = allowDecimal ? stringValue : stringValue.replace(/\./g, '');
+
+  // 소숫점으로 끝나는 경우 (입력 중) 보존
+  const endsWithDot = allowDecimal && cleanedValue.endsWith('.');
+
+  // 소숫점 뒤 0으로 끝나는 경우 (예: "1.50", "1.00") 보존
+  const decimalMatch = allowDecimal ? cleanedValue.match(/\.(\d*)$/) : null;
+  const trailingDecimal = decimalMatch ? decimalMatch[1] : '';
+
+  const numericValue = Number(cleanedValue);
+
+  if (Number.isNaN(numericValue)) {
     return '';
   }
 
-  return Number(removeComma).toLocaleString('ko-KR');
+  if (!allowNegative && numericValue < 0) {
+    return '0';
+  }
+
+  // 소숫점으로 끝나면 정수 포맷 후 . 붙이기
+  if (endsWithDot) {
+    return numericValue.toLocaleString('ko-KR') + '.';
+  }
+
+  // 소숫점 이하 자릿수가 있으면 그 자릿수 유지
+  if (trailingDecimal !== '') {
+    const maxFraction = maximumFractionDigits ?? trailingDecimal.length;
+    const minFraction = Math.min(minimumFractionDigits ?? trailingDecimal.length, maxFraction);
+
+    return numericValue.toLocaleString('ko-KR', {
+      minimumFractionDigits: minFraction,
+      maximumFractionDigits: maxFraction,
+    });
+  }
+
+  return numericValue.toLocaleString('ko-KR', {
+    minimumFractionDigits,
+    maximumFractionDigits,
+  });
 }
 
 export function formatDateString(date: string | number, formatter: string = '.') {

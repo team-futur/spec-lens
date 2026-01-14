@@ -2,7 +2,7 @@ import { applyAuth } from './apply-auth';
 import { buildExecuteUrl } from './build-execute-url';
 import { parseBody } from './parse-body';
 import type { ExecuteRequestOptions, ExecuteRequestResult } from '../model/api-tester-types';
-import { proxyApiRequest } from '@/shared/server/proxy-api-request';
+import { proxyApiRequest } from '@/shared/server';
 
 /**
  * Execute an API Test request via server proxy to avoid CORS issues

@@ -1,33 +1,5 @@
-import { dialog } from '@jigoooo/shared-ui';
-import { endOfYear, format, subYears } from 'date-fns';
-
-import { ALERT_TITLE_MOBILE_WARNING } from '@/shared/constants';
-
 export function sleep(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time));
-}
-
-export function isNullOrUndefined(value: any) {
-  return value === null || value === undefined;
-}
-
-export function convertToRGBA(hexColor: string, alpha: number) {
-  const r = parseInt(hexColor.slice(1, 3), 16);
-  const g = parseInt(hexColor.slice(3, 5), 16);
-  const b = parseInt(hexColor.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
-export function getYears(prevYearCount: number = 100) {
-  const currentYear = new Date().getFullYear();
-  const years: string[] = [];
-
-  for (let i = currentYear; i >= currentYear - prevYearCount; i--) {
-    const formattedYear = format(endOfYear(subYears(new Date(), currentYear - i)), 'yyyy');
-    years.push(formattedYear);
-  }
-
-  return years;
 }
 
 export function logOnDev(...message: any[]) {
@@ -93,25 +65,12 @@ export function detectDeviceTypeAndOS() {
   };
 }
 
-export function scrollToTop() {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth',
-  });
-}
-
-export function scrollToTopNoneSmooth() {
-  window.scrollTo({
-    top: 0,
-  });
-}
-
 export function openPhoneApp(phoneNumber: string) {
-  window.location.href = `tel:${phoneNumber}`;
+  window.open(`tel:${phoneNumber}`);
 }
 
 export function openSmsApp(phoneNumber: string, message: string = '') {
-  window.location.href = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+  window.open(`sms:${phoneNumber}?body=${encodeURIComponent(message)}`);
 }
 
 export function openKakaoMap({
@@ -146,11 +105,15 @@ export function openTMap({
 
   if (isMobile) {
     window.location.href = `tmap://search?name=${encodeURIComponent(placeName)}&lon=${longitude}&lat=${latitude}`;
+    return {
+      success: true,
+      message: null,
+    };
   } else {
-    dialog.warning({
-      title: ALERT_TITLE_MOBILE_WARNING,
-      content: '모바일에서만 지원됩니다.',
-    });
+    return {
+      success: true,
+      message: '모바일에서만 지원됩니다.',
+    };
   }
 }
 
@@ -348,32 +311,6 @@ export async function webShare(shareData: ShareData, failedSharedDataCopiedData:
   } else {
     copyToClipboard(failedSharedDataCopiedData);
   }
-}
-
-export function handleTextSelectionClear() {
-  return () => {
-    const selection = window.getSelection();
-    if (selection) {
-      selection.removeAllRanges();
-    }
-  };
-}
-
-export function devConsole(...args: any[]) {
-  if (import.meta.env.DEV) {
-    console.log(...args);
-  }
-}
-export function debounce<T extends (...args: any[]) => any>(
-  func: T,
-  wait: number,
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout;
-
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
 }
 
 export async function blurElement(delay = 0) {

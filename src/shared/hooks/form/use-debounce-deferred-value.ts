@@ -1,6 +1,6 @@
 import { useDeferredValue } from 'react';
 
-import { useDebounce } from '@/shared/hooks';
+import { useDebounce } from './use-debounce.ts';
 
 export function useDebounceDeferredValue<Value>(
   value: Value,

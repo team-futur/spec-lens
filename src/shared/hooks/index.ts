@@ -1,8 +1,7 @@
-export { useDebounce } from './common/use-debounce.ts';
-export { useTimer } from './common/use-timer.ts';
-export { useToggle } from './common/use-toggle.ts';
-export { useLongPress } from './common/use-long-press.ts';
-export { useHandleNetworkState } from './common/use-handle-network-state.ts';
+export { useTimer } from './interaction/use-timer.ts';
+export { useToggle } from './interaction/use-toggle.ts';
+export { useLongPress } from './interaction/use-long-press.ts';
+export { useHandleNetworkState } from './interaction/use-handle-network-state.ts';
 
 export { useMediaQueryWidth } from './style/use-media-query-width.ts';
 export { useElementSize } from './style/use-element-size.ts';

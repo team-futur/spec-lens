@@ -1,12 +1,7 @@
 export {
-  isNullOrUndefined,
-  getYears,
   sleep,
   logOnDev,
-  convertToRGBA,
   detectDeviceTypeAndOS,
-  scrollToTop,
-  scrollToTopNoneSmooth,
   generateRandomNumber,
   transformArrayToDictByKey,
   openPhoneApp,
@@ -22,9 +17,6 @@ export {
   throttle,
   getCookie,
   webShare,
-  handleTextSelectionClear,
-  devConsole,
-  debounce,
   blurElement,
 } from './common/common-lib.ts';
 
@@ -52,3 +44,5 @@ export {
 
 export { createValidator } from './validation/create-validator.ts';
 export { createSchema } from './validation/create-schema.ts';
+
+export { smoothScrollTo } from './interaction/scroll.ts';

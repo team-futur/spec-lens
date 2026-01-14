@@ -16,7 +16,7 @@ import {
   validateOpenAPISpec,
 } from '@/entities/openapi';
 import { GlobalAuthPanel } from '@/features/api-tester';
-import { checkSpecUpdate } from '@/shared/server/fetch-external-spec';
+import { checkSpecUpdate } from '@/shared/server';
 
 export function ViewerLayout() {
   const navigate = useNavigate();
