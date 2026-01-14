@@ -20,19 +20,10 @@ import {
 import { HeaderAutocompleteInput } from './header-autocomplete-input';
 import { VariableAutocompleteInput } from './variable-autocomplete-input';
 import {
-  testParamsStoreActions,
   historyStoreActions,
   executeApiTestRequest,
   getExecuteStatusColor,
   useAuthConfig,
-  useExecuteError,
-  useHeaders,
-  useIsExecuting,
-  usePathParams,
-  useQueryParams,
-  useRequestBody,
-  useResponse,
-  useSelectedServer,
 } from '@/entities/api-tester';
 import { cookieStoreActions, useCustomCookies, useSessionCookies } from '@/entities/cookie';
 import {
@@ -46,6 +37,17 @@ import {
   isReferenceObject,
   useSpecSource,
 } from '@/entities/openapi';
+import {
+  testParamsStoreActions,
+  useExecuteError,
+  useHeaders,
+  useIsExecuting,
+  usePathParams,
+  useQueryParams,
+  useRequestBody,
+  useResponse,
+  useSelectedServer,
+} from '@/entities/test-params';
 import { useShowSkeleton } from '@/shared/hooks';
 import { FuturSelect } from '@/shared/ui/select';
 

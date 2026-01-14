@@ -1,7 +1,11 @@
 import { create } from 'zustand';
 
-import type { EndpointTestData, PersistedTestParams } from './test-params-types.ts';
-import type { ResponseState } from '@/shared/server';
+import type {
+  EndpointTestData,
+  PersistedTestParams,
+  TestParamsState,
+  TestParamsStore,
+} from './test-params-types.ts';
 
 // ========== Storage Helpers ==========
 
@@ -85,41 +89,6 @@ function clearAllTestData(specSourceId: string): void {
 
 // ========== State & Store ==========
 
-export type TestParamsState = {
-  selectedServer: string;
-  pathParams: Record<string, string>;
-  queryParams: Record<string, string>;
-  headers: Record<string, string>;
-  requestBody: string;
-  response: ResponseState | null;
-  isExecuting: boolean;
-  executeError: string | null;
-};
-
-export type TestParamsActions = {
-  setSelectedServer: (server: string) => void;
-  setPathParam: (key: string, value: string) => void;
-  setQueryParam: (key: string, value: string) => void;
-  setHeader: (key: string, value: string) => void;
-  removeHeader: (key: string) => void;
-  setRequestBody: (body: string) => void;
-  setResponse: (response: ResponseState) => void;
-  setExecuting: (executing: boolean) => void;
-  setExecuteError: (error: string | null) => void;
-  clearResponse: () => void;
-  resetParams: () => void;
-  resetPathParams: () => void;
-  resetQueryParams: () => void;
-  resetHeaders: () => void;
-  // Endpoint test data persistence
-  saveCurrentParams: (specSourceId: string, endpointKey: string) => void;
-  loadSavedParams: (specSourceId: string, endpointKey: string) => boolean;
-  clearEndpointParams: (specSourceId: string, endpointKey: string) => void;
-  clearAllParams: (specSourceId: string) => void;
-};
-
-export type TestParamsStore = TestParamsState & { actions: TestParamsActions };
-
 const DEFAULT_HEADERS = { 'Content-Type': 'application/json' };
 
 const initialState: TestParamsState = {
@@ -187,7 +156,7 @@ export const useTestParamsStore = create<TestParamsStore>((set) => ({
     resetHeaders: () => set({ headers: DEFAULT_HEADERS }),
 
     // Endpoint test data persistence
-    saveCurrentParams: (specSourceId: string, endpointKey: string) => {
+    saveCurrentParams: (specSourceId, endpointKey) => {
       const state = useTestParamsStore.getState();
       const data: EndpointTestData = {
         pathParams: state.pathParams,
@@ -200,7 +169,7 @@ export const useTestParamsStore = create<TestParamsStore>((set) => ({
       saveEndpointTestData(specSourceId, endpointKey, data);
     },
 
-    loadSavedParams: (specSourceId: string, endpointKey: string): boolean => {
+    loadSavedParams: (specSourceId, endpointKey) => {
       const data = loadEndpointTestData(specSourceId, endpointKey);
       if (data) {
         set({
@@ -217,7 +186,7 @@ export const useTestParamsStore = create<TestParamsStore>((set) => ({
       return false;
     },
 
-    clearEndpointParams: (specSourceId: string, endpointKey: string) => {
+    clearEndpointParams: (specSourceId, endpointKey) => {
       clearEndpointTestData(specSourceId, endpointKey);
       set({
         pathParams: {},
@@ -229,7 +198,7 @@ export const useTestParamsStore = create<TestParamsStore>((set) => ({
       });
     },
 
-    clearAllParams: (specSourceId: string) => {
+    clearAllParams: (specSourceId) => {
       clearAllTestData(specSourceId);
       set({
         pathParams: {},

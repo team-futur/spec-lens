@@ -14,17 +14,3 @@ export { variableStoreActions, useVariables } from './model/variable-store.ts';
 
 // History store
 export { historyStoreActions, useHistory } from './model/history-store.ts';
-
-// Test params store
-export {
-  useTestParamsStore,
-  testParamsStoreActions,
-  useSelectedServer,
-  usePathParams,
-  useQueryParams,
-  useHeaders,
-  useRequestBody,
-  useResponse,
-  useIsExecuting,
-  useExecuteError,
-} from './model/test-params-store.ts';
