@@ -21,12 +21,10 @@ import { HeaderAutocompleteInput } from './header-autocomplete-input';
 import { VariableAutocompleteInput } from './variable-autocomplete-input';
 import {
   testParamsStoreActions,
-  cookieStoreActions,
   historyStoreActions,
   executeApiTestRequest,
   getExecuteStatusColor,
   useAuthConfig,
-  useCustomCookies,
   useExecuteError,
   useHeaders,
   useIsExecuting,
@@ -35,8 +33,8 @@ import {
   useRequestBody,
   useResponse,
   useSelectedServer,
-  useSessionCookies,
 } from '@/entities/api-tester';
+import { cookieStoreActions, useCustomCookies, useSessionCookies } from '@/entities/cookie';
 import {
   type OpenAPISpec,
   type ParameterObject,

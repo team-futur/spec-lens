@@ -1,20 +1,20 @@
 import { type OpenAPISpec, type ParsedEndpoint } from './openapi-types.ts';
 import type { HttpMethod } from '@/shared/type';
 
-export interface SpecSource {
+export type SpecSource = {
   type: 'file' | 'url';
   name: string;
   // For URL sources - used for refresh/update detection
   etag?: string | null;
   lastModified?: string | null;
-}
+};
 
-export interface SelectedEndpoint {
+export type SelectedEndpoint = {
   path: string;
   method: HttpMethod;
-}
+};
 
-export interface OpenAPIState {
+export type OpenAPIState = {
   // Spec data
   spec: OpenAPISpec | null;
   specSource: SpecSource | null;
@@ -41,14 +41,14 @@ export interface OpenAPIState {
   // Sidebar state
   isSidebarOpen: boolean;
   expandedTags: string[];
-}
+};
 
-export interface RefreshResult {
+export type RefreshResult = {
   updated: boolean;
   message: string;
-}
+};
 
-export interface OpenAPIActions {
+export type OpenAPIActions = {
   // Spec actions
   setSpec: (spec: OpenAPISpec, source: SpecSource) => void;
   clearSpec: () => void;
@@ -81,6 +81,6 @@ export interface OpenAPIActions {
   getFilteredEndpoints: () => ParsedEndpoint[];
   getEndpointsByTag: () => Record<string, ParsedEndpoint[]>;
   getSelectedEndpointData: () => ParsedEndpoint | null;
-}
+};
 
 export type OpenAPIStore = OpenAPIState & { actions: OpenAPIActions };

@@ -1,18 +1,22 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { type AuthConfig, DEFAULT_AUTH_CONFIG } from './api-tester-types.ts';
+import { type AuthConfig } from './api-tester-types.ts';
 
-// ========== Auth Store ==========
+export const DEFAULT_AUTH_CONFIG: AuthConfig = {
+  type: 'none',
+  apiKeyLocation: 'header',
+  persistSession: false,
+};
 
-export interface AuthState {
+export type AuthState = {
   authConfig: AuthConfig;
-}
+};
 
-export interface AuthActions {
+export type AuthActions = {
   setAuthConfig: (config: Partial<AuthConfig>) => void;
   clearAuth: () => void;
-}
+};
 
 export type AuthStore = AuthState & { actions: AuthActions };
 

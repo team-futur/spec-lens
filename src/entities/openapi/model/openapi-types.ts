@@ -5,7 +5,7 @@
 
 import type { HttpMethod } from '@/shared/type';
 
-export interface OpenAPISpec {
+export type OpenAPISpec = {
   openapi: string;
   info: InfoObject;
   servers?: ServerObject[];
@@ -14,45 +14,45 @@ export interface OpenAPISpec {
   security?: SecurityRequirementObject[];
   tags?: TagObject[];
   externalDocs?: ExternalDocumentationObject;
-}
+};
 
-export interface InfoObject {
+export type InfoObject = {
   title: string;
   description?: string;
   termsOfService?: string;
   contact?: ContactObject;
   license?: LicenseObject;
   version: string;
-}
+};
 
-export interface ContactObject {
+export type ContactObject = {
   name?: string;
   url?: string;
   email?: string;
-}
+};
 
-export interface LicenseObject {
+export type LicenseObject = {
   name: string;
   url?: string;
-}
+};
 
-export interface ServerObject {
+export type ServerObject = {
   url: string;
   description?: string;
   variables?: Record<string, ServerVariableObject>;
-}
+};
 
-export interface ServerVariableObject {
+export type ServerVariableObject = {
   enum?: string[];
   default: string;
   description?: string;
-}
+};
 
-export interface PathsObject {
+export type PathsObject = {
   [path: string]: PathItemObject;
-}
+};
 
-export interface PathItemObject {
+export type PathItemObject = {
   $ref?: string;
   summary?: string;
   description?: string;
@@ -66,9 +66,9 @@ export interface PathItemObject {
   trace?: OperationObject;
   servers?: ServerObject[];
   parameters?: (ParameterObject | ReferenceObject)[];
-}
+};
 
-export interface OperationObject {
+export type OperationObject = {
   tags?: string[];
   summary?: string;
   description?: string;
@@ -81,16 +81,16 @@ export interface OperationObject {
   deprecated?: boolean;
   security?: SecurityRequirementObject[];
   servers?: ServerObject[];
-}
+};
 
-export interface ExternalDocumentationObject {
+export type ExternalDocumentationObject = {
   description?: string;
   url: string;
-}
+};
 
 export type ParameterLocation = 'query' | 'header' | 'path' | 'cookie';
 
-export interface ParameterObject {
+export type ParameterObject = {
   name: string;
   in: ParameterLocation;
   description?: string;
@@ -104,74 +104,74 @@ export interface ParameterObject {
   example?: unknown;
   examples?: Record<string, ExampleObject | ReferenceObject>;
   content?: Record<string, MediaTypeObject>;
-}
+};
 
-export interface RequestBodyObject {
+export type RequestBodyObject = {
   description?: string;
   content: Record<string, MediaTypeObject>;
   required?: boolean;
-}
+};
 
-export interface MediaTypeObject {
+export type MediaTypeObject = {
   schema?: SchemaObject | ReferenceObject;
   example?: unknown;
   examples?: Record<string, ExampleObject | ReferenceObject>;
   encoding?: Record<string, EncodingObject>;
-}
+};
 
-export interface EncodingObject {
+export type EncodingObject = {
   contentType?: string;
   headers?: Record<string, HeaderObject | ReferenceObject>;
   style?: string;
   explode?: boolean;
   allowReserved?: boolean;
-}
+};
 
-export interface ResponsesObject {
+export type ResponsesObject = {
   default?: ResponseObject | ReferenceObject;
   [statusCode: string]: ResponseObject | ReferenceObject | undefined;
-}
+};
 
-export interface ResponseObject {
+export type ResponseObject = {
   description: string;
   headers?: Record<string, HeaderObject | ReferenceObject>;
   content?: Record<string, MediaTypeObject>;
   links?: Record<string, LinkObject | ReferenceObject>;
-}
+};
 
-export interface CallbackObject {
+export type CallbackObject = {
   [expression: string]: PathItemObject;
-}
+};
 
-export interface ExampleObject {
+export type ExampleObject = {
   summary?: string;
   description?: string;
   value?: unknown;
   externalValue?: string;
-}
+};
 
-export interface LinkObject {
+export type LinkObject = {
   operationRef?: string;
   operationId?: string;
   parameters?: Record<string, unknown>;
   requestBody?: unknown;
   description?: string;
   server?: ServerObject;
-}
+};
 
 export type HeaderObject = Omit<ParameterObject, 'name' | 'in'>;
 
-export interface TagObject {
+export type TagObject = {
   name: string;
   description?: string;
   externalDocs?: ExternalDocumentationObject;
-}
+};
 
-export interface ReferenceObject {
+export type ReferenceObject = {
   $ref: string;
-}
+};
 
-export interface SchemaObject {
+export type SchemaObject = {
   title?: string;
   multipleOf?: number;
   maximum?: number;
@@ -207,22 +207,22 @@ export interface SchemaObject {
   externalDocs?: ExternalDocumentationObject;
   example?: unknown;
   deprecated?: boolean;
-}
+};
 
-export interface DiscriminatorObject {
+export type DiscriminatorObject = {
   propertyName: string;
   mapping?: Record<string, string>;
-}
+};
 
-export interface XMLObject {
+export type XMLObject = {
   name?: string;
   namespace?: string;
   prefix?: string;
   attribute?: boolean;
   wrapped?: boolean;
-}
+};
 
-export interface SecuritySchemeObject {
+export type SecuritySchemeObject = {
   type: 'apiKey' | 'http' | 'oauth2' | 'openIdConnect';
   description?: string;
   name?: string;
@@ -231,27 +231,27 @@ export interface SecuritySchemeObject {
   bearerFormat?: string;
   flows?: OAuthFlowsObject;
   openIdConnectUrl?: string;
-}
+};
 
-export interface OAuthFlowsObject {
+export type OAuthFlowsObject = {
   implicit?: OAuthFlowObject;
   password?: OAuthFlowObject;
   clientCredentials?: OAuthFlowObject;
   authorizationCode?: OAuthFlowObject;
-}
+};
 
-export interface OAuthFlowObject {
+export type OAuthFlowObject = {
   authorizationUrl?: string;
   tokenUrl?: string;
   refreshUrl?: string;
   scopes: Record<string, string>;
-}
+};
 
-export interface SecurityRequirementObject {
+export type SecurityRequirementObject = {
   [name: string]: string[];
-}
+};
 
-export interface ComponentsObject {
+export type ComponentsObject = {
   schemas?: Record<string, SchemaObject | ReferenceObject>;
   responses?: Record<string, ResponseObject | ReferenceObject>;
   parameters?: Record<string, ParameterObject | ReferenceObject>;
@@ -261,19 +261,19 @@ export interface ComponentsObject {
   securitySchemes?: Record<string, SecuritySchemeObject | ReferenceObject>;
   links?: Record<string, LinkObject | ReferenceObject>;
   callbacks?: Record<string, CallbackObject | ReferenceObject>;
-}
+};
 
 // Utility types for parsed endpoints
-export interface ParsedEndpoint {
+export type ParsedEndpoint = {
   path: string;
   method: HttpMethod;
   operation: OperationObject;
   pathItem: PathItemObject;
-}
+};
 
-export interface EndpointsByTag {
+export type EndpointsByTag = {
   [tag: string]: ParsedEndpoint[];
-}
+};
 
 // Type guard for ReferenceObject
 export function isReferenceObject(obj: unknown): obj is ReferenceObject {

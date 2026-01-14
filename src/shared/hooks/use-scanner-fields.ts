@@ -1,32 +1,32 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export interface FieldConfig<TFieldName extends string> {
+export type FieldConfig<TFieldName extends string> = {
   name: TFieldName;
   autoFocus?: boolean;
   skipIf?: () => boolean;
   validator?: (value: string) => boolean;
   transform?: (value: string) => string;
   onScan: (value: string) => void;
-}
+};
 
-export interface ScannerFieldsConfig<TFieldName extends string> {
+export type ScannerFieldsConfig<TFieldName extends string> = {
   fields: ReadonlyArray<FieldConfig<TFieldName>>;
   disableAutoNext?: boolean; // true일 경우 스캔 후 다음 필드로 자동 이동하지 않음
-}
+};
 
-export interface InputProps {
+export type InputProps = {
   ref: (el: HTMLInputElement | null) => void;
   onFocus: () => void;
   onBlur: () => void;
-}
+};
 
-export interface UseScannerFieldsReturn<TFieldName extends string> {
+export type UseScannerFieldsReturn<TFieldName extends string> = {
   getInputProps: (fieldName: TFieldName) => InputProps;
   handleScan: (data: string) => void;
   currentField: TFieldName | null;
   focusField: (field: TFieldName) => void;
   reset: () => void;
-}
+};
 
 export function useScannerFields<TFieldName extends string>(
   config: ScannerFieldsConfig<TFieldName>,

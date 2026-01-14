@@ -7,9 +7,9 @@ import { createRootRouteWithContext } from '@tanstack/react-router';
 import cssUrl from '../styles/index.css?url';
 import { RootCatchBoundary, RootComponent, RootNotFound } from '@/pages/root';
 
-export interface RouterContext {
+export type RouterContext = {
   queryClient: QueryClient;
-}
+};
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async () => {},

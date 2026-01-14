@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import type { EndpointTestData, PersistedTestParams } from './api-tester-types.ts';
+import type { EndpointTestData, PersistedTestParams } from './test-params-types.ts';
 import type { ResponseState } from '@/shared/server';
 
 // ========== Storage Helpers ==========
@@ -85,7 +85,7 @@ function clearAllTestData(specSourceId: string): void {
 
 // ========== State & Store ==========
 
-export interface TestParamsState {
+export type TestParamsState = {
   selectedServer: string;
   pathParams: Record<string, string>;
   queryParams: Record<string, string>;
@@ -94,9 +94,9 @@ export interface TestParamsState {
   response: ResponseState | null;
   isExecuting: boolean;
   executeError: string | null;
-}
+};
 
-export interface TestParamsActions {
+export type TestParamsActions = {
   setSelectedServer: (server: string) => void;
   setPathParam: (key: string, value: string) => void;
   setQueryParam: (key: string, value: string) => void;
@@ -116,7 +116,7 @@ export interface TestParamsActions {
   loadSavedParams: (specSourceId: string, endpointKey: string) => boolean;
   clearEndpointParams: (specSourceId: string, endpointKey: string) => void;
   clearAllParams: (specSourceId: string) => void;
-}
+};
 
 export type TestParamsStore = TestParamsState & { actions: TestParamsActions };
 

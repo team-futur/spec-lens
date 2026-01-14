@@ -1,22 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type { Variable } from './api-tester-types.ts';
-
-// ========== Variable Store ==========
-
-export interface VariableState {
-  variables: Variable[];
-}
-
-export interface VariableActions {
-  addVariable: (variable: Variable) => void;
-  updateVariable: (index: number, variable: Partial<Variable>) => void;
-  removeVariable: (index: number) => void;
-  clearVariables: () => void;
-}
-
-export type VariableStore = VariableState & { actions: VariableActions };
+import type { VariableStore } from './variable-types.ts';
 
 export const useVariableStore = create<VariableStore>()(
   persist(
@@ -24,12 +9,12 @@ export const useVariableStore = create<VariableStore>()(
       variables: [],
 
       actions: {
-        addVariable: (variable: Variable) =>
+        addVariable: (variable) =>
           set((state) => ({
             variables: [...state.variables, variable],
           })),
 
-        updateVariable: (index: number, variable: Partial<Variable>) =>
+        updateVariable: (index, variable) =>
           set((state) => {
             const newVariables = [...state.variables];
             newVariables[index] = { ...newVariables[index], ...variable };
@@ -47,12 +32,13 @@ export const useVariableStore = create<VariableStore>()(
     {
       name: 'api-tester-variables',
       version: 1,
+      partialize: (state) => ({
+        variables: state.variables,
+      }),
     },
   ),
 );
 
-// Actions - can be used outside of React components
 export const variableStoreActions = useVariableStore.getState().actions;
 
-// Selector hooks
 export const useVariables = () => useVariableStore((s) => s.variables);

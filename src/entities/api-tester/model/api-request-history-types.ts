@@ -1,7 +1,7 @@
 import type { ResponseState } from '@/shared/server';
 import type { HttpMethod } from '@/shared/type';
 
-export interface HistoryEntry {
+export type HistoryEntry = {
   id: string; // Unique ID (timestamp + random)
   timestamp: number;
   method: HttpMethod;
@@ -19,16 +19,16 @@ export interface HistoryEntry {
   error: string | null;
   // Metadata
   duration?: number; // Request duration (ms)
-}
+};
 
-export interface HistoryState {
+export type HistoryState = {
   history: HistoryEntry[];
-}
+};
 
-export interface HistoryActions {
+export type HistoryActions = {
   addToHistory: (entry: HistoryEntry) => void;
   removeHistoryEntry: (id: string) => void;
   clearHistory: () => void;
-}
+};
 
 export type HistoryStore = HistoryState & { actions: HistoryActions };

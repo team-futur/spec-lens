@@ -18,18 +18,20 @@ import {
 
 import {
   authStoreActions,
-  cookieStoreActions,
   variableStoreActions,
   historyStoreActions,
   type AuthType,
-  getCookieExpirationInfo,
   type HistoryEntry,
   useAuthConfig,
-  useCustomCookies,
   useHistory,
-  useSessionCookies,
   useVariables,
 } from '@/entities/api-tester';
+import {
+  cookieStoreActions,
+  getCookieExpirationInfo,
+  useCustomCookies,
+  useSessionCookies,
+} from '@/entities/cookie';
 import { getMethodColor } from '@/entities/openapi';
 import { FuturSelect } from '@/shared/ui/select';
 

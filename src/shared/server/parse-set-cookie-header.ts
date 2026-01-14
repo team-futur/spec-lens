@@ -1,4 +1,4 @@
-export interface ParsedCookie {
+export type ParsedCookie = {
   name: string;
   value: string;
   path?: string;
@@ -7,7 +7,7 @@ export interface ParsedCookie {
   httpOnly?: boolean;
   secure?: boolean;
   sameSite?: string;
-}
+};
 
 /**
  * Parse a Set-Cookie header string into a structured object

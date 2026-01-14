@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type { CustomCookie, SessionCookie } from './api-tester-types.ts';
+import { type SessionCookie, type CookieStore } from './cookie-types.ts';
 
 // ========== Cookie Utility Functions ==========
 
@@ -58,32 +58,9 @@ export function getCookieExpirationInfo(cookie: SessionCookie): {
   };
 }
 
-// Filter out expired cookies from an array
 function filterExpiredCookies(cookies: SessionCookie[]): SessionCookie[] {
   return cookies.filter((cookie) => !isCookieExpired(cookie));
 }
-
-// ========== Cookie Store ==========
-
-export interface CookieState {
-  customCookies: CustomCookie[];
-  sessionCookies: SessionCookie[];
-}
-
-export interface CookieActions {
-  // Custom Cookies
-  addCustomCookie: (cookie: CustomCookie) => void;
-  updateCustomCookie: (index: number, cookie: Partial<CustomCookie>) => void;
-  removeCustomCookie: (index: number) => void;
-  clearCustomCookies: () => void;
-  // Session Cookies
-  setSessionCookies: (cookies: SessionCookie[]) => void;
-  addSessionCookies: (cookies: SessionCookie[]) => void;
-  clearSessionCookies: () => void;
-  removeExpiredCookies: () => number;
-}
-
-export type CookieStore = CookieState & { actions: CookieActions };
 
 export const useCookieStore = create<CookieStore>()(
   persist(
@@ -149,9 +126,7 @@ export const useCookieStore = create<CookieStore>()(
   ),
 );
 
-// Actions - can be used outside of React components
 export const cookieStoreActions = useCookieStore.getState().actions;
 
-// Selector hooks
 export const useCustomCookies = () => useCookieStore((s) => s.customCookies);
 export const useSessionCookies = () => useCookieStore((s) => s.sessionCookies);
