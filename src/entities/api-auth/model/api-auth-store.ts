@@ -32,8 +32,6 @@ const useApiAuthStore = create<ApiAuthStore>()(
   ),
 );
 
-// Actions - can be used outside of React components
 export const apiAuthStoreActions = useApiAuthStore.getState().actions;
 
-// Selector hooks
 export const useAuthConfig = () => useApiAuthStore((s) => s.apiAuthConfig);

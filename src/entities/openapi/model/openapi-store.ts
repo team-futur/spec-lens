@@ -9,7 +9,7 @@ import {
   getAllTags,
   filterEndpoints,
 } from '../lib/openapi-parser.ts';
-import { testParamsStoreActions } from '@/entities/test-params/model/test-params-store.ts';
+import { testParamsStoreActions } from '@/entities/test-params/@x/openapi.ts';
 
 const initialState: OpenAPIState = {
   spec: null,
