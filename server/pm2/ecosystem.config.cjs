@@ -7,7 +7,7 @@ module.exports = {
       exec_mode: 'cluster',
       env: {
         NODE_ENV: 'production',
-        PORT: 3100,
+        PORT: 3001,
         DATABASE_URL: 'file:./server/specLens.db',
       },
       error_file: './logs/err.log',

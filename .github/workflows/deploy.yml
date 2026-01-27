@@ -1,0 +1,113 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Prepare deployment files
+        run: |
+          # Copy PM2 config and script to the output directory
+          cp server/pm2/ecosystem.config.cjs .output/
+          cp server/pm2/pm2.sh .output/
+          # Copy Prisma schema for db push on server
+          mkdir -p .output/prisma
+          cp prisma/schema.prisma .output/prisma/
+
+      - name: Prepare initial DB
+        run: |
+          # Create initial DB with schema and seed data for first deployment
+          # Extract DB path from DATABASE_URL (e.g., "file:./server/futur-home.db" -> "server/futur-home.db")
+          DB_PATH="${DATABASE_URL#file:./}"
+          DB_NAME=$(basename "$DB_PATH")
+          pnpm prisma db push
+          pnpm prisma db seed || echo "Seed skipped or failed (may already have data)"
+          mkdir -p .output/server
+          cp "$DB_PATH" ".output/server/$DB_NAME.init"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Clean old node_modules on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            rm -rf ${{ secrets.DEPLOY_PATH }}/server/node_modules
+
+      - name: Deploy to Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: ".output/*"
+          target: "${{ secrets.DEPLOY_PATH }}"
+          strip_components: 1 # Removes the '.output' directory from the target path
+
+      - name: Initialize DB and apply migrations
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          envs: DATABASE_URL
+          script: |
+            export PATH=$PATH:/root/.nvm/versions/node/v22.21.0/bin
+            cd ${{ secrets.DEPLOY_PATH }}
+            # Extract DB filename from DATABASE_URL (e.g., "file:./server/futur-home.db" -> "futur-home.db")
+            DB_PATH="${DATABASE_URL#file:./}"
+            DB_NAME=$(basename "$DB_PATH")
+            if [ ! -f "server/$DB_NAME" ]; then
+              echo "DB not found, initializing from $DB_NAME.init..."
+              mv "server/$DB_NAME.init" "server/$DB_NAME"
+            else
+              echo "DB exists, applying schema changes..."
+              rm -f "server/$DB_NAME.init"
+              npx prisma db push --schema=prisma/schema.prisma --accept-data-loss --url "file:./server/$DB_NAME"
+            fi
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Restart Application
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            export PATH=$PATH:/root/.nvm/versions/node/v22.21.0/bin
+            cd ${{ secrets.DEPLOY_PATH }}
+            export SESSION_SECRET="${{ secrets.SESSION_SECRET }}"
+            pm2 restart spec-lens --update-env
