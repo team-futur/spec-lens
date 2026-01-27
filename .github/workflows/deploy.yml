@@ -110,4 +110,4 @@ jobs:
             export PATH=$PATH:/root/.nvm/versions/node/v22.21.0/bin
             cd ${{ secrets.DEPLOY_PATH }}
             export SESSION_SECRET="${{ secrets.SESSION_SECRET }}"
-            pm2 restart spec-lens --update-env
+            pm2 startOrReload ecosystem.config.cjs --update-env
