@@ -1,5 +1,5 @@
-import type { ApiAuthConfig } from '@/entities/api-auth/@x/api-tester.ts';
-import type { CustomCookie, SessionCookie } from '@/entities/cookie/@x/api-tester.ts';
+import type { ApiAuthConfig } from '@/entities/api-auth';
+import type { CustomCookie, SessionCookie } from '@/entities/cookie';
 import type { ResponseState } from '@/shared/server';
 import type { HttpMethod } from '@/shared/type';
 

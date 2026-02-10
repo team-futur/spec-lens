@@ -1,4 +1,4 @@
-import type { ApiAuthConfig } from '@/entities/api-auth/@x/api-tester.ts';
+import type { ApiAuthConfig } from '@/entities/api-auth';
 
 /**
  * Apply authentication to headers and query params based on auth config

@@ -19,8 +19,9 @@ import {
 
 import { HeaderAutocompleteInput } from './header-autocomplete-input';
 import { VariableAutocompleteInput } from './variable-autocomplete-input';
+import { getExecuteStatusColor } from '../config/execute-status-color';
+import { executeApiTestRequest } from '../lib/execute-api-test-request';
 import { useAuthConfig } from '@/entities/api-auth';
-import { executeApiTestRequest, getExecuteStatusColor } from '@/entities/api-tester';
 import { cookieStoreActions, useCustomCookies, useSessionCookies } from '@/entities/cookie';
 import { historyStoreActions } from '@/entities/history';
 import {
