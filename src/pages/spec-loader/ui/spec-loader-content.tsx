@@ -1,6 +1,5 @@
-import { FileUploadZone } from './file-upload-zone';
-import { UrlInputForm } from './url-input-form';
 import type { SpecLoaderType } from '../model/spec-loader-types';
+import { FileUploadZone, UrlInputForm } from '@/features/spec-import';
 
 export function SpecLoaderContent({ inputMode }: { inputMode: SpecLoaderType }) {
   return (
