@@ -1,69 +1,13 @@
-import { useState, type DragEvent, type ChangeEvent } from 'react';
+import { AlertCircle, FileJson, Upload } from 'lucide-react';
 
-import { Upload, FileJson, AlertCircle } from 'lucide-react';
-
-import { setSpecWithExpanded } from '../lib/set-spec-with-expanded';
-import {
-  type OpenAPISpec,
-  validateOpenAPISpec,
-  specStoreActions,
-  useError,
-} from '@/entities/openapi-spec';
+import { useFileHandler } from '../model/use-file-drag-and-drop';
+import { useError } from '@/entities/openapi-spec';
 
 export function FileUploadZone() {
-  const [isDragging, setIsDragging] = useState(false);
-  const [fileName, setFileName] = useState<string | null>(null);
   const error = useError();
 
-  async function processFile(file: File) {
-    setFileName(file.name);
-    specStoreActions.setLoading(true);
-    specStoreActions.setError(null);
-
-    try {
-      const text = await file.text();
-      const json = JSON.parse(text);
-
-      const validation = validateOpenAPISpec(json);
-      if (!validation.valid) {
-        throw new Error(validation.error);
-      }
-
-      setSpecWithExpanded(json as OpenAPISpec, { type: 'file', name: file.name });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to parse file';
-      specStoreActions.setError(message);
-    }
-  }
-
-  function handleDragOver(e: DragEvent) {
-    e.preventDefault();
-    setIsDragging(true);
-  }
-
-  function handleDragLeave(e: DragEvent) {
-    e.preventDefault();
-    setIsDragging(false);
-  }
-
-  function handleDrop(e: DragEvent) {
-    e.preventDefault();
-    setIsDragging(false);
-
-    const file = e.dataTransfer.files[0];
-    if (file && (file.type === 'application/json' || file.name.endsWith('.json'))) {
-      processFile(file);
-    } else {
-      specStoreActions.setError('Please drop a JSON file');
-    }
-  }
-
-  function handleFileInput(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (file) {
-      processFile(file);
-    }
-  }
+  const { fileName, isDragging, handleFileInput, handleDragOver, handleDragLeave, handleDrop } =
+    useFileHandler();
 
   return (
     <div style={{ width: '100%' }}>
