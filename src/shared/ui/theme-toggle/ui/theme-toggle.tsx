@@ -43,6 +43,7 @@ export function ThemeToggle() {
         }}
       >
         <motion.div
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           key={resolvedMode}
           initial={{ rotate: -90, opacity: 0 }}
           animate={{ rotate: 0, opacity: 1 }}

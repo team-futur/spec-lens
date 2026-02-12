@@ -1,7 +1,10 @@
+import { FlexRow } from '@jigoooo/shared-ui';
+
 import { Search, X } from 'lucide-react';
 
 import { endpointFilterStoreActions, useSearchQuery } from '@/entities/endpoint-filter';
 import { useSpecStore } from '@/entities/openapi-spec';
+import { ThemeToggle } from '@/shared/ui/theme-toggle';
 
 export function SidebarHeader() {
   const spec = useSpecStore((s) => s.spec);
@@ -16,21 +19,27 @@ export function SidebarHeader() {
         borderBottom: '1px solid rgba(255,255,255,0.08)',
       }}
     >
-      <div style={{ marginBottom: '1.2rem' }}>
-        <h2
-          style={{
-            color: '#e5e5e5',
-            fontSize: '1.4rem',
-            fontWeight: 600,
-            marginBottom: '0.4rem',
-          }}
-        >
-          {spec.info.title}
-        </h2>
-        <span style={{ color: '#6b7280', fontSize: '1.2rem' }}>
-          v{spec.info.version} • OpenAPI {spec.openapi}
-        </span>
-      </div>
+      <FlexRow style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ marginBottom: '1.2rem' }}>
+          <h2
+            style={{
+              color: '#e5e5e5',
+              fontSize: '1.4rem',
+              fontWeight: 600,
+              marginBottom: '0.4rem',
+            }}
+          >
+            {spec.info.title}
+          </h2>
+          <span style={{ color: '#6b7280', fontSize: '1.2rem' }}>
+            v{spec.info.version} • OpenAPI {spec.openapi}
+          </span>
+        </div>
+
+        <div style={{ marginBottom: '1rem' }}>
+          <ThemeToggle />
+        </div>
+      </FlexRow>
 
       <div
         style={{
