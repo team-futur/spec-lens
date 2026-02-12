@@ -6,6 +6,7 @@ import { SpecLoaderContent } from './spec-loader-content';
 import { SpecLoaderHeader } from './spec-loader-header';
 import type { SpecLoaderType } from '../model/spec-loader-types';
 import { useSpec, useSpecStoreHydration } from '@/entities/openapi-spec';
+import { ThemeToggle } from '@/shared/ui/theme-toggle';
 
 export function SpecLoaderPage() {
   const hydrated = useSpecStoreHydration();
@@ -27,6 +28,7 @@ export function SpecLoaderPage() {
   return (
     <div
       style={{
+        position: 'relative',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -37,6 +39,9 @@ export function SpecLoaderPage() {
         backgroundColor: '#0a0a0a',
       }}
     >
+      <div style={{ position: 'absolute', top: '2.4rem', right: '2.4rem' }}>
+        <ThemeToggle />
+      </div>
       <div
         style={{
           width: '100%',
