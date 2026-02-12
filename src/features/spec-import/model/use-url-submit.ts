@@ -84,7 +84,6 @@ export function useUrlSubmit() {
       }
 
       setLocalError(message);
-      specStoreActions.setError(message);
     } finally {
       setIsLoadingLocal(false);
       specStoreActions.setLoading(false);

@@ -1,10 +1,25 @@
+import type { ChangeEvent, DragEvent as ReactDragEvent } from 'react';
+
 import { FileJson, Upload } from 'lucide-react';
 
-import { useFileHandler } from '../model/use-file-drag-and-drop';
+import { useColors } from '@/shared/theme';
 
-export function FileUploadContent() {
-  const { fileName, isDragging, handleFileInput, handleDragOver, handleDragLeave, handleDrop } =
-    useFileHandler();
+export function FileUploadContent({
+  fileName,
+  isDragging,
+  handleFileInput,
+  handleDragOver,
+  handleDragLeave,
+  handleDrop,
+}: {
+  fileName: string | null;
+  isDragging: boolean;
+  handleFileInput: (e: ChangeEvent<HTMLInputElement>) => void;
+  handleDragOver: (e: ReactDragEvent) => void;
+  handleDragLeave: (e: ReactDragEvent) => void;
+  handleDrop: (e: ReactDragEvent) => void;
+}) {
+  const colors = useColors();
 
   return (
     <label
@@ -19,8 +34,8 @@ export function FileUploadContent() {
         gap: '1.6rem',
         padding: '4rem 3.2rem',
         borderRadius: '0.8rem',
-        border: `2px dashed ${isDragging ? '#075D46' : 'rgba(255,255,255,0.2)'}`,
-        backgroundColor: isDragging ? 'rgba(7, 93, 70, 0.1)' : 'rgba(255,255,255,0.02)',
+        border: `2px dashed ${isDragging ? colors.interactive.primary : colors.border.default}`,
+        backgroundColor: isDragging ? 'rgba(7, 93, 70, 0.1)' : colors.bg.overlay,
         cursor: 'pointer',
         transition: 'all 0.2s ease',
       }}
@@ -40,21 +55,27 @@ export function FileUploadContent() {
           width: '6.4rem',
           height: '6.4rem',
           borderRadius: '50%',
-          backgroundColor: isDragging ? 'rgba(7, 93, 70, 0.2)' : 'rgba(255,255,255,0.05)',
+          backgroundColor: isDragging ? 'rgba(7, 93, 70, 0.2)' : colors.bg.overlay,
           transition: 'all 0.2s ease',
         }}
       >
         {fileName ? (
-          <FileJson size={28} color={isDragging ? '#075D46' : '#9ca3af'} />
+          <FileJson
+            size={28}
+            color={isDragging ? colors.interactive.primary : colors.text.secondary}
+          />
         ) : (
-          <Upload size={28} color={isDragging ? '#075D46' : '#9ca3af'} />
+          <Upload
+            size={28}
+            color={isDragging ? colors.interactive.primary : colors.text.secondary}
+          />
         )}
       </div>
 
       <div style={{ textAlign: 'center' }}>
         <p
           style={{
-            color: '#e5e5e5',
+            color: colors.text.primary,
             fontSize: '1.5rem',
             fontWeight: 500,
             marginBottom: '0.8rem',
@@ -63,7 +84,9 @@ export function FileUploadContent() {
           {fileName || 'Drop OpenAPI spec file here'}
         </p>
         {!fileName && (
-          <p style={{ color: '#6b7280', fontSize: '1.3rem' }}>or click to browse (.json)</p>
+          <p style={{ color: colors.text.tertiary, fontSize: '1.3rem' }}>
+            or click to browse (.json)
+          </p>
         )}
       </div>
     </label>

@@ -1,14 +1,17 @@
 import type { SpecLoaderType } from '../model/spec-loader-types';
 import { FileUploadZone, UrlInputForm } from '@/features/spec-import';
+import { useColors } from '@/shared/theme';
 
 export function SpecLoaderContent({ inputMode }: { inputMode: SpecLoaderType }) {
+  const colors = useColors();
+
   return (
     <div
       style={{
         padding: '2.4rem',
-        backgroundColor: 'rgba(255,255,255,0.02)',
+        backgroundColor: colors.bg.overlay,
         borderRadius: '1.2rem',
-        border: '1px solid rgba(255,255,255,0.1)',
+        border: `1px solid ${colors.border.default}`,
       }}
     >
       {inputMode === 'file' ? <FileUploadZone /> : <UrlInputForm />}

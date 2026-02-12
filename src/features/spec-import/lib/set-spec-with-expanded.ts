@@ -10,4 +10,5 @@ export function setSpecWithExpanded(spec: OpenAPISpec, source: SpecSource) {
   specStoreActions.setSpec(spec, source);
   const tags = getAllTags(spec);
   sidebarStoreActions.expandAllTags(tags);
+  sidebarStoreActions.setSidebarOpen(true);
 }

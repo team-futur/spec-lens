@@ -12,7 +12,6 @@ const initialState: SpecState = {
   endpoints: [],
   tags: [],
   isLoading: false,
-  error: null,
   isRefreshing: false,
   lastRefreshTime: null,
   refreshError: null,
@@ -34,7 +33,6 @@ export const useSpecStore = create<SpecStore>()(
               specSource: source,
               endpoints,
               tags,
-              error: null,
               isLoading: false,
               isRefreshing: false,
               lastRefreshTime: Date.now(),
@@ -49,8 +47,6 @@ export const useSpecStore = create<SpecStore>()(
           },
 
           setLoading: (isLoading) => set({ isLoading }),
-
-          setError: (error) => set({ error, isLoading: false }),
 
           setRefreshing: (isRefreshing) => set({ isRefreshing }),
 
@@ -95,7 +91,6 @@ export const useSpecSource = () => useSpecStore((state) => state.specSource);
 export const useEndpoints = () => useSpecStore((state) => state.endpoints);
 export const useTags = () => useSpecStore((state) => state.tags);
 export const useIsLoading = () => useSpecStore((state) => state.isLoading);
-export const useError = () => useSpecStore((state) => state.error);
 export const useIsRefreshing = () => useSpecStore((state) => state.isRefreshing);
 export const useLastRefreshTime = () => useSpecStore((state) => state.lastRefreshTime);
 export const useRefreshError = () => useSpecStore((state) => state.refreshError);

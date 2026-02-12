@@ -6,9 +6,11 @@ import { SpecLoaderContent } from './spec-loader-content';
 import { SpecLoaderHeader } from './spec-loader-header';
 import type { SpecLoaderType } from '../model/spec-loader-types';
 import { useSpec, useSpecStoreHydration } from '@/entities/openapi-spec';
+import { useColors } from '@/shared/theme';
 import { ThemeToggle } from '@/shared/ui/theme-toggle';
 
 export function SpecLoaderPage() {
+  const colors = useColors();
   const hydrated = useSpecStoreHydration();
   const spec = useSpec();
   const [inputMode, setInputMode] = useState<SpecLoaderType>('file');
@@ -36,7 +38,7 @@ export function SpecLoaderPage() {
         minHeight: '100%',
         padding: '3.2rem',
         paddingTop: '12rem',
-        backgroundColor: '#0a0a0a',
+        backgroundColor: colors.bg.base,
       }}
     >
       <div style={{ position: 'absolute', top: '2.4rem', right: '2.4rem' }}>

@@ -6,11 +6,12 @@ import { specStoreActions, validateOpenAPISpec, type OpenAPISpec } from '@/entit
 export function useFileHandler() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const processFile = async (file: File) => {
     setFileName(file.name);
     specStoreActions.setLoading(true);
-    specStoreActions.setError(null);
+    setError(null);
 
     try {
       const text = await file.text();
@@ -24,7 +25,7 @@ export function useFileHandler() {
       setSpecWithExpanded(json as OpenAPISpec, { type: 'file', name: file.name });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to parse file';
-      specStoreActions.setError(message);
+      setError(message);
     }
   };
 
@@ -53,11 +54,12 @@ export function useFileHandler() {
     if (file && (file.type === 'application/json' || file.name.endsWith('.json'))) {
       processFile(file);
     } else {
-      specStoreActions.setError('Please drop a JSON file');
+      setError('Please drop a JSON file');
     }
   };
 
   return {
+    error,
     fileName,
     isDragging,
     handleFileInput,

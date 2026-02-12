@@ -3,7 +3,7 @@ export { specStoreActions, useSpecStore } from './model/spec-store.ts';
 
 // Selector hooks
 export { useSpec, useSpecSource, useEndpoints, useTags } from './model/spec-store.ts';
-export { useIsLoading, useError, useIsRefreshing } from './model/spec-store.ts';
+export { useIsLoading, useIsRefreshing } from './model/spec-store.ts';
 export { useSpecStoreHydration } from './model/spec-store.ts';
 
 // Types

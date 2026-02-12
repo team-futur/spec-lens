@@ -1,6 +1,10 @@
 import { AlertCircle } from 'lucide-react';
 
+import { useColors } from '@/shared/theme';
+
 export function UploadErrorMessage({ errorMessage }: { errorMessage: string }) {
+  const colors = useColors();
+
   return (
     <div
       style={{
@@ -14,8 +18,8 @@ export function UploadErrorMessage({ errorMessage }: { errorMessage: string }) {
         border: '1px solid rgba(239, 68, 68, 0.2)',
       }}
     >
-      <AlertCircle size={16} color='#ef4444' />
-      <span style={{ color: '#ef4444', fontSize: '1.3rem' }}>{errorMessage}</span>
+      <AlertCircle size={16} color={colors.feedback.error} />
+      <span style={{ color: colors.feedback.error, fontSize: '1.3rem' }}>{errorMessage}</span>
     </div>
   );
 }
