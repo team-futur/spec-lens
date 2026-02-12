@@ -1,9 +1,7 @@
 import { motion, type Transition, type Variants } from 'framer-motion';
 import type { CSSProperties, ReactNode } from 'react';
 
-import { useThemeStore } from '@/shared/store';
-
-type ThemeMode = 'light' | 'dark';
+import { type ResolvedThemeMode, useThemeStore } from '@/shared/theme';
 
 interface SkeletonProps {
   width?: string;
@@ -13,7 +11,7 @@ interface SkeletonProps {
   style?: CSSProperties;
   variant?: 'pulse' | 'wave' | 'shimmer';
   animation?: 'default' | 'subtle' | 'none';
-  themeMode?: ThemeMode; // 추가
+  themeMode?: ResolvedThemeMode;
   children?: ReactNode;
 }
 
@@ -63,7 +61,7 @@ export function Skeleton({
   animation = 'default',
   children,
 }: SkeletonProps) {
-  const themeMode = useThemeStore((state) => state.themeMode);
+  const themeMode = useThemeStore((state) => state.resolvedMode);
   const palette = skeletonColors[themeMode];
 
   const baseStyle: CSSProperties = {

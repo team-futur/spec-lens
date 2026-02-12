@@ -2,10 +2,10 @@ import { CloseIconButton, FlexColumn, FlexRow, Typography } from '@jigoooo/share
 import type { ReactNode } from 'react';
 
 import { CONTENT_BLOCK_SIZE } from '@/shared/constants';
-import { useTheme } from '@/shared/theme';
+import { useColors } from '@/shared/theme';
 
 export function BottomSheetLayout({ title, children }: { title?: string; children: ReactNode }) {
-  const { theme } = useTheme();
+  const colors = useColors();
 
   return (
     <FlexColumn>
@@ -20,7 +20,7 @@ export function BottomSheetLayout({ title, children }: { title?: string; childre
         <Typography style={{ fontSize: '1.8rem', fontWeight: 700 }}>{title}</Typography>
         <CloseIconButton
           iconSize={'2.4rem'}
-          color={theme.colors.textLightDark}
+          color={colors.text.tertiary}
           close={() => window.history.back()}
         />
       </FlexRow>

@@ -1,7 +1,7 @@
 import { type InputProps, OutlinedInput } from '@jigoooo/shared-ui';
 
 import { FORM_HEIGHT_SM } from '@/shared/constants';
-import { useTheme } from '@/shared/theme';
+import { useColors } from '@/shared/theme';
 
 export function CjInput({
   style,
@@ -10,7 +10,7 @@ export function CjInput({
 }: InputProps & {
   placeholderSize?: 'md' | 'sm';
 }) {
-  const { theme } = useTheme();
+  const colors = useColors();
 
   return (
     <OutlinedInput
@@ -19,16 +19,16 @@ export function CjInput({
         width: '100%',
         height: FORM_HEIGHT_SM,
         borderRadius: '0.4rem',
-        boxShadow: `inset 0 0 0 1px ${theme.colors.border}`,
+        boxShadow: `inset 0 0 0 1px ${colors.border.input}`,
         paddingInline: '1.44rem',
         fontSize: '1.6rem',
         fontWeight: 500,
-        color: theme.colors.textMediumDark,
+        color: colors.text.secondary,
         ...style,
       }}
-      disabledStyle={{ color: theme.colors.textLightDark }}
+      disabledStyle={{ color: colors.text.tertiary }}
       outlinedFocusWidth={1.4}
-      focusColor={theme.colors.point1}
+      focusColor={colors.interactive.primary}
       autoCapitalize='none'
       autoCorrect='off'
       spellCheck={false}

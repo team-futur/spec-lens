@@ -5,10 +5,10 @@ import { FaCircleCheck } from 'react-icons/fa6';
 import { IoIosWarning } from 'react-icons/io';
 import { MdError } from 'react-icons/md';
 
-import { useTheme } from '@/shared/theme';
+import { useColors } from '@/shared/theme';
 
 export function AlertProvider() {
-  const { theme } = useTheme();
+  const colors = useColors();
 
   return (
     <>
@@ -25,13 +25,9 @@ export function AlertProvider() {
           duration: 1800,
         }}
         icons={{
-          success: (
-            <FaCircleCheck style={{ color: theme.colors.successColor, fontSize: '3.2rem' }} />
-          ),
-          warning: (
-            <IoIosWarning style={{ color: theme.colors.warningColor, fontSize: '3.2rem' }} />
-          ),
-          error: <MdError style={{ color: theme.colors.errorColor, fontSize: '3.2rem' }} />,
+          success: <FaCircleCheck style={{ color: colors.feedback.success, fontSize: '3.2rem' }} />,
+          warning: <IoIosWarning style={{ color: colors.feedback.warning, fontSize: '3.2rem' }} />,
+          error: <MdError style={{ color: colors.feedback.error, fontSize: '3.2rem' }} />,
         }}
         expand={true}
       />
