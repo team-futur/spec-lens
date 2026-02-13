@@ -40,7 +40,17 @@ export function ResizableSidebarLayout({ children }: PropsWithChildren) {
             position: 'relative',
           }}
         >
-          {children}
+          <div
+            style={{
+              flex: 1,
+              overflow: 'hidden',
+              marginRight: '0.4rem',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {children}
+          </div>
 
           <div
             onMouseDown={startResizing}

@@ -46,8 +46,8 @@ export const darkColors: SemanticColors = {
   },
   text: {
     primary: p.neutral[1000],
-    secondary: p.neutral[750],
-    tertiary: p.neutral[700],
+    secondary: p.neutral[850],
+    tertiary: p.neutral[750],
     disabled: p.neutral[700],
     onBrand: p.neutral[1300],
   },

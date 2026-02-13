@@ -49,7 +49,7 @@ export function SidebarHeader() {
           alignItems: 'center',
           gap: '0.8rem',
           padding: '0.8rem 1.2rem',
-          backgroundColor: colors.bg.overlay,
+          backgroundColor: colors.bg.input,
           borderRadius: '0.6rem',
           border: `1px solid ${colors.border.default}`,
         }}
@@ -62,7 +62,7 @@ export function SidebarHeader() {
           placeholder='Search endpoints...'
           style={{
             flex: 1,
-            backgroundColor: 'transparent',
+            backgroundColor: colors.bg.input,
             border: 'none',
             outline: 'none',
             color: colors.text.primary,
@@ -73,7 +73,7 @@ export function SidebarHeader() {
           <button
             onClick={endpointFilterStoreActions.clearFilters}
             style={{
-              padding: '0.2rem',
+              paddingInline: '0.2rem',
               backgroundColor: 'transparent',
               border: 'none',
               cursor: 'pointer',
