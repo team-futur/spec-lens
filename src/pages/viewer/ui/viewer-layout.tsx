@@ -1,23 +1,11 @@
-import { EndpointDetail } from './endpoint-detail.tsx';
-import { EndpointPlaceholder } from './endpoint-placeholder.tsx';
+import { EndpointContent } from './endpoint-content.tsx';
 import { Sidebar } from './sidebar.tsx';
 import { ViewerToolbar } from './viewer-toolbar.tsx';
-import { useSelectedEndpoint } from '@/entities/endpoint-selection';
-import { useSpecStore } from '@/entities/openapi-spec';
 import { GlobalAuthPanel } from '@/features/api-tester';
 import { useColors } from '@/shared/theme';
 
 export function ViewerLayout() {
   const colors = useColors();
-
-  const selectedEndpointKey = useSelectedEndpoint();
-  const endpoints = useSpecStore((s) => s.endpoints);
-
-  const selectedEndpoint = selectedEndpointKey
-    ? (endpoints.find(
-        (e) => e.path === selectedEndpointKey.path && e.method === selectedEndpointKey.method,
-      ) ?? null)
-    : null;
 
   return (
     <div
@@ -28,10 +16,8 @@ export function ViewerLayout() {
         overflow: 'hidden',
       }}
     >
-      {/* Sidebar */}
       <Sidebar />
 
-      {/* Main Content */}
       <main
         style={{
           flex: 1,
@@ -50,11 +36,7 @@ export function ViewerLayout() {
             overflowY: 'auto',
           }}
         >
-          {selectedEndpoint ? (
-            <EndpointDetail endpoint={selectedEndpoint} />
-          ) : (
-            <EndpointPlaceholder />
-          )}
+          <EndpointContent />
         </div>
       </main>
     </div>

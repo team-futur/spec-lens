@@ -1,18 +1,11 @@
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useDeferredValue, useMemo, useRef } from 'react';
+import { useRef } from 'react';
 
 import { SidebarEndpointGroupHeader } from './sidebar-endpoint-group-header';
 import { SidebarEndpointItem } from './sidebar-endpoint-item';
+import { useFlatEndpointItems } from '../model/use-flat-endpoint-items';
 import { useRestoreEndpointFromHash } from '../model/use-restore-endpoint-from-hash';
 import { useScrollToSelectedEndpoint } from '../model/use-scroll-to-selected-endpoint';
-import { useSearchQuery, useSelectedMethods, useSelectedTags } from '@/entities/endpoint-filter';
-import { useExpandedTags } from '@/entities/openapi-sidebar';
-import {
-  filterEndpoints,
-  groupEndpointsByTag,
-  useSpecStore,
-  type EndpointFlatItem,
-} from '@/entities/openapi-spec';
 import { useColors } from '@/shared/theme';
 
 const TAG_HEADER_HEIGHT = 40;
@@ -22,43 +15,13 @@ export function SidebarEndpointList() {
   'use no memo';
 
   const colors = useColors();
-  const searchQuery = useSearchQuery();
-  const selectedTags = useSelectedTags();
-  const selectedMethods = useSelectedMethods();
-  const endpoints = useSpecStore((s) => s.endpoints);
-  const expandedTags = useExpandedTags();
-
-  const deferredSearchQuery = useDeferredValue(searchQuery);
-
-  const filteredEndpoints = filterEndpoints(endpoints, {
-    searchQuery: deferredSearchQuery,
-    selectedTags,
-    selectedMethods,
-  });
-  const endpointsByTag = groupEndpointsByTag(filteredEndpoints);
-  const tagEntries = Object.entries(endpointsByTag);
-
   const endpointRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const parentRef = useRef<HTMLDivElement>(null);
 
   useRestoreEndpointFromHash();
   useScrollToSelectedEndpoint(endpointRefs);
 
-  const flatItems = useMemo<EndpointFlatItem[]>(() => {
-    const items: EndpointFlatItem[] = [];
-
-    for (const [tag, tagEndpoints] of tagEntries) {
-      const isExpanded = expandedTags.includes(tag);
-      items.push({ type: 'header', tag, count: tagEndpoints.length, isExpanded });
-      if (isExpanded) {
-        for (const endpoint of tagEndpoints) {
-          items.push({ type: 'endpoint', endpoint });
-        }
-      }
-    }
-
-    return items;
-  }, [tagEntries, expandedTags]);
+  const { flatItems } = useFlatEndpointItems();
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
@@ -70,7 +33,7 @@ export function SidebarEndpointList() {
     useFlushSync: false,
   });
 
-  if (tagEntries.length === 0) {
+  if (flatItems.length === 0) {
     return (
       <div
         style={{

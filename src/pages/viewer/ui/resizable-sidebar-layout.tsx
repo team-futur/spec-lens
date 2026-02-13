@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, type PropsWithChildren } from 'react';
 
 import { useResizeSidebar } from '../model/use-resize-sidebar';
-import { useIsSidebarOpen } from '@/entities/openapi-sidebar';
+import { useIsSidebarOpen } from '@/entities/sidebar';
 import { useColors } from '@/shared/theme';
 
 let hasInitiallyMounted = false;

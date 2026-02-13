@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { generateEndpointHash } from '../lib/generate-endpoint-hash';
 import { endpointSelectionStoreActions } from '@/entities/endpoint-selection';
-import { sidebarStoreActions, useExpandedTags } from '@/entities/openapi-sidebar';
+import { sidebarStoreActions, useExpandedTags } from '@/entities/sidebar';
 import { useSpecStore } from '@/entities/openapi-spec';
 
 export function useRestoreEndpointFromHash() {

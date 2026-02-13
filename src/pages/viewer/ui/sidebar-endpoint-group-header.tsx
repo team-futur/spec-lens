@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 import { ChevronRight } from 'lucide-react';
 
-import { sidebarStoreActions } from '@/entities/openapi-sidebar';
+import { sidebarStoreActions } from '@/entities/sidebar';
 import type { EndpointFlatItem } from '@/entities/openapi-spec';
 import { useColors } from '@/shared/theme';
 

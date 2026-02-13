@@ -885,7 +885,7 @@ export function TryItPanel({ endpoint, spec }: { endpoint: ParsedEndpoint; spec:
                     style={{
                       width: '100%',
                       padding: '1.2rem',
-                      backgroundColor: 'rgba(0,0,0,0.2)',
+                      backgroundColor: colors.bg.overlay,
                       border: `1px solid ${jsonError ? 'rgba(239, 68, 68, 0.5)' : colors.border.default}`,
                       borderRadius: '0.6rem',
                       color: colors.text.primary,

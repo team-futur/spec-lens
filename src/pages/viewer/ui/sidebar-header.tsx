@@ -54,7 +54,7 @@ export function SidebarHeader() {
           border: `1px solid ${colors.border.default}`,
         }}
       >
-        <Search size={14} color={colors.text.tertiary} />
+        <Search size={'1.4rem'} color={colors.text.tertiary} />
         <input
           type='text'
           value={searchQuery}
@@ -62,7 +62,7 @@ export function SidebarHeader() {
           placeholder='Search endpoints...'
           style={{
             flex: 1,
-            backgroundColor: colors.bg.input,
+            backgroundColor: 'transparent',
             border: 'none',
             outline: 'none',
             color: colors.text.primary,
@@ -81,7 +81,7 @@ export function SidebarHeader() {
               alignItems: 'center',
             }}
           >
-            <X size={14} color={colors.text.tertiary} />
+            <X size={'1.4rem'} color={colors.text.tertiary} />
           </button>
         )}
       </div>

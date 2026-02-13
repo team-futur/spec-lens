@@ -1,7 +1,7 @@
 import { Navigate } from '@tanstack/react-router';
 
 import { ViewerLayout } from './viewer-layout.tsx';
-import { sidebarStoreActions } from '@/entities/openapi-sidebar';
+import { sidebarStoreActions } from '@/entities/sidebar/index.ts';
 import { useSpec, useSpecStore, useSpecStoreHydration } from '@/entities/openapi-spec';
 
 export function ViewerPage() {

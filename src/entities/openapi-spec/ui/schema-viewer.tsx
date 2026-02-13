@@ -144,15 +144,6 @@ export function SchemaViewer({
     refName: {
       color: '#6366f1', // indigo-500
     },
-    nullable: {
-      padding: '0.2rem 0.6rem',
-      fontSize: '1rem',
-      textTransform: 'uppercase' as const,
-      fontWeight: 'bold' as const,
-      color: colors.text.secondary,
-      backgroundColor: colors.border.subtle,
-      borderRadius: '0.2rem',
-    },
     validation: {
       fontSize: '1rem',
       color: colors.text.tertiary,
@@ -219,8 +210,6 @@ export function SchemaViewer({
               </span>
               {refName && <span style={styles.refName}>({refName})</span>}
             </div>
-
-            {resolvedSchema.nullable && <span style={styles.nullable}>Nullable</span>}
 
             {/* Validations */}
             {(resolvedSchema.minLength !== undefined || resolvedSchema.maxLength !== undefined) && (

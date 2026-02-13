@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { FileJson, Link, Menu, RefreshCw, Upload, X } from 'lucide-react';
 
-import { sidebarStoreActions, useIsSidebarOpen } from '@/entities/openapi-sidebar';
+import { sidebarStoreActions, useIsSidebarOpen } from '@/entities/sidebar';
 import {
   specStoreActions,
   useSpec,

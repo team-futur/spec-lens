@@ -1,5 +1,5 @@
 import { endpointSelectionStoreActions } from '@/entities/endpoint-selection';
-import { sidebarStoreActions } from '@/entities/openapi-sidebar';
+import { sidebarStoreActions } from '@/entities/sidebar';
 import {
   type OpenAPISpec,
   type SpecSource,
